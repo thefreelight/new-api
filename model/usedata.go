@@ -2,10 +2,11 @@ package model
 
 import (
 	"fmt"
-	"gorm.io/gorm"
-	"one-api/common"
 	"sync"
 	"time"
+
+	"github.com/QuantumNous/new-api/common"
+	"gorm.io/gorm"
 )
 
 // QuotaData 柱状图数据
@@ -21,12 +22,6 @@ type QuotaData struct {
 }
 
 func UpdateQuotaData() {
-	// recover
-	defer func() {
-		if r := recover(); r != nil {
-			common.SysLog(fmt.Sprintf("UpdateQuotaData panic: %s", r))
-		}
-	}()
 	for {
 		if common.DataExportEnabled {
 			common.SysLog("正在更新数据看板数据...")
@@ -117,6 +112,16 @@ func GetQuotaDataByUserId(userId int, startTime int64, endTime int64) (quotaData
 	var quotaDatas []*QuotaData
 	// 从quota_data表中查询数据
 	err = DB.Table("quota_data").Where("user_id = ? and created_at >= ? and created_at <= ?", userId, startTime, endTime).Find(&quotaDatas).Error
+	return quotaDatas, err
+}
+
+func GetQuotaDataGroupByUser(startTime int64, endTime int64) (quotaData []*QuotaData, err error) {
+	var quotaDatas []*QuotaData
+	err = DB.Table("quota_data").
+		Select("username, created_at, sum(count) as count, sum(quota) as quota, sum(token_used) as token_used").
+		Where("created_at >= ? and created_at <= ?", startTime, endTime).
+		Group("username, created_at").
+		Find(&quotaDatas).Error
 	return quotaDatas, err
 }
 
