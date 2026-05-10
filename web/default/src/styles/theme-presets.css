@@ -14,6 +14,62 @@
  *   blocks so an explicit user choice overrides the preset's default radius.
  */
 
+/* ── Signal Grid ──────────────────────────────────────────────────────── */
+[data-theme-preset='signal-grid'] {
+  --primary: oklch(0.62 0.13 205);
+  --primary-foreground: oklch(0.992 0.006 220);
+  --secondary: oklch(0.742 0.11 82);
+  --secondary-foreground: oklch(0.225 0.025 82);
+  --ring: oklch(0.62 0.13 205);
+  --chart-1: oklch(0.62 0.13 205);
+  --chart-2: oklch(0.7 0.14 160);
+  --chart-3: oklch(0.67 0.118 232);
+  --chart-4: oklch(0.78 0.14 88);
+  --chart-5: oklch(0.63 0.2 25);
+  --sidebar-primary: oklch(0.62 0.13 205);
+  --sidebar-primary-foreground: oklch(0.992 0.006 220);
+  --sidebar-accent: oklch(0.952 0.014 206);
+  --sidebar-accent-foreground: oklch(0.235 0.02 233);
+  --sidebar-ring: oklch(0.62 0.13 205);
+  --card: color-mix(in oklch, var(--primary) 3%, oklch(0.995 0.004 223));
+  --popover: color-mix(in oklch, var(--primary) 4%, oklch(0.997 0.004 223));
+  --muted: color-mix(in oklch, var(--primary) 5%, oklch(0.953 0.008 223));
+  --accent: color-mix(in oklch, var(--primary) 8%, oklch(0.944 0.018 207));
+  --border: color-mix(in oklch, var(--primary) 16%, oklch(0.9 0.012 225));
+  --input: color-mix(in oklch, var(--primary) 20%, oklch(0.916 0.012 225));
+  --sidebar: color-mix(in oklch, var(--primary) 3%, oklch(0.988 0.007 223));
+  --sidebar-border: color-mix(
+    in oklch,
+    var(--primary) 20%,
+    oklch(0.91 0.012 225)
+  );
+  --radius: 0.625rem;
+}
+.dark [data-theme-preset='signal-grid'] {
+  --primary: oklch(0.715 0.108 201);
+  --primary-foreground: oklch(0.188 0.018 233);
+  --secondary: oklch(0.735 0.106 83);
+  --secondary-foreground: oklch(0.19 0.018 83);
+  --ring: oklch(0.715 0.108 201);
+  --chart-1: oklch(0.715 0.108 201);
+  --chart-2: oklch(0.744 0.13 160);
+  --chart-3: oklch(0.736 0.102 232);
+  --chart-4: oklch(0.81 0.13 88);
+  --chart-5: oklch(0.69 0.192 25);
+  --sidebar-primary: oklch(0.715 0.108 201);
+  --sidebar-primary-foreground: oklch(0.188 0.018 233);
+  --sidebar-accent: oklch(0.245 0.024 210);
+  --sidebar-accent-foreground: oklch(0.958 0.008 223);
+  --card: color-mix(in oklch, var(--primary) 8%, oklch(0.228 0.018 232));
+  --popover: color-mix(in oklch, var(--primary) 10%, oklch(0.255 0.02 232));
+  --muted: color-mix(in oklch, var(--primary) 12%, oklch(0.268 0.018 232));
+  --accent: color-mix(in oklch, var(--primary) 18%, oklch(0.312 0.03 205));
+  --border: color-mix(in oklch, var(--primary) 24%, oklch(1 0 0 / 8%));
+  --input: color-mix(in oklch, var(--primary) 30%, oklch(1 0 0 / 12%));
+  --sidebar: color-mix(in oklch, var(--primary) 5%, oklch(0.155 0.018 233));
+  --sidebar-border: color-mix(in oklch, var(--primary) 18%, oklch(1 0 0 / 10%));
+}
+
 /* ── Underground ──────────────────────────────────────────────────────── */
 [data-theme-preset='underground'] {
   --primary: oklch(0.5315 0.0694 156.19);

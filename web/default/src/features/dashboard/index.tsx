@@ -61,13 +61,13 @@ const LazyUserCharts = lazy(() =>
 
 function LogStatCardsFallback() {
   return (
-    <div className='overflow-hidden rounded-lg border'>
+    <div className='overflow-hidden rounded-[1.5rem] border border-border/70 bg-background/86 shadow-[0_16px_42px_-34px_color-mix(in_oklch,var(--foreground)_18%,transparent)]'>
       <div className='divide-border/60 grid grid-cols-2 divide-x sm:grid-cols-3 lg:grid-cols-5'>
         {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className='px-4 py-3.5 sm:px-5 sm:py-4'>
-            <Skeleton className='h-3.5 w-16' />
-            <Skeleton className='mt-2 h-7 w-20' />
-            <Skeleton className='mt-1.5 h-3.5 w-28' />
+          <div key={i} className='px-4 py-4 sm:px-5 sm:py-5'>
+            <Skeleton className='h-3.5 w-16 rounded-lg bg-muted/55' />
+            <Skeleton className='mt-2 h-8 w-20 rounded-lg bg-muted/70' />
+            <Skeleton className='mt-1.5 h-3.5 w-28 rounded-lg bg-muted/50' />
           </div>
         ))}
       </div>
@@ -77,13 +77,13 @@ function LogStatCardsFallback() {
 
 function ModelChartsFallback() {
   return (
-    <div className='overflow-hidden rounded-lg border'>
-      <div className='flex items-center justify-between border-b px-4 py-3 sm:px-5'>
-        <Skeleton className='h-5 w-32' />
-        <Skeleton className='h-8 w-72' />
+    <div className='overflow-hidden rounded-[1.5rem] border border-border/70 bg-background/86 shadow-[0_16px_42px_-34px_color-mix(in_oklch,var(--foreground)_18%,transparent)]'>
+      <div className='flex items-center justify-between border-b border-border/65 px-4 py-3.5 sm:px-5'>
+        <Skeleton className='h-5 w-32 rounded-lg bg-muted/65' />
+        <Skeleton className='h-8 w-72 rounded-xl bg-muted/55' />
       </div>
       <div className='h-96 p-2'>
-        <Skeleton className='h-full w-full' />
+        <Skeleton className='h-full w-full rounded-[1.1rem] bg-muted/60' />
       </div>
     </div>
   )
@@ -92,23 +92,23 @@ function ModelChartsFallback() {
 function PerformanceOverviewFallback() {
   return (
     <div className='space-y-3 sm:space-y-4'>
-      <div className='overflow-hidden rounded-lg border'>
+      <div className='overflow-hidden rounded-[1.5rem] border border-border/70 bg-background/86 shadow-[0_16px_42px_-34px_color-mix(in_oklch,var(--foreground)_18%,transparent)]'>
         <div className='divide-border/60 grid grid-cols-2 divide-x sm:grid-cols-4'>
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className='px-3 py-2.5 sm:px-5 sm:py-4'>
-              <Skeleton className='h-4 w-24' />
-              <Skeleton className='mt-2 h-7 w-20' />
-              <Skeleton className='mt-1.5 h-3.5 w-28' />
+            <div key={i} className='px-3 py-3.5 sm:px-5 sm:py-5'>
+              <Skeleton className='h-4 w-24 rounded-lg bg-muted/55' />
+              <Skeleton className='mt-2 h-8 w-20 rounded-lg bg-muted/70' />
+              <Skeleton className='mt-1.5 h-3.5 w-28 rounded-lg bg-muted/50' />
             </div>
           ))}
         </div>
       </div>
-      <div className='overflow-hidden rounded-lg border'>
-        <div className='flex items-center justify-between border-b px-4 py-3 sm:px-5'>
-          <Skeleton className='h-5 w-40' />
-          <Skeleton className='h-4 w-48' />
+      <div className='overflow-hidden rounded-[1.5rem] border border-border/70 bg-background/86 shadow-[0_16px_42px_-34px_color-mix(in_oklch,var(--foreground)_18%,transparent)]'>
+        <div className='flex items-center justify-between border-b border-border/65 px-4 py-3.5 sm:px-5'>
+          <Skeleton className='h-5 w-40 rounded-lg bg-muted/65' />
+          <Skeleton className='h-4 w-48 rounded-lg bg-muted/50' />
         </div>
-        <Skeleton className='h-44 w-full' />
+        <Skeleton className='m-2 h-44 w-auto rounded-[1.1rem] bg-muted/60' />
       </div>
     </div>
   )
@@ -215,14 +215,18 @@ export function Dashboard() {
         {t(meta.descriptionKey)}
       </SectionPageLayout.Description>
       <SectionPageLayout.Content>
-        <div className='space-y-3 sm:space-y-4'>
+        <div className='space-y-4 sm:space-y-5'>
           {activeSection !== 'overview' && (
-            <div className='flex flex-wrap items-center justify-between gap-1.5 sm:gap-2'>
+            <div className='flex flex-wrap items-center justify-between gap-2 rounded-[1.5rem] border border-border/65 bg-background/72 px-3 py-3 shadow-[0_16px_42px_-34px_color-mix(in_oklch,var(--foreground)_18%,transparent)] backdrop-blur sm:px-4'>
               {showSectionTabs ? (
                 <Tabs value={activeSection} onValueChange={handleSectionChange}>
-                  <TabsList className='h-auto max-w-full flex-wrap justify-start'>
+                  <TabsList className='h-auto max-w-full flex-wrap justify-start rounded-[1.1rem] border border-border/65 bg-muted/55 p-1'>
                     {visibleSections.map((section) => (
-                      <TabsTrigger key={section} value={section}>
+                      <TabsTrigger
+                        key={section}
+                        value={section}
+                        className='rounded-xl px-3 py-2 text-xs font-semibold tracking-[0.12em] uppercase'
+                      >
                         {t(SECTION_META[section].titleKey)}
                       </TabsTrigger>
                     ))}

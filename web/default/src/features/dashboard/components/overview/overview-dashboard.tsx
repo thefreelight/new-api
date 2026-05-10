@@ -158,16 +158,20 @@ function SetupGuideBackdrop(props: { compact?: boolean }) {
     <>
       <div
         className={cn(
-          'pointer-events-none absolute inset-0 bg-[linear-gradient(112deg,oklch(0.97_0.04_250/.92)_0%,oklch(0.95_0.08_315/.82)_38%,oklch(0.96_0.12_92/.78)_74%,oklch(0.94_0.1_132/.62)_100%)] dark:opacity-25',
+          'pointer-events-none absolute inset-0 bg-[linear-gradient(128deg,oklch(0.985_0.01_95/.98)_0%,oklch(0.965_0.025_210/.96)_32%,oklch(0.955_0.06_90/.82)_74%,oklch(0.94_0.05_185/.7)_100%)] dark:opacity-25',
           props.compact
             ? '[mask-image:linear-gradient(90deg,black_0%,black_48%,transparent_74%)] opacity-55'
-            : 'opacity-85'
+            : 'opacity-90'
         )}
         aria-hidden='true'
       />
       <div
+        className='pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,color-mix(in_oklch,var(--border)_38%,transparent)_1px,transparent_1px),linear-gradient(to_bottom,color-mix(in_oklch,var(--border)_32%,transparent)_1px,transparent_1px)] bg-[size:28px_28px] opacity-[0.34]'
+        aria-hidden='true'
+      />
+      <div
         className={cn(
-          'pointer-events-none absolute inset-y-0 right-0 hidden overflow-hidden font-mono text-lime-100/75 sm:block dark:text-lime-200/25',
+          'pointer-events-none absolute inset-y-0 right-0 hidden overflow-hidden font-mono text-emerald-950/35 sm:block dark:text-lime-200/25',
           props.compact ? 'w-1/2 opacity-45' : 'w-[58%] opacity-75'
         )}
         aria-hidden='true'
@@ -221,10 +225,10 @@ function StartStepItem(props: {
 
       <Link
         to={props.step.to}
-        className='bg-background/70 hover:bg-muted/50 focus-visible:ring-ring flex min-w-0 flex-1 items-center justify-between gap-3 rounded-xl border px-3 py-2.5 text-left shadow-xs transition-colors outline-none focus-visible:ring-2'
+        className='bg-background/72 hover:bg-background/92 focus-visible:ring-ring flex min-w-0 flex-1 items-center justify-between gap-3 rounded-[1.1rem] border border-border/65 px-3 py-3 text-left shadow-[0_18px_36px_-30px_color-mix(in_oklch,var(--foreground)_18%,transparent)] transition-colors outline-none focus-visible:ring-2'
       >
         <span className='flex min-w-0 items-start gap-2.5'>
-          <span className='bg-muted mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-lg'>
+          <span className='bg-muted/72 mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-xl border border-border/55'>
             <Icon className='size-3.5' aria-hidden='true' />
           </span>
           <span className='flex min-w-0 flex-col gap-0.5'>
@@ -266,7 +270,7 @@ function RequestPreview(props: {
       initial={shouldReduceMotion ? false : { opacity: 0, y: 10, scale: 0.98 }}
       animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
       transition={MOTION_TRANSITION.slow}
-      className='bg-background/75 relative overflow-hidden rounded-2xl border p-3 shadow-sm backdrop-blur'
+      className='bg-background/76 relative overflow-hidden rounded-[1.6rem] border border-border/70 p-3.5 shadow-[0_24px_50px_-36px_color-mix(in_oklch,var(--foreground)_24%,transparent)] backdrop-blur'
     >
       {!shouldReduceMotion && (
         <motion.div
@@ -277,9 +281,9 @@ function RequestPreview(props: {
         />
       )}
 
-      <div className='flex items-center justify-between gap-3 border-b pb-3'>
+      <div className='flex items-center justify-between gap-3 border-b border-border/60 pb-3'>
         <div className='flex min-w-0 items-center gap-2'>
-          <span className='bg-muted flex size-8 shrink-0 items-center justify-center rounded-lg'>
+          <span className='bg-muted/70 flex size-9 shrink-0 items-center justify-center rounded-xl border border-border/55'>
             <TerminalSquare className='size-4' aria-hidden='true' />
           </span>
           <div className='min-w-0'>
@@ -312,7 +316,7 @@ function RequestPreview(props: {
         )}
       </div>
 
-      <div className='bg-foreground/[0.035] my-3 rounded-xl p-3 font-mono text-xs'>
+      <div className='bg-foreground/[0.035] my-3 rounded-[1.1rem] border border-border/55 p-3 font-mono text-xs'>
         <div className='mb-2 flex items-center gap-1.5'>
           <span className='bg-destructive size-2 rounded-full' />
           <span className='bg-warning size-2 rounded-full' />
@@ -338,7 +342,7 @@ function RequestPreview(props: {
           return (
             <div
               key={signal.label}
-              className='bg-muted/40 flex items-center justify-between gap-3 rounded-xl px-3 py-2'
+              className='bg-muted/42 flex items-center justify-between gap-3 rounded-[1rem] border border-border/45 px-3 py-2.5'
             >
               <span className='flex min-w-0 items-center gap-2'>
                 <Icon
@@ -366,10 +370,10 @@ function QuickActionItem(props: { action: QuickAction }) {
   return (
     <Button
       variant='outline'
-      className='h-auto justify-start rounded-xl px-3 py-3 text-left'
+      className='h-auto justify-start rounded-[1.15rem] border-border/65 bg-background/72 px-3 py-3 text-left shadow-[0_16px_32px_-28px_color-mix(in_oklch,var(--foreground)_16%,transparent)]'
       render={<Link to={props.action.to} />}
     >
-      <span className='bg-muted flex size-9 shrink-0 items-center justify-center rounded-lg'>
+      <span className='bg-muted/72 flex size-10 shrink-0 items-center justify-center rounded-xl border border-border/55'>
         <Icon className='size-4' aria-hidden='true' />
       </span>
       <span className='flex min-w-0 flex-1 flex-col gap-0.5'>
@@ -391,7 +395,7 @@ function CompactQuickAction(props: { action: QuickAction }) {
     <Button
       variant='outline'
       size='sm'
-      className='bg-background/70 h-8 min-w-24 gap-1.5 px-2.5'
+      className='bg-background/74 h-9 min-w-28 rounded-xl border-border/65 gap-1.5 px-3 shadow-[0_14px_28px_-24px_color-mix(in_oklch,var(--foreground)_16%,transparent)]'
       render={<Link to={props.action.to} />}
     >
       <Icon data-icon='inline-start' />
@@ -563,26 +567,26 @@ export function OverviewDashboard() {
   }
 
   return (
-    <div className='flex flex-col gap-4'>
+    <div className='flex flex-col gap-5'>
       {setupGuideExpanded ? (
         <CardStaggerContainer className='grid items-stretch gap-4 xl:grid-cols-[minmax(0,1fr)_22rem]'>
-          <CardStaggerItem className='bg-card h-full overflow-hidden rounded-2xl border shadow-xs'>
+          <CardStaggerItem className='h-full overflow-hidden rounded-[2rem] border border-border/70 bg-background/82 shadow-[0_30px_70px_-42px_color-mix(in_oklch,var(--foreground)_24%,transparent),inset_0_1px_0_color-mix(in_oklch,var(--background)_90%,transparent)]'>
             <div className='relative h-full overflow-hidden p-4 sm:p-5'>
               <SetupGuideBackdrop />
               <div className='relative grid gap-5 lg:grid-cols-[minmax(0,1fr)_21rem]'>
                 <div className='flex min-w-0 flex-col gap-5'>
                   <div className='flex flex-wrap items-start justify-between gap-3'>
                     <div className='flex max-w-2xl flex-col gap-1'>
-                      <div className='text-muted-foreground flex items-center gap-2 text-xs font-medium tracking-wider uppercase'>
+                      <div className='text-muted-foreground flex items-center gap-2 text-[11px] font-semibold tracking-[0.24em] uppercase'>
                         <ListChecks className='size-3.5' aria-hidden='true' />
-                        {t('Get started')}
+                        {t('Traffic briefing')}
                       </div>
-                      <h3 className='text-xl font-semibold tracking-tight sm:text-2xl'>
-                        {t('Build on your API gateway in minutes')}
+                      <h3 className='max-w-2xl text-2xl font-semibold tracking-tight sm:text-3xl'>
+                        {t('Launch, verify, and steer AI traffic from one console')}
                       </h3>
-                      <p className='text-muted-foreground max-w-xl text-sm leading-relaxed'>
+                      <p className='text-muted-foreground/78 max-w-2xl text-sm leading-7'>
                         {t(
-                          'A focused home for keys, balance, routing, and service health.'
+                          'Keep setup progress, live routes, authentication state, and your first production request visible in the same operational view.'
                         )}
                       </p>
                     </div>
@@ -602,16 +606,43 @@ export function OverviewDashboard() {
                     </div>
                   </div>
 
-                  <ol className='bg-background/45 rounded-2xl border p-2 backdrop-blur'>
-                    {startSteps.map((step, index) => (
-                      <StartStepItem
-                        key={step.title}
-                        step={step}
-                        index={index}
-                        isLast={index === startSteps.length - 1}
-                      />
-                    ))}
-                  </ol>
+                  <div className='grid gap-3 lg:grid-cols-[minmax(0,1fr)_14rem]'>
+                    <div className='rounded-[1.35rem] border border-border/65 bg-background/52 p-2 backdrop-blur'>
+                      <ol>
+                        {startSteps.map((step, index) => (
+                          <StartStepItem
+                            key={step.title}
+                            step={step}
+                            index={index}
+                            isLast={index === startSteps.length - 1}
+                          />
+                        ))}
+                      </ol>
+                    </div>
+                    <div className='rounded-[1.35rem] border border-border/60 bg-background/40 p-4 backdrop-blur'>
+                      <div className='text-muted-foreground text-[11px] font-semibold tracking-[0.2em] uppercase'>
+                        {t('Mission status')}
+                      </div>
+                      <div className='mt-3 space-y-3'>
+                        <div className='rounded-xl border border-border/55 bg-background/72 px-3 py-2.5'>
+                          <div className='text-muted-foreground text-xs'>
+                            {t('Setup progress')}
+                          </div>
+                          <div className='mt-1 font-mono text-2xl font-semibold tracking-tight'>
+                            {completedStepCount}/{startSteps.length}
+                          </div>
+                        </div>
+                        <div className='rounded-xl border border-border/55 bg-background/72 px-3 py-2.5'>
+                          <div className='text-muted-foreground text-xs'>
+                            {t('Traffic state')}
+                          </div>
+                          <div className='mt-1 text-sm font-semibold'>
+                            {setupComplete ? t('Ready for routing') : t('Needs attention')}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <RequestPreview
@@ -622,14 +653,14 @@ export function OverviewDashboard() {
             </div>
           </CardStaggerItem>
 
-          <CardStaggerItem className='bg-card h-full rounded-2xl border p-4 shadow-xs sm:p-5'>
+          <CardStaggerItem className='h-full rounded-[2rem] border border-border/70 bg-background/82 p-4 shadow-[0_24px_54px_-40px_color-mix(in_oklch,var(--foreground)_24%,transparent),inset_0_1px_0_color-mix(in_oklch,var(--background)_88%,transparent)] sm:p-5'>
             <div className='flex h-full flex-col gap-4'>
               <div className='flex flex-col gap-1'>
-                <div className='text-muted-foreground text-xs font-medium tracking-wider uppercase'>
+                <div className='text-muted-foreground text-[11px] font-semibold tracking-[0.22em] uppercase'>
                   {t('Recommended actions')}
                 </div>
-                <h3 className='text-lg font-semibold tracking-tight'>
-                  {t('Keep the platform ready')}
+                <h3 className='text-xl font-semibold tracking-tight'>
+                  {t('Control plane shortcuts')}
                 </h3>
               </div>
               <div className='grid gap-2'>
@@ -642,29 +673,29 @@ export function OverviewDashboard() {
         </CardStaggerContainer>
       ) : (
         <CardStaggerContainer>
-          <CardStaggerItem className='bg-card overflow-hidden rounded-2xl border shadow-xs'>
+          <CardStaggerItem className='overflow-hidden rounded-[1.8rem] border border-border/70 bg-background/82 shadow-[0_24px_54px_-40px_color-mix(in_oklch,var(--foreground)_24%,transparent),inset_0_1px_0_color-mix(in_oklch,var(--background)_88%,transparent)]'>
             <div className='relative overflow-hidden px-4 py-3 sm:px-5'>
               <SetupGuideBackdrop compact />
               <div className='relative flex flex-wrap items-center justify-between gap-3'>
                 <div className='flex min-w-0 items-center gap-3'>
-                  <span className='bg-background/70 flex size-9 shrink-0 items-center justify-center rounded-xl border shadow-xs'>
+                  <span className='bg-background/74 flex size-10 shrink-0 items-center justify-center rounded-2xl border border-border/65 shadow-[0_18px_36px_-30px_color-mix(in_oklch,var(--foreground)_18%,transparent)]'>
                     <Check className='text-success size-4' aria-hidden='true' />
                   </span>
                   <div className='min-w-0'>
-                    <div className='flex items-center gap-2'>
+                    <div className='flex flex-wrap items-center gap-2'>
                       <h3 className='truncate text-sm font-semibold'>
                         {setupComplete
                           ? t('Setup guide complete')
                           : t('Setup guide')}
                       </h3>
-                      <span className='text-muted-foreground bg-background/60 rounded-md border px-2 py-0.5 text-xs'>
+                      <span className='text-muted-foreground bg-background/70 rounded-full border border-border/60 px-2.5 py-1 text-[11px]'>
                         {t('Setup progress: {{completed}}/{{total}}', {
                           completed: completedStepCount,
                           total: startSteps.length,
                         })}
                       </span>
                     </div>
-                    <p className='text-muted-foreground line-clamp-1 text-xs'>
+                    <p className='text-muted-foreground/72 line-clamp-1 text-xs'>
                       {setupComplete
                         ? t(
                             'Your setup guide is collapsed so usage stays in focus.'

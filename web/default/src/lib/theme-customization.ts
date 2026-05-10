@@ -7,6 +7,11 @@
 
 export const THEME_PRESETS = [
   {
+    value: 'signal-grid',
+    name: 'Signal Grid',
+    swatches: ['oklch(0.62 0.13 205)', 'oklch(0.74 0.11 82)'],
+  },
+  {
     value: 'default',
     name: 'Default',
     swatches: ['oklch(0.13 0 0)', 'oklch(0.95 0 0)'],
@@ -61,7 +66,7 @@ export type ThemeCustomization = {
 }
 
 export const DEFAULT_THEME_CUSTOMIZATION: ThemeCustomization = {
-  preset: 'default',
+  preset: 'signal-grid',
   radius: 'default',
   scale: 'default',
   contentLayout: 'full',

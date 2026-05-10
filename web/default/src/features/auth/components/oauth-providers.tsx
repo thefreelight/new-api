@@ -118,13 +118,18 @@ export function OAuthProviders({
   if (providerButtons.length === 0) return null
 
   return (
-    <div className={cn('space-y-3', className)}>
+    <div
+      className={cn(
+        'space-y-4 rounded-[1.45rem] border border-slate-900/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.82),rgba(244,237,226,0.8))] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.88)] dark:border-white/10 dark:bg-[linear-gradient(135deg,rgba(255,255,255,0.05),rgba(255,255,255,0.03))]',
+        className
+      )}
+    >
       <div className='relative'>
         <div className='absolute inset-0 flex items-center'>
-          <span className='w-full border-t' />
+          <span className='w-full border-t border-slate-900/10 dark:border-white/10' />
         </div>
         <div className='relative flex justify-center text-xs uppercase'>
-          <span className='bg-background text-muted-foreground px-2'>
+          <span className='bg-[#f8f2e8] px-3 text-[0.68rem] font-semibold tracking-[0.22em] text-slate-500 dark:bg-[#12161d] dark:text-white/45'>
             {t('Or continue with')}
           </span>
         </div>
@@ -139,7 +144,7 @@ export function OAuthProviders({
               type='button'
               disabled={disabled || isLoading || extraDisabled}
               onClick={onClick}
-              className='h-11 w-full justify-center gap-2 rounded-lg'
+              className='h-12 w-full justify-center gap-2 rounded-2xl border-slate-900/10 bg-white/84 text-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] hover:bg-white dark:border-white/10 dark:bg-white/[0.04] dark:text-white dark:hover:bg-white/[0.08]'
             >
               {icon}
               {label}

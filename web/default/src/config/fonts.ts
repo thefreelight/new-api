@@ -1,6 +1,6 @@
 /**
  * List of available font names (visit the url `/settings/appearance`).
- * This array is used to generate dynamic font classes (e.g., `font-inter`, `font-manrope`).
+ * This array is used to generate dynamic font classes (e.g., `font-space-grotesk`).
  *
  * 📝 How to Add a New Font (Tailwind v4+):
  * 1. Add the font name here.
@@ -12,8 +12,7 @@
  * index.html         → Add font link for Roboto.
  * theme.css          → Add the new font in the CSS, e.g.:
  *   @theme inline {
- *      // ... other font families
  *      --font-roboto: 'Roboto', var(--font-sans);
  *   }
  */
-export const fonts = ['inter', 'manrope', 'system'] as const
+export const fonts = ['sans', 'space-grotesk', 'system'] as const

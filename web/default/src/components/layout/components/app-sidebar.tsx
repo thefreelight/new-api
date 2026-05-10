@@ -6,9 +6,16 @@ import { ROLE } from '@/lib/roles'
 import { useLayout } from '@/context/layout-provider'
 import { useSidebarConfig } from '@/hooks/use-sidebar-config'
 import { useSidebarData } from '@/hooks/use-sidebar-data'
-import { Sidebar, SidebarContent, SidebarRail } from '@/components/ui/sidebar'
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  SidebarRail,
+  SidebarSeparator,
+} from '@/components/ui/sidebar'
 import { getNavGroupsForPath } from '../lib/workspace-registry'
 import { NavGroup } from './nav-group'
+import { SystemBrand } from './system-brand'
 
 /**
  * Application sidebar component
@@ -44,8 +51,24 @@ export function AppSidebar() {
   }, [configFilteredNavGroups, userRole])
 
   return (
-    <Sidebar collapsible={collapsible} variant={variant}>
-      <SidebarContent className='py-2'>
+    <Sidebar
+      collapsible={collapsible}
+      variant={variant}
+      className='before:pointer-events-none before:absolute before:inset-x-3 before:top-3 before:h-28 before:rounded-[1.5rem] before:bg-[radial-gradient(circle_at_top_left,oklch(0.93_0.05_90/.8),transparent_46%),radial-gradient(circle_at_top_right,oklch(0.94_0.07_210/.45),transparent_38%)] before:content-[""]'
+    >
+      <SidebarHeader className='gap-3 px-3 pb-3'>
+        <SystemBrand variant='sidebar' />
+        <div className='rounded-2xl border border-sidebar-border/70 bg-sidebar-accent/45 px-3 py-2 text-[11px] leading-5 text-sidebar-foreground/78 shadow-[inset_0_1px_0_color-mix(in_oklch,var(--sidebar-background)_82%,transparent)] group-data-[collapsible=icon]:hidden'>
+          <div className='font-semibold tracking-[0.18em] uppercase'>
+            {t('Traffic Control')}
+          </div>
+          <div className='mt-1 text-sidebar-foreground/62'>
+            {t('Watch routes, policies, keys, and spend from one console.')}
+          </div>
+        </div>
+      </SidebarHeader>
+      <SidebarSeparator className='mx-3 bg-sidebar-border/70' />
+      <SidebarContent className='px-1.5 py-3'>
         {currentNavGroups.map((props) => {
           const key = props.id || props.title
           return <NavGroup key={key} {...props} />

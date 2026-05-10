@@ -32,7 +32,7 @@ export function LegalConsent({
   return (
     <div
       className={cn(
-        'border-border/60 bg-muted/40 flex items-start gap-3 rounded-md border p-3',
+        'flex items-start gap-3 rounded-[1.35rem] border border-slate-900/10 bg-white/70 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.88)] dark:border-white/10 dark:bg-white/[0.03]',
         className
       )}
     >
@@ -40,11 +40,11 @@ export function LegalConsent({
         id='legal-consent'
         checked={checked}
         onCheckedChange={handleChange}
-        className='mt-0.5'
+        className='mt-0.5 border-slate-400 data-[checked=true]:border-[#a66a18] data-[checked=true]:bg-[#a66a18] dark:border-white/30 dark:data-[checked=true]:border-[#d6a353] dark:data-[checked=true]:bg-[#d6a353]'
       />
       <Label
         htmlFor='legal-consent'
-        className='text-muted-foreground items-start gap-1 text-left text-xs leading-5 font-normal'
+        className='items-start gap-1 text-left text-xs leading-6 font-normal text-slate-600 dark:text-white/62'
       >
         <span>
           {t('I have read and agree to the')}{' '}
@@ -53,7 +53,7 @@ export function LegalConsent({
               href='/user-agreement'
               target='_blank'
               rel='noopener noreferrer'
-              className='text-primary hover:underline'
+              className='font-semibold text-slate-950 underline decoration-slate-300 underline-offset-4 transition-colors hover:text-[#9a6822] dark:text-white dark:decoration-white/25 dark:hover:text-[#f2c98c]'
             >
               {t('User Agreement')}
             </a>
@@ -64,7 +64,7 @@ export function LegalConsent({
               href='/privacy-policy'
               target='_blank'
               rel='noopener noreferrer'
-              className='text-primary hover:underline'
+              className='font-semibold text-slate-950 underline decoration-slate-300 underline-offset-4 transition-colors hover:text-[#9a6822] dark:text-white dark:decoration-white/25 dark:hover:text-[#f2c98c]'
             >
               {t('Privacy Policy')}
             </a>

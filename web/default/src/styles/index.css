@@ -24,9 +24,47 @@
   }
   html {
     @apply overflow-x-hidden font-sans;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'rlig' 1, 'calt' 1;
   }
   body {
-    @apply bg-background text-foreground has-[div[data-variant='inset']]:bg-sidebar min-h-svh w-full font-sans;
+    @apply bg-background text-foreground has-[div[data-variant='inset']]:bg-sidebar min-h-svh w-full font-sans antialiased;
+    background-image:
+      radial-gradient(
+        circle at top right,
+        color-mix(in oklch, var(--primary) 12%, transparent) 0%,
+        transparent 32%
+      ),
+      radial-gradient(
+        circle at left -10%,
+        color-mix(in oklch, var(--secondary) 10%, transparent) 0%,
+        transparent 24%
+      ),
+      linear-gradient(
+        to right,
+        color-mix(in oklch, var(--border) 55%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in oklch, var(--border) 55%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: auto, auto, 36px 36px, 36px 36px;
+    background-attachment: fixed;
+  }
+
+  ::selection {
+    background: color-mix(in oklch, var(--primary) 24%, transparent);
+    color: var(--foreground);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
   }
 
   /* Keep sticky headers stable while primitives lock body scrolling. */
@@ -47,6 +85,12 @@
     textarea {
       font-size: 16px !important;
     }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body {
+    background-attachment: scroll;
   }
 }
 
@@ -187,6 +231,85 @@
 
 /* Launch UI Animations and Effects - Matching Template Exactly */
 @layer utilities {
+  .signal-grid-label {
+    color: color-mix(in oklch, var(--muted-foreground) 78%, var(--primary));
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .signal-grid-panel {
+    border: 1px solid color-mix(in oklch, var(--primary) 14%, var(--border));
+    background:
+      linear-gradient(
+        180deg,
+        color-mix(in oklch, var(--card) 78%, transparent),
+        color-mix(in oklch, var(--background) 82%, transparent)
+      );
+    box-shadow:
+      0 1px 0 color-mix(in oklch, var(--background) 70%, white),
+      0 20px 40px -32px color-mix(in oklch, var(--primary) 30%, transparent);
+    position: relative;
+  }
+
+  .signal-grid-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto auto 0;
+    height: 1px;
+    width: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      color-mix(in oklch, var(--primary) 64%, transparent) 18%,
+      color-mix(in oklch, var(--secondary) 52%, transparent) 78%,
+      transparent 100%
+    );
+    pointer-events: none;
+  }
+
+  .signal-grid-shell {
+    background:
+      linear-gradient(
+        180deg,
+        color-mix(in oklch, var(--background) 74%, transparent),
+        color-mix(in oklch, var(--muted) 86%, transparent)
+      );
+    border: 1px solid color-mix(in oklch, var(--primary) 10%, var(--border));
+    box-shadow:
+      inset 0 1px 0 color-mix(in oklch, white 60%, transparent),
+      0 24px 60px -42px color-mix(in oklch, var(--primary) 28%, transparent);
+  }
+
+  .signal-grid-inset {
+    background:
+      linear-gradient(
+        180deg,
+        color-mix(in oklch, var(--background) 92%, transparent),
+        color-mix(in oklch, var(--muted) 76%, transparent)
+      );
+  }
+
+  .signal-grid-dot {
+    position: relative;
+    padding-left: 0.85rem;
+  }
+
+  .signal-grid-dot::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    height: 0.42rem;
+    width: 0.42rem;
+    border-radius: 999px;
+    transform: translateY(-50%);
+    background: color-mix(in oklch, var(--primary) 84%, white);
+    box-shadow: 0 0 0 0.2rem color-mix(in oklch, var(--primary) 14%, transparent);
+  }
+
   /* Gradient utilities */
   .bg-radial {
     background-image: radial-gradient(var(--tw-gradient-stops));

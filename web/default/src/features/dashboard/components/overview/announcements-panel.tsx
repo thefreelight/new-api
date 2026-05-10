@@ -52,7 +52,7 @@ export function AnnouncementsPanel() {
       contentClassName='p-0'
     >
       <ScrollArea className='h-72'>
-        <div>
+        <div className='divide-y divide-border/55'>
           {list.map((item: AnnouncementItem, idx: number) => {
             const key = item.id ?? `announcement-${idx}`
             return (
@@ -61,23 +61,22 @@ export function AnnouncementsPanel() {
                 type='button'
                 onClick={() => handleAnnouncementClick(item)}
                 className={cn(
-                  'group hover:bg-muted/40 w-full px-3 py-3 text-left transition-colors sm:px-5 sm:py-3.5',
-                  idx < list.length - 1 && 'border-border/60 border-b'
+                  'group hover:bg-muted/38 w-full px-3 py-3.5 text-left transition-colors sm:px-5 sm:py-4'
                 )}
               >
                 <div className='flex items-start gap-2.5'>
                   <AnnouncementStatusDot type={item.type} />
                   <div className='flex min-w-0 flex-1 flex-col gap-1'>
-                    <p className='line-clamp-1 text-sm font-medium'>
+                    <p className='line-clamp-2 text-sm font-medium leading-relaxed'>
                       {getPreviewText(item.content)}
                     </p>
-                    <div className='flex items-center justify-between'>
+                    <div className='flex flex-wrap items-center justify-between gap-2'>
                       {item.publishDate && (
-                        <time className='text-muted-foreground/60 text-xs'>
+                        <time className='text-muted-foreground/62 text-xs'>
                           {formatDateTimeObject(new Date(item.publishDate))}
                         </time>
                       )}
-                      <span className='text-muted-foreground/40 text-xs opacity-0 transition-opacity group-hover:opacity-100'>
+                      <span className='text-muted-foreground/42 text-xs opacity-0 transition-opacity group-hover:opacity-100'>
                         {t('Click for details')}
                       </span>
                     </div>

@@ -23,25 +23,25 @@ export function ApiInfoItemComponent(props: ApiInfoItemProps) {
   const status = props.status
 
   return (
-    <div className='group hover:bg-muted/40 flex items-center justify-between gap-2 px-3 py-2.5 transition-colors sm:gap-3 sm:px-5 sm:py-3'>
+    <div className='group hover:bg-muted/38 flex items-center justify-between gap-2 px-3 py-3 transition-colors sm:gap-3 sm:px-5 sm:py-3.5'>
       <div className='flex min-w-0 flex-1 items-center gap-2 sm:gap-3'>
         <span
           className={cn(
-            'inline-block size-2 shrink-0 rounded-full',
+            'inline-block size-2.5 shrink-0 rounded-full shadow-[0_0_0_4px_color-mix(in_oklch,var(--background)_88%,transparent)]',
             getBgColorClass(item.color)
           )}
         />
 
         <div className='flex min-w-0 flex-1 flex-col gap-0.5'>
-          <div className='flex items-baseline gap-2'>
-            <span className='font-mono text-sm font-semibold'>
+          <div className='flex flex-wrap items-baseline gap-2'>
+            <span className='font-mono text-sm font-semibold tracking-tight'>
               {item.route}
             </span>
-            <span className='text-muted-foreground/60 hidden truncate text-xs md:inline'>
+            <span className='text-muted-foreground/70 hidden truncate text-xs md:inline'>
               {item.description}
             </span>
           </div>
-          <span className='text-muted-foreground/40 truncate font-mono text-xs'>
+          <span className='text-muted-foreground/48 truncate font-mono text-xs'>
             {item.url}
           </span>
         </div>
@@ -53,7 +53,7 @@ export function ApiInfoItemComponent(props: ApiInfoItemProps) {
             <StatusBadge
               label={t('Testing...')}
               variant='warning'
-              className='animate-pulse'
+              className='animate-pulse rounded-full'
               copyable={false}
             />
           )}
@@ -62,7 +62,7 @@ export function ApiInfoItemComponent(props: ApiInfoItemProps) {
               variant='success'
               label={`${status.latency}${t('ms')}`}
               className={cn(
-                'font-mono font-medium',
+                'rounded-full font-mono font-medium',
                 getLatencyColorClass(status.latency)
               )}
               copyable={false}
@@ -73,13 +73,13 @@ export function ApiInfoItemComponent(props: ApiInfoItemProps) {
           )}
         </div>
 
-        <div className='flex items-center gap-0.5'>
+        <div className='flex items-center gap-1'>
           <Button
             variant='ghost'
             size='sm'
             onClick={() => props.onTest(item.url)}
             disabled={status.testing}
-            className='size-7 p-0'
+            className='size-8 rounded-xl p-0'
             title={t('Test Latency')}
           >
             <Zap
@@ -91,7 +91,7 @@ export function ApiInfoItemComponent(props: ApiInfoItemProps) {
             variant='ghost'
             size='sm'
             onClick={() => openExternalSpeedTest(item.url)}
-            className='hidden size-7 p-0 sm:inline-flex'
+            className='hidden size-8 rounded-xl p-0 sm:inline-flex'
             title={t('External Speed Test')}
           >
             <Gauge className='size-3.5' />
@@ -101,7 +101,7 @@ export function ApiInfoItemComponent(props: ApiInfoItemProps) {
             value={item.url}
             variant='ghost'
             size='sm'
-            className='size-7 p-0'
+            className='size-8 rounded-xl p-0'
             iconClassName='size-3.5'
             tooltip={t('Copy URL')}
             aria-label={t('Copy URL')}
@@ -110,7 +110,7 @@ export function ApiInfoItemComponent(props: ApiInfoItemProps) {
           <Button
             variant='ghost'
             size='sm'
-            className='hidden size-7 p-0 sm:inline-flex'
+            className='hidden size-8 rounded-xl p-0 sm:inline-flex'
             title={t('Open in New Tab')}
             render={<a href={item.url} target='_blank' rel='noreferrer' />}
           >

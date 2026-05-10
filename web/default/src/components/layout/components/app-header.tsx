@@ -1,5 +1,7 @@
 import { useNotifications } from '@/hooks/use-notifications'
 import { useTopNavLinks } from '@/hooks/use-top-nav-links'
+import { useTranslation } from 'react-i18next'
+import { cn } from '@/lib/utils'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { NotificationButton } from '@/components/notification-button'
@@ -85,6 +87,7 @@ export function AppHeader({
   showConfigDrawer = true,
   showProfileDropdown = true,
 }: AppHeaderProps) {
+  const { t } = useTranslation()
   // Prioritize dynamically generated links from backend
   const dynamicLinks = useTopNavLinks()
   const links = dynamicLinks.length > 0 ? dynamicLinks : navLinks
@@ -94,25 +97,36 @@ export function AppHeader({
 
   return (
     <>
-      <Header>
-        <SystemBrand variant='inline' />
+      <Header className='border-b border-border/60 bg-background/82 backdrop-blur-xl'>
+        <div className='flex min-w-0 flex-1 items-center gap-3'>
+          <SystemBrand variant='inline' />
 
-        {leftContent ? (
-          <div className='ms-2 flex items-center'>{leftContent}</div>
-        ) : null}
+          {leftContent ? (
+            <div className='ms-1 flex min-w-0 items-center'>{leftContent}</div>
+          ) : null}
+        </div>
 
         {rightContent ?? (
-          <div className='ms-auto flex items-center gap-1 sm:gap-2'>
+          <div className='ms-auto flex items-center gap-1.5 sm:gap-2'>
             {showTopNav && (
-              <div className='me-1 hidden lg:block'>
+              <div className='hidden xl:block'>
                 <TopNav links={links} />
               </div>
             )}
-            {showSearch && <Search />}
+            {showSearch && (
+              <Search
+                className={cn(
+                  'hidden md:inline-flex md:min-w-52 lg:min-w-60 xl:min-w-72',
+                  'border-border/70 bg-muted/55 hover:bg-muted/80 shadow-[inset_0_1px_0_color-mix(in_oklch,var(--background)_88%,transparent)]'
+                )}
+                placeholder={t('Search routes, keys, models')}
+              />
+            )}
             {showNotifications && (
               <NotificationButton
                 unreadCount={notifications.unreadCount}
                 onClick={() => notifications.openDialog()}
+                className='border-border/60 bg-background/70 hover:bg-muted/75 size-9 rounded-xl border shadow-[inset_0_1px_0_color-mix(in_oklch,var(--background)_88%,transparent)]'
               />
             )}
             <LanguageSwitcher />

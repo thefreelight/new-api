@@ -155,15 +155,18 @@ export function SummaryCards() {
   })
 
   return (
-    <div className='bg-card overflow-hidden rounded-2xl border shadow-xs'>
-      <div className='grid xl:grid-cols-[minmax(0,1fr)_19rem]'>
-        <div className='flex flex-col gap-3 p-4 sm:p-5'>
+    <div className='overflow-hidden rounded-[1.9rem] border border-border/70 bg-[linear-gradient(135deg,color-mix(in_oklch,var(--background)_96%,transparent),color-mix(in_oklch,var(--muted)_38%,transparent)_62%,color-mix(in_oklch,var(--warning)_12%,transparent))] shadow-[0_24px_60px_-40px_color-mix(in_oklch,var(--foreground)_24%,transparent),inset_0_1px_0_color-mix(in_oklch,var(--background)_90%,transparent)]'>
+      <div className='grid xl:grid-cols-[minmax(0,1fr)_20rem]'>
+        <div className='flex flex-col gap-4 p-4 sm:p-5'>
           <div className='flex flex-wrap items-start justify-between gap-3'>
-            <div className='flex flex-col gap-1'>
-              <h3 className='text-base font-semibold'>
+            <div className='flex flex-col gap-1.5'>
+              <div className='text-muted-foreground text-[11px] font-semibold tracking-[0.22em] uppercase'>
+                {t('Traffic summary')}
+              </div>
+              <h3 className='text-lg font-semibold tracking-tight'>
                 {t('Usage at a glance')}
               </h3>
-              <p className='text-muted-foreground text-sm'>
+              <p className='text-muted-foreground/78 max-w-2xl text-sm leading-relaxed'>
                 {t('Monitor balance, usage, and request volume')}
               </p>
             </div>
@@ -172,7 +175,7 @@ export function SummaryCards() {
             {items.map((it) => (
               <StaggerItem
                 key={it.title}
-                className='bg-background/60 rounded-xl border p-3'
+                className='rounded-[1.35rem] border border-border/60 bg-background/74 p-4 shadow-[inset_0_1px_0_color-mix(in_oklch,var(--background)_88%,transparent)] backdrop-blur'
               >
                 <StatCard
                   title={it.title}
@@ -188,13 +191,13 @@ export function SummaryCards() {
           </StaggerContainer>
         </div>
 
-        <div className='bg-warning/10 flex flex-col justify-between gap-5 border-t p-4 sm:p-5 xl:border-t-0 xl:border-l'>
-          <div className='flex flex-col gap-2'>
-            <div className='text-muted-foreground text-sm'>
+        <div className='flex flex-col justify-between gap-5 border-t border-border/60 bg-[linear-gradient(180deg,color-mix(in_oklch,var(--warning)_18%,transparent),color-mix(in_oklch,var(--background)_92%,transparent))] p-4 sm:p-5 xl:border-t-0 xl:border-l'>
+          <div className='flex flex-col gap-2.5'>
+            <div className='text-muted-foreground text-[11px] font-semibold tracking-[0.2em] uppercase'>
               {t('Credit remaining')}
             </div>
-            <div className='flex items-center gap-2'>
-              <span className='font-mono text-2xl font-semibold tracking-tight'>
+            <div className='flex items-center gap-2.5'>
+              <span className='font-mono text-3xl font-semibold tracking-tight'>
                 {summaryValues.remainDisplay}
               </span>
               <CreditCard
@@ -202,13 +205,16 @@ export function SummaryCards() {
                 aria-hidden='true'
               />
             </div>
-            <p className='text-muted-foreground text-sm leading-relaxed'>
+            <p className='text-muted-foreground/78 text-sm leading-relaxed'>
               {currencyEnabled
                 ? `${t('Displayed in')} ${currencyLabel}`
                 : t('Balance is shown in quota units')}
             </p>
           </div>
-          <Button className='justify-between' render={<Link to='/wallet' />}>
+          <Button
+            className='h-10 justify-between rounded-xl shadow-[0_16px_32px_-24px_color-mix(in_oklch,var(--foreground)_30%,transparent)]'
+            render={<Link to='/wallet' />}
+          >
             <span>{t('Recharge')}</span>
             <ArrowRight data-icon='inline-end' />
           </Button>
