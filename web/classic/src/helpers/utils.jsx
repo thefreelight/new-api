@@ -48,13 +48,20 @@ export function isRoot() {
 
 export function getSystemName() {
   let system_name = localStorage.getItem('system_name');
-  if (!system_name) return 'New API';
+  if (!system_name || system_name === 'New API') return 'NavtoAI';
   return system_name;
 }
 
 export function getLogo() {
   let logo = localStorage.getItem('logo');
-  if (!logo) return '/logo.png';
+  if (
+    !logo ||
+    logo === '/logo.png' ||
+    logo === '/navtoai-logo.png' ||
+    logo === '/navtoai-logo.svg'
+  ) {
+    return '/favicon.svg';
+  }
   return logo;
 }
 
