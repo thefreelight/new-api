@@ -1,0 +1,10 @@
+name = "navtoai-domain-proxy"
+main = "worker.js"
+compatibility_date = "2026-07-11"
+account_id = "b2da93ccbca8c78973eb85e536a1d51f"
+workers_dev = false
+
+routes = [
+  { pattern = "navtoai.com/*", zone_name = "navtoai.com" },
+  { pattern = "www.navtoai.com/*", zone_name = "navtoai.com" },
+]
