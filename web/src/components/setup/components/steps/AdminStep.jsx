@@ -18,8 +18,8 @@ For commercial licensing, please contact support@quantumnous.com
 */
 
 import React from 'react';
-import { Banner, Form } from '@douyinfe/semi-ui';
-import { IconUser, IconLock } from '@douyinfe/semi-icons';
+import { Form } from '@douyinfe/semi-ui';
+import { Info, LockKeyhole, ShieldCheck, UserRound } from 'lucide-react';
 
 /**
  * 管理员账号设置步骤组件
@@ -36,81 +36,97 @@ const AdminStep = ({
   return (
     <>
       {setupStatus.root_init ? (
-        <Banner
-          type='info'
-          closeIcon={null}
-          description={
-            <div className='flex items-center'>
-              <span>{t('管理员账号已经初始化过，请继续设置其他参数')}</span>
-            </div>
-          }
-          className='!rounded-lg'
-        />
+        <div className='setup-notice is-info'>
+          <Info size={18} />
+          <div>
+            <strong>{t('管理员账号已初始化')}</strong>
+            <p>{t('请继续选择运行模式并完成系统初始化。')}</p>
+          </div>
+        </div>
       ) : (
-        <>
-          <Form.Input
-            field='username'
-            label={t('用户名')}
-            placeholder={t('请输入管理员用户名')}
-            prefix={<IconUser />}
-            showClear
-            noLabel={false}
-            validateStatus='default'
-            rules={[{ required: true, message: t('请输入管理员用户名') }]}
-            initValue={formData.username || ''}
-            onChange={(value) => {
-              setFormData({ ...formData, username: value });
-            }}
-          />
-          <Form.Input
-            field='password'
-            label={t('密码')}
-            placeholder={t('请输入管理员密码')}
-            type='password'
-            prefix={<IconLock />}
-            showClear
-            noLabel={false}
-            mode='password'
-            validateStatus='default'
-            rules={[
-              { required: true, message: t('请输入管理员密码') },
-              { min: 8, message: t('密码长度至少为8个字符') },
-            ]}
-            initValue={formData.password || ''}
-            onChange={(value) => {
-              setFormData({ ...formData, password: value });
-            }}
-          />
-          <Form.Input
-            field='confirmPassword'
-            label={t('确认密码')}
-            placeholder={t('请确认管理员密码')}
-            type='password'
-            prefix={<IconLock />}
-            showClear
-            noLabel={false}
-            mode='password'
-            validateStatus='default'
-            rules={[
-              { required: true, message: t('请确认管理员密码') },
-              {
-                validator: (rule, value) => {
-                  if (value && formRef.current) {
-                    const password = formRef.current.getValue('password');
-                    if (value !== password) {
-                      return Promise.reject(t('两次输入的密码不一致'));
+        <div className='setup-admin-grid'>
+          <div className='setup-admin-aside'>
+            <div className='setup-admin-mark'>
+              <ShieldCheck size={22} />
+            </div>
+            <h4>{t('创建首个管理员')}</h4>
+            <p>
+              {t(
+                '该账号将拥有控制台全部权限，用于后续配置渠道、用户、额度和系统参数。',
+              )}
+            </p>
+          </div>
+          <div className='setup-form-stack'>
+            <Form.Input
+              field='username'
+              label={t('用户名')}
+              placeholder={t('请输入管理员用户名')}
+              prefix={<UserRound size={16} />}
+              showClear
+              noLabel={false}
+              validateStatus='default'
+              className='setup-input'
+              rules={[{ required: true, message: t('请输入管理员用户名') }]}
+              initValue={formData.username || ''}
+              onChange={(value) => {
+                setFormData((prev) => ({ ...prev, username: value }));
+              }}
+            />
+            <Form.Input
+              field='password'
+              label={t('密码')}
+              placeholder={t('请输入管理员密码')}
+              type='password'
+              prefix={<LockKeyhole size={16} />}
+              showClear
+              noLabel={false}
+              mode='password'
+              validateStatus='default'
+              className='setup-input'
+              rules={[
+                { required: true, message: t('请输入管理员密码') },
+                { min: 8, message: t('密码长度至少为8个字符') },
+              ]}
+              initValue={formData.password || ''}
+              onChange={(value) => {
+                setFormData((prev) => ({ ...prev, password: value }));
+              }}
+            />
+            <Form.Input
+              field='confirmPassword'
+              label={t('确认密码')}
+              placeholder={t('请确认管理员密码')}
+              type='password'
+              prefix={<LockKeyhole size={16} />}
+              showClear
+              noLabel={false}
+              mode='password'
+              validateStatus='default'
+              className='setup-input'
+              rules={[
+                { required: true, message: t('请确认管理员密码') },
+                {
+                  validator: (rule, value) => {
+                    if (value && formRef.current) {
+                      const password = formRef.current.getValue('password');
+                      if (value !== password) {
+                        return Promise.reject(t('两次输入的密码不一致'));
+                      }
                     }
-                  }
-                  return Promise.resolve();
+                    return Promise.resolve();
+                  },
                 },
-              },
-            ]}
-            initValue={formData.confirmPassword || ''}
-            onChange={(value) => {
-              setFormData({ ...formData, confirmPassword: value });
-            }}
-          />
-        </>
+              ]}
+              initValue={formData.confirmPassword || ''}
+              onChange={(value) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  confirmPassword: value,
+                }));
+              }}
+            />
+          </div>
+        </div>
       )}
       {renderNavigationButtons && renderNavigationButtons()}
     </>

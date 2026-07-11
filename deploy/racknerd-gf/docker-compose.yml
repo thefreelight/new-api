@@ -1,0 +1,81 @@
+services:
+  new-api:
+    image: ${APP_IMAGE:?APP_IMAGE is required}
+    container_name: navtoai-new-api
+    restart: unless-stopped
+    command: --log-dir /app/logs
+    ports:
+      - "127.0.0.1:${APP_PORT:-13000}:3000"
+    volumes:
+      - new_api_data:/data
+      - ./logs:/app/logs
+    environment:
+      - SQL_DSN=postgresql://${POSTGRES_USER:-newapi}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-newapi}
+      - REDIS_CONN_STRING=redis://:${REDIS_PASSWORD}@redis:6379/0
+      - TZ=Asia/Shanghai
+      - SESSION_SECRET=${SESSION_SECRET}
+      - FRONTEND_BASE_URL=${FRONTEND_BASE_URL}
+      - TRUSTED_REDIRECT_DOMAINS=${TRUSTED_REDIRECT_DOMAINS:-navtoai.com}
+      - ERROR_LOG_ENABLED=true
+      - BATCH_UPDATE_ENABLED=true
+      - NODE_NAME=navtoai-new-api-racknerd-gf
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - navtoai-new-api-net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:3000/api/status | grep -Eq '\"success\"[[:space:]]*:[[:space:]]*true' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: navtoai-new-api-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-newapi}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB:-newapi}
+      - TZ=Asia/Shanghai
+    volumes:
+      - new_api_pg_data:/var/lib/postgresql/data
+    networks:
+      - navtoai-new-api-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-newapi} -d ${POSTGRES_DB:-newapi}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:8-alpine
+    container_name: navtoai-new-api-redis
+    restart: unless-stopped
+    command: ["sh", "-c", "redis-server --appendonly yes --requirepass \"$REDIS_PASSWORD\""]
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDISCLI_AUTH=${REDIS_PASSWORD}
+      - TZ=Asia/Shanghai
+    volumes:
+      - new_api_redis_data:/data
+    networks:
+      - navtoai-new-api-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  new_api_data:
+  new_api_pg_data:
+  new_api_redis_data:
+
+networks:
+  navtoai-new-api-net:
+    driver: bridge

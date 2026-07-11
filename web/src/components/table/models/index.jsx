@@ -25,6 +25,7 @@ import ModelsTable from './ModelsTable';
 import ModelsActions from './ModelsActions';
 import ModelsFilters from './ModelsFilters';
 import ModelsTabs from './ModelsTabs';
+import ModelsDescription from './ModelsDescription';
 import EditModelModal from './modals/EditModelModal';
 import EditVendorModal from './modals/EditVendorModal';
 import { useModelsData } from '../../../hooks/models/useModelsData';
@@ -159,6 +160,13 @@ const ModelsPage = () => {
       ) : null}
       <CardPro
         type='type3'
+        descriptionArea={
+          <ModelsDescription
+            compactMode={compactMode}
+            setCompactMode={setCompactMode}
+            t={t}
+          />
+        }
         tabsArea={<ModelsTabs {...modelsData} />}
         actionsArea={
           <div className='flex flex-col md:flex-row justify-between items-center gap-2 w-full'>
@@ -173,8 +181,6 @@ const ModelsPage = () => {
               previewing={modelsData.previewing}
               previewUpstreamDiff={modelsData.previewUpstreamDiff}
               applyUpstreamOverwrite={modelsData.applyUpstreamOverwrite}
-              compactMode={compactMode}
-              setCompactMode={setCompactMode}
               t={t}
             />
 

@@ -19,12 +19,13 @@ For commercial licensing, please contact support@quantumnous.com
 
 import React from 'react';
 import SubscriptionsPage from '../../components/table/subscriptions';
+import ConsoleShell from '../../components/layout/ConsoleShell';
 
 const Subscription = () => {
   return (
-    <div className='mt-[60px] px-2'>
+    <ConsoleShell wide>
       <SubscriptionsPage />
-    </div>
+    </ConsoleShell>
   );
 };
 

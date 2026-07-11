@@ -23,12 +23,10 @@ import { UserContext } from '../../context/User';
 import { StatusContext } from '../../context/Status';
 import {
   API,
-  getLogo,
   showError,
   showInfo,
   showSuccess,
   updateAPI,
-  getSystemName,
   getOAuthProviderIcon,
   setUserData,
   onGitHubOAuthClicked,
@@ -81,9 +79,8 @@ const LoginForm = () => {
     wechat_verification_code: '',
   });
   const { username, password } = inputs;
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [submitted, setSubmitted] = useState(false);
-  const [userState, userDispatch] = useContext(UserContext);
+  const [searchParams] = useSearchParams();
+  const [, userDispatch] = useContext(UserContext);
   const [statusState] = useContext(StatusContext);
   const [turnstileEnabled, setTurnstileEnabled] = useState(false);
   const [turnstileSiteKey, setTurnstileSiteKey] = useState('');
@@ -112,9 +109,18 @@ const LoginForm = () => {
   const githubTimeoutRef = useRef(null);
   const githubButtonText = t(githubButtonTextKeyByState[githubButtonState]);
   const [customOAuthLoading, setCustomOAuthLoading] = useState({});
-
-  const logo = getLogo();
-  const systemName = getSystemName();
+  const authFormClassName =
+    'space-y-3 [&_.semi-input-wrapper]:!rounded-md [&_.semi-input-wrapper]:!border [&_.semi-input-wrapper]:!border-[#dfe3e8] [&_.semi-input-wrapper]:!bg-[#fbfbf9] [&_.semi-input-wrapper]:!shadow-none [&_.semi-input-wrapper:hover]:!border-[#cbd1d8] [&_.semi-input-wrapper:focus-within]:!border-[#ff5a1f] [&_.semi-input-wrapper:focus-within]:!bg-white [&_.semi-input-wrapper:focus-within]:!shadow-[0_0_0_3px_rgba(255,90,31,0.14)] [&_.semi-input]:!text-[#171d27] [&_.semi-input-prefix]:!text-[#7b8490] [&_.semi-input-suffix]:!text-[#7b8490]';
+  const authLinkClassName =
+    'font-medium text-[#ff5a1f] underline decoration-transparent decoration-1 underline-offset-4 transition-colors duration-200 hover:text-[#d94a15] hover:decoration-current';
+  const oauthButtonClassName =
+    'flex h-11 w-full items-center justify-center !rounded-md border border-[#dfe3e8] bg-white text-[#171d27] transition duration-200 hover:border-[#cbd1d8] hover:bg-[#fbfbf9] disabled:border-[#e6eaef] disabled:bg-[#f7f8f6] disabled:text-[#a1a8b3]';
+  const primaryButtonClassName =
+    'flex h-11 w-full items-center justify-center !rounded-md !bg-[#ff5a1f] font-medium !text-[#14100d] transition duration-200 hover:!bg-[#ff6a32] disabled:!bg-[#f0b49b] disabled:!text-[#fff5ef]';
+  const secondaryButtonClassName =
+    'h-11 w-full !rounded-md border border-[#dfe3e8] !bg-white font-medium !text-[#4f5864] transition duration-200 hover:!border-[#cbd1d8] hover:!bg-[#fbfbf9] hover:!text-[#171d27]';
+  const termsTextClassName = 'text-[#5c6672] leading-6';
+  const auxiliaryTextClassName = '!text-[#6d7681]';
 
   let affCode = new URLSearchParams(window.location.search).get('aff');
   if (affCode) {
@@ -135,12 +141,12 @@ const LoginForm = () => {
     (status.custom_oauth_providers || []).length > 0;
   const hasOAuthLoginOptions = Boolean(
     status.github_oauth ||
-      status.discord_oauth ||
-      status.oidc_enabled ||
-      status.wechat_login ||
-      status.linuxdo_oauth ||
-      status.telegram_oauth ||
-      hasCustomOAuthProviders,
+    status.discord_oauth ||
+    status.oidc_enabled ||
+    status.wechat_login ||
+    status.linuxdo_oauth ||
+    status.telegram_oauth ||
+    hasCustomOAuthProviders,
   );
 
   useEffect(() => {
@@ -215,7 +221,7 @@ const LoginForm = () => {
     setInputs((inputs) => ({ ...inputs, [name]: value }));
   }
 
-  async function handleSubmit(e) {
+  async function handleSubmit() {
     if ((hasUserAgreement || hasPrivacyPolicy) && !agreedToTerms) {
       showInfo(t('请先阅读并同意用户协议和隐私政策'));
       return;
@@ -224,7 +230,6 @@ const LoginForm = () => {
       showInfo('请稍后几秒重试，Turnstile 正在检查用户环境！');
       return;
     }
-    setSubmitted(true);
     setLoginLoading(true);
     try {
       if (username && password) {
@@ -500,29 +505,47 @@ const LoginForm = () => {
     setInputs({ username: '', password: '', wechat_verification_code: '' });
   };
 
+  const renderTurnstileBlock = () => {
+    if (!turnstileEnabled) {
+      return null;
+    }
+
+    return (
+      <div className='mt-6 rounded-lg border border-[#e3e7eb] bg-[#fbfbf9] px-4 py-4 text-center shadow-[0_10px_30px_rgba(17,23,34,0.03)]'>
+        <p className='mb-3 text-xs leading-6 text-[#68717d]'>
+          {t('安全检查完成后即可继续')}
+        </p>
+        <div className='flex justify-center overflow-hidden'>
+          <Turnstile
+            sitekey={turnstileSiteKey}
+            onVerify={(token) => {
+              setTurnstileToken(token);
+            }}
+          />
+        </div>
+      </div>
+    );
+  };
+
   const renderOAuthOptions = () => {
     return (
       <div className='flex flex-col items-center'>
         <div className='w-full max-w-md'>
-          <div className='flex items-center justify-center mb-6 gap-2'>
-            <img src={logo} alt='Logo' className='h-10 rounded-full' />
-            <Title heading={3} className='!text-gray-800'>
-              {systemName}
-            </Title>
-          </div>
-
-          <Card className='border-0 !rounded-2xl overflow-hidden'>
-            <div className='flex justify-center pt-6 pb-2'>
-              <Title heading={3} className='text-gray-800 dark:text-gray-200'>
-                {t('登 录')}
+          <Card className='overflow-hidden border border-[#dfe3e8] !rounded-lg bg-[#ffffff] shadow-[0_24px_90px_rgba(17,23,34,0.08)]'>
+            <div className='flex justify-center px-8 pb-2 pt-8'>
+              <Title
+                heading={3}
+                className='!m-0 !text-[24px] !font-medium !text-[#111722]'
+              >
+                {t('登录')}
               </Title>
             </div>
-            <div className='px-2 py-8'>
+            <div className='px-7 pb-8 pt-7 sm:px-8'>
               <div className='space-y-3'>
                 {status.wechat_login && (
                   <Button
                     theme='outline'
-                    className='w-full h-12 flex items-center justify-center !rounded-full border border-gray-200 hover:bg-gray-50 transition-colors'
+                    className={oauthButtonClassName}
                     type='tertiary'
                     icon={
                       <Icon svg={<WeChatIcon />} style={{ color: '#07C160' }} />
@@ -537,7 +560,7 @@ const LoginForm = () => {
                 {status.github_oauth && (
                   <Button
                     theme='outline'
-                    className='w-full h-12 flex items-center justify-center !rounded-full border border-gray-200 hover:bg-gray-50 transition-colors'
+                    className={oauthButtonClassName}
                     type='tertiary'
                     icon={<IconGithubLogo size='large' />}
                     onClick={handleGitHubClick}
@@ -551,7 +574,7 @@ const LoginForm = () => {
                 {status.discord_oauth && (
                   <Button
                     theme='outline'
-                    className='w-full h-12 flex items-center justify-center !rounded-full border border-gray-200 hover:bg-gray-50 transition-colors'
+                    className={oauthButtonClassName}
                     type='tertiary'
                     icon={
                       <SiDiscord
@@ -572,7 +595,7 @@ const LoginForm = () => {
                 {status.oidc_enabled && (
                   <Button
                     theme='outline'
-                    className='w-full h-12 flex items-center justify-center !rounded-full border border-gray-200 hover:bg-gray-50 transition-colors'
+                    className={oauthButtonClassName}
                     type='tertiary'
                     icon={<OIDCIcon style={{ color: '#1877F2' }} />}
                     onClick={handleOIDCClick}
@@ -585,7 +608,7 @@ const LoginForm = () => {
                 {status.linuxdo_oauth && (
                   <Button
                     theme='outline'
-                    className='w-full h-12 flex items-center justify-center !rounded-full border border-gray-200 hover:bg-gray-50 transition-colors'
+                    className={oauthButtonClassName}
                     type='tertiary'
                     icon={
                       <LinuxDoIcon
@@ -608,7 +631,7 @@ const LoginForm = () => {
                     <Button
                       key={provider.slug}
                       theme='outline'
-                      className='w-full h-12 flex items-center justify-center !rounded-full border border-gray-200 hover:bg-gray-50 transition-colors'
+                      className={oauthButtonClassName}
                       type='tertiary'
                       icon={getOAuthProviderIcon(provider.icon || '', 20)}
                       onClick={() => handleCustomOAuthClick(provider)}
@@ -632,7 +655,7 @@ const LoginForm = () => {
                 {status.passkey_login && passkeySupported && (
                   <Button
                     theme='outline'
-                    className='w-full h-12 flex items-center justify-center !rounded-full border border-gray-200 hover:bg-gray-50 transition-colors'
+                    className={oauthButtonClassName}
                     type='tertiary'
                     icon={<IconKey size='large' />}
                     onClick={handlePasskeyLogin}
@@ -649,7 +672,7 @@ const LoginForm = () => {
                 <Button
                   theme='solid'
                   type='primary'
-                  className='w-full h-12 flex items-center justify-center bg-black text-white !rounded-full hover:bg-gray-800 transition-colors'
+                  className={primaryButtonClassName}
                   icon={<IconMail size='large' />}
                   onClick={handleEmailLoginClick}
                   loading={emailLoginLoading}
@@ -664,28 +687,30 @@ const LoginForm = () => {
                     checked={agreedToTerms}
                     onChange={(e) => setAgreedToTerms(e.target.checked)}
                   >
-                    <Text size='small' className='text-gray-600'>
+                    <Text size='small' className={termsTextClassName}>
                       {t('我已阅读并同意')}
                       {hasUserAgreement && (
                         <>
+                          {' '}
                           <a
                             href='/user-agreement'
                             target='_blank'
                             rel='noopener noreferrer'
-                            className='text-blue-600 hover:text-blue-800 mx-1'
+                            className={authLinkClassName}
                           >
                             {t('用户协议')}
                           </a>
                         </>
                       )}
-                      {hasUserAgreement && hasPrivacyPolicy && t('和')}
+                      {hasUserAgreement && hasPrivacyPolicy && ` ${t('和')} `}
                       {hasPrivacyPolicy && (
                         <>
+                          {' '}
                           <a
                             href='/privacy-policy'
                             target='_blank'
                             rel='noopener noreferrer'
-                            className='text-blue-600 hover:text-blue-800 mx-1'
+                            className={authLinkClassName}
                           >
                             {t('隐私政策')}
                           </a>
@@ -698,17 +723,16 @@ const LoginForm = () => {
 
               {!status.self_use_mode_enabled && (
                 <div className='mt-6 text-center text-sm'>
-                  <Text>
+                  <Text className={auxiliaryTextClassName}>
                     {t('没有账户？')}{' '}
-                    <Link
-                      to='/register'
-                      className='text-blue-600 hover:text-blue-800 font-medium'
-                    >
+                    <Link to='/register' className={authLinkClassName}>
                       {t('注册')}
                     </Link>
                   </Text>
                 </div>
               )}
+
+              {renderTurnstileBlock()}
             </div>
           </Card>
         </div>
@@ -720,23 +744,21 @@ const LoginForm = () => {
     return (
       <div className='flex flex-col items-center'>
         <div className='w-full max-w-md'>
-          <div className='flex items-center justify-center mb-6 gap-2'>
-            <img src={logo} alt='Logo' className='h-10 rounded-full' />
-            <Title heading={3}>{systemName}</Title>
-          </div>
-
-          <Card className='border-0 !rounded-2xl overflow-hidden'>
-            <div className='flex justify-center pt-6 pb-2'>
-              <Title heading={3} className='text-gray-800 dark:text-gray-200'>
-                {t('登 录')}
+          <Card className='overflow-hidden border border-[#dfe3e8] !rounded-lg bg-[#ffffff] shadow-[0_24px_90px_rgba(17,23,34,0.08)]'>
+            <div className='flex justify-center px-8 pb-2 pt-8'>
+              <Title
+                heading={3}
+                className='!m-0 !text-[24px] !font-medium !text-[#111722]'
+              >
+                {t('登录')}
               </Title>
             </div>
-            <div className='px-2 py-8'>
+            <div className='px-7 pb-8 pt-7 sm:px-8'>
               {status.passkey_login && passkeySupported && (
                 <Button
                   theme='outline'
                   type='tertiary'
-                  className='w-full h-12 flex items-center justify-center !rounded-full border border-gray-200 hover:bg-gray-50 transition-colors mb-4'
+                  className={`mb-4 ${oauthButtonClassName}`}
                   icon={<IconKey size='large' />}
                   onClick={handlePasskeyLogin}
                   loading={passkeyLoading}
@@ -744,12 +766,13 @@ const LoginForm = () => {
                   <span className='ml-3'>{t('使用 Passkey 登录')}</span>
                 </Button>
               )}
-              <Form className='space-y-3'>
+              <Form className={authFormClassName}>
                 <Form.Input
                   field='username'
                   label={t('用户名或邮箱')}
                   placeholder={t('请输入您的用户名或邮箱地址')}
                   name='username'
+                  autoComplete='username'
                   onChange={(value) => handleChange('username', value)}
                   prefix={<IconMail />}
                 />
@@ -760,6 +783,7 @@ const LoginForm = () => {
                   placeholder={t('请输入您的密码')}
                   name='password'
                   mode='password'
+                  autoComplete='current-password'
                   onChange={(value) => handleChange('password', value)}
                   prefix={<IconLock />}
                 />
@@ -770,28 +794,30 @@ const LoginForm = () => {
                       checked={agreedToTerms}
                       onChange={(e) => setAgreedToTerms(e.target.checked)}
                     >
-                      <Text size='small' className='text-gray-600'>
+                      <Text size='small' className={termsTextClassName}>
                         {t('我已阅读并同意')}
                         {hasUserAgreement && (
                           <>
+                            {' '}
                             <a
                               href='/user-agreement'
                               target='_blank'
                               rel='noopener noreferrer'
-                              className='text-blue-600 hover:text-blue-800 mx-1'
+                              className={authLinkClassName}
                             >
                               {t('用户协议')}
                             </a>
                           </>
                         )}
-                        {hasUserAgreement && hasPrivacyPolicy && t('和')}
+                        {hasUserAgreement && hasPrivacyPolicy && ` ${t('和')} `}
                         {hasPrivacyPolicy && (
                           <>
+                            {' '}
                             <a
                               href='/privacy-policy'
                               target='_blank'
                               rel='noopener noreferrer'
-                              className='text-blue-600 hover:text-blue-800 mx-1'
+                              className={authLinkClassName}
                             >
                               {t('隐私政策')}
                             </a>
@@ -805,7 +831,7 @@ const LoginForm = () => {
                 <div className='space-y-2 pt-2'>
                   <Button
                     theme='solid'
-                    className='w-full !rounded-full'
+                    className={primaryButtonClassName}
                     type='primary'
                     htmlType='submit'
                     onClick={handleSubmit}
@@ -820,7 +846,7 @@ const LoginForm = () => {
                   <Button
                     theme='borderless'
                     type='tertiary'
-                    className='w-full !rounded-full'
+                    className={secondaryButtonClassName}
                     onClick={handleResetPasswordClick}
                     loading={resetPasswordLoading}
                   >
@@ -839,7 +865,7 @@ const LoginForm = () => {
                     <Button
                       theme='outline'
                       type='tertiary'
-                      className='w-full !rounded-full'
+                      className={secondaryButtonClassName}
                       onClick={handleOtherLoginOptionsClick}
                       loading={otherLoginOptionsLoading}
                     >
@@ -851,17 +877,16 @@ const LoginForm = () => {
 
               {!status.self_use_mode_enabled && (
                 <div className='mt-6 text-center text-sm'>
-                  <Text>
+                  <Text className={auxiliaryTextClassName}>
                     {t('没有账户？')}{' '}
-                    <Link
-                      to='/register'
-                      className='text-blue-600 hover:text-blue-800 font-medium'
-                    >
+                    <Link to='/register' className={authLinkClassName}>
                       {t('注册')}
                     </Link>
                   </Text>
                 </div>
               )}
+
+              {renderTurnstileBlock()}
             </div>
           </Card>
         </div>
@@ -894,7 +919,7 @@ const LoginForm = () => {
           </p>
         </div>
 
-        <Form>
+        <Form className={authFormClassName}>
           <Form.Input
             field='wechat_verification_code'
             placeholder={t('验证码')}
@@ -915,9 +940,9 @@ const LoginForm = () => {
       <Modal
         title={
           <div className='flex items-center'>
-            <div className='w-8 h-8 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center mr-3'>
+            <div className='w-8 h-8 rounded-full bg-orange-100 dark:bg-orange-900 flex items-center justify-center mr-3'>
               <svg
-                className='w-4 h-4 text-green-600 dark:text-green-400'
+                className='w-4 h-4 text-orange-600 dark:text-orange-400'
                 fill='currentColor'
                 viewBox='0 0 20 20'
               >
@@ -947,34 +972,13 @@ const LoginForm = () => {
   };
 
   return (
-    <div className='relative overflow-hidden bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8'>
-      {/* 背景模糊晕染球 */}
-      <div
-        className='blur-ball blur-ball-indigo'
-        style={{ top: '-80px', right: '-80px', transform: 'none' }}
-      />
-      <div
-        className='blur-ball blur-ball-teal'
-        style={{ top: '50%', left: '-120px' }}
-      />
-      <div className='w-full max-w-sm mt-[60px]'>
-        {showEmailLogin ||
-        !hasOAuthLoginOptions
+    <div className='relative flex min-h-[calc(100vh-64px)] items-center justify-center overflow-hidden bg-[linear-gradient(#eef2f4_1px,transparent_1px),linear-gradient(90deg,#eef2f4_1px,transparent_1px),#fbfaf8] bg-[length:42px_42px] px-4 pb-12 pt-10 sm:px-6 sm:pb-16 sm:pt-14 lg:px-8'>
+      <div className='relative z-10 w-full max-w-[460px]'>
+        {showEmailLogin || !hasOAuthLoginOptions
           ? renderEmailLoginForm()
           : renderOAuthOptions()}
         {renderWeChatLoginModal()}
         {render2FAModal()}
-
-        {turnstileEnabled && (
-          <div className='flex justify-center mt-6'>
-            <Turnstile
-              sitekey={turnstileSiteKey}
-              onVerify={(token) => {
-                setTurnstileToken(token);
-              }}
-            />
-          </div>
-        )}
       </div>
     </div>
   );

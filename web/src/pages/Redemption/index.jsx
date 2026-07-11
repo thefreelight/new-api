@@ -19,12 +19,13 @@ For commercial licensing, please contact support@quantumnous.com
 
 import React from 'react';
 import RedemptionsTable from '../../components/table/redemptions';
+import ConsoleShell from '../../components/layout/ConsoleShell';
 
 const Redemption = () => {
   return (
-    <div className='mt-[60px] px-2'>
+    <ConsoleShell wide>
       <RedemptionsTable />
-    </div>
+    </ConsoleShell>
   );
 };
 

@@ -38,7 +38,6 @@ import { useDashboardCharts } from '../../hooks/dashboard/useDashboardCharts';
 import {
   CHART_CONFIG,
   CARD_PROPS,
-  FLEX_CENTER_GAP2,
   ILLUSTRATION_SIZE,
   ANNOUNCEMENT_LEGEND_DATA,
   UPTIME_STATUS_MAP,
@@ -199,7 +198,6 @@ const Dashboard = () => {
             isAdminUser={dashboardData.isAdminUser}
             CARD_PROPS={CARD_PROPS}
             CHART_CONFIG={CHART_CONFIG}
-            FLEX_CENTER_GAP2={FLEX_CENTER_GAP2}
             hasApiInfoPanel={dashboardData.hasApiInfoPanel}
             t={dashboardData.t}
           />
@@ -210,7 +208,6 @@ const Dashboard = () => {
               handleCopyUrl={(url) => handleCopyUrl(url, dashboardData.t)}
               handleSpeedTest={handleSpeedTest}
               CARD_PROPS={CARD_PROPS}
-              FLEX_CENTER_GAP2={FLEX_CENTER_GAP2}
               ILLUSTRATION_SIZE={ILLUSTRATION_SIZE}
               t={dashboardData.t}
             />
@@ -243,7 +240,6 @@ const Dashboard = () => {
               <FaqPanel
                 faqData={faqData}
                 CARD_PROPS={CARD_PROPS}
-                FLEX_CENTER_GAP2={FLEX_CENTER_GAP2}
                 ILLUSTRATION_SIZE={ILLUSTRATION_SIZE}
                 t={dashboardData.t}
               />

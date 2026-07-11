@@ -21,7 +21,6 @@ For commercial licensing, please contact support@quantumnous.com
 export const CHART_CONFIG = { mode: 'desktop-browser' };
 
 export const CARD_PROPS = {
-  shadows: '',
   bordered: true,
   headerLine: true,
 };
@@ -32,7 +31,6 @@ export const FORM_FIELD_PROPS = {
 };
 
 export const ICON_BUTTON_CLASS = 'text-white hover:bg-opacity-80 !rounded-full';
-export const FLEX_CENTER_GAP2 = 'flex items-center gap-2';
 
 export const ILLUSTRATION_SIZE = { width: 96, height: 96 };
 

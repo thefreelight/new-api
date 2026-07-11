@@ -17,339 +17,840 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 
-import React, { useContext, useEffect, useState } from 'react';
-import {
-  Button,
-  Typography,
-  Input,
-  ScrollList,
-  ScrollItem,
-} from '@douyinfe/semi-ui';
-import { API, showError, copy, showSuccess } from '../../helpers';
-import { useIsMobile } from '../../hooks/common/useIsMobile';
-import { API_ENDPOINTS } from '../../constants/common.constant';
-import { StatusContext } from '../../context/Status';
-import { useActualTheme } from '../../context/Theme';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { marked } from 'marked';
 import { useTranslation } from 'react-i18next';
 import {
-  IconGithubLogo,
-  IconPlay,
-  IconFile,
-  IconCopy,
-} from '@douyinfe/semi-icons';
-import { Link } from 'react-router-dom';
+  ArrowRight,
+  BadgeCheck,
+  Bell,
+  Code2,
+  FileText,
+  Image,
+  Languages,
+  LineChart,
+  Lock,
+  Monitor,
+  Route,
+  Sparkles,
+  Sun,
+  UserRound,
+  WalletCards,
+} from 'lucide-react';
+import { API } from '../../helpers';
 import NoticeModal from '../../components/layout/NoticeModal';
-import {
-  Moonshot,
-  OpenAI,
-  XAI,
-  Zhipu,
-  Volcengine,
-  Cohere,
-  Claude,
-  Gemini,
-  Suno,
-  Minimax,
-  Wenxin,
-  Spark,
-  Qingyan,
-  DeepSeek,
-  Qwen,
-  Midjourney,
-  Grok,
-  AzureAI,
-  Hunyuan,
-  Xinference,
-} from '@lobehub/icons';
+import { StatusContext } from '../../context/Status';
+import { useActualTheme } from '../../context/Theme';
+import { useIsMobile } from '../../hooks/common/useIsMobile';
+import ModelGlobe from '../../components/home/ModelGlobe';
+import './home.css';
 
-const { Text } = Typography;
+const navItems = [
+  { label: '首页', href: '#top' },
+  { label: '模型', href: '#models' },
+  { label: '价格', href: '#pricing' },
+  { label: '代理合作', href: '#agent' },
+  { label: '试验场', href: '/console/playground' },
+  { label: '提示词库', href: '/console/playground?mode=image' },
+  { label: '文档', href: '#quick-start' },
+];
+
+const capabilities = [
+  {
+    title: '多模型统一接入',
+    body: '通过一个网关统一管理可用模型，后续可按业务需要扩展更多模型渠道。',
+    Icon: Sparkles,
+  },
+  {
+    title: '计费与配额',
+    body: '支持套餐、用量扣费、剩余额度和团队分配策略，方便统一成本管理。',
+    Icon: WalletCards,
+  },
+  {
+    title: 'Token 多渠道管理',
+    body: '按用户、项目、场景拆分 Key，独立控制模型权限、过期时间与额度。',
+    Icon: Lock,
+  },
+  {
+    title: '日志与监控',
+    body: '聚合请求日志、调用成功率、消耗趋势和异常事件，便于排障与审计。',
+    Icon: LineChart,
+  },
+  {
+    title: '异步任务追踪',
+    body: '图片、视频等长耗时任务可在后台执行，并通过任务日志查看状态与结果。',
+    Icon: Route,
+  },
+  {
+    title: '提示词与 Playground',
+    body: '从真实案例挑选提示词，一键带入 Playground，缩短从参考到生成的路径。',
+    Icon: Image,
+  },
+];
+
+const operationCards = [
+  {
+    title: '我们做什么',
+    body: '把已开通的模型能力统一收敛到一个稳定入口，降低接入、密钥管理和用量排障成本。',
+  },
+  {
+    title: '我们怎么交付',
+    body: '围绕控制台持续维护渠道、模型、日志、额度和价格体系，协助客户完成配置和问题定位。',
+  },
+  {
+    title: '适合谁使用',
+    body: '适合需要多模型调用、团队额度管理、代理分销和客户 API 交付的开发者与团队。',
+  },
+];
+
+const promptCards = [
+  {
+    title: '人像与摄影',
+    body: '查找光线、镜头、构图和人物风格描述。',
+    code: 'cinematic portrait, neon convenience store',
+    Icon: UserRound,
+  },
+  {
+    title: '海报与插画',
+    body: '快速参考版式、色彩、材质和视觉主题。',
+    code: 'bold poster layout, high contrast typography',
+    Icon: FileText,
+  },
+  {
+    title: 'UI 与社媒 Mockup',
+    body: '用于产品截图、社交封面和界面概念图。',
+    code: 'mobile app dashboard, glass card composition',
+    Icon: Monitor,
+  },
+];
+
+const agentItems = [
+  {
+    title: '统一项目资料',
+    body: '提供产品介绍、常见问题、客户沟通口径和直播课资料，帮助代理讲清楚项目价值。',
+    Icon: FileText,
+  },
+  {
+    title: '推广素材支持',
+    body: '围绕朋友圈、社群、私聊和短视频分发，提供可直接执行的素材和话术参考。',
+    Icon: Sparkles,
+  },
+  {
+    title: '客户承接协助',
+    body: '代理引流来的客户，可通过官网、资料、直播课和团队支持完成进一步了解与转化。',
+    Icon: UserRound,
+  },
+];
+
+const pricingRows = [
+  ['普通客户', '按需充值', '注册后在控制台查看已开通模型和余额消耗。'],
+  ['99 基础代理', '¥99', '领取资料、参加直播课、参与分发与转介绍。'],
+  ['团队客户', '客服确认', '按实际渠道、额度、模型和支持需求确认。'],
+];
+
+const globeLabels = [
+  {
+    className: 'globe-label-models',
+    title: '67 种模型',
+    body: 'GPT / Claude / Gemini / 图像',
+  },
+  {
+    className: 'globe-label-batch',
+    title: '按批次开通模型',
+    body: '以控制台已开通为准',
+  },
+  {
+    className: 'globe-label-code',
+    title: '代码/长文本场景',
+    body: 'Claude / GPT 长上下文',
+  },
+  {
+    className: 'globe-label-image',
+    title: '多模态能力扩展',
+    body: 'Gemini / 图像生成',
+  },
+  {
+    className: 'globe-label-api',
+    title: '主流接口兼容',
+    body: 'OpenAI-compatible API',
+  },
+];
+
+const terminalLines = [
+  [{ className: 'token-comment', text: '// 配置兼容工具' }],
+  [
+    { className: 'token-keyword', text: 'export' },
+    ' ',
+    { className: 'token-variable', text: 'ANTHROPIC_BASE_URL' },
+    { className: 'token-operator', text: '=' },
+    { className: 'token-string', text: '"https://api.navtoai.com"' },
+  ],
+  [
+    { className: 'token-keyword', text: 'export' },
+    ' ',
+    { className: 'token-variable', text: 'AI_GATEWAY_KEY' },
+    { className: 'token-operator', text: '=' },
+    { className: 'token-string', text: '"navtoai-demo-key"' },
+  ],
+  [
+    { className: 'token-prompt', text: '$' },
+    ' ',
+    { className: 'token-command', text: 'your-ai-tool' },
+  ],
+  [],
+  [{ className: 'token-comment', text: '// 配置 Codex' }],
+  [
+    { className: 'token-keyword', text: 'export' },
+    ' ',
+    { className: 'token-variable', text: 'OPENAI_BASE_URL' },
+    { className: 'token-operator', text: '=' },
+    { className: 'token-string', text: '"https://api.navtoai.com/v1"' },
+  ],
+  [
+    { className: 'token-keyword', text: 'export' },
+    ' ',
+    { className: 'token-variable', text: 'OPENAI_API_KEY' },
+    { className: 'token-operator', text: '=' },
+    { className: 'token-string', text: '"navtoai-codex-demo-key"' },
+  ],
+  [
+    { className: 'token-prompt', text: '$' },
+    ' ',
+    { className: 'token-command', text: 'codex' },
+    ' ',
+    { className: 'token-flag', text: '--model' },
+    ' ',
+    { className: 'token-argument', text: '已开通模型ID' },
+  ],
+];
+
+const ProviderVisual = () => (
+  <div className='model-globe' aria-label='NavtoAI 多模型网络地球仪'>
+    <div className='globe-stage'>
+      <div className='globe-canvas-shell'>
+        <ModelGlobe />
+      </div>
+
+      {globeLabels.map((label) => (
+        <div className={`globe-label ${label.className}`} key={label.title}>
+          <span />
+          <strong>{label.title}</strong>
+          <small>{label.body}</small>
+        </div>
+      ))}
+
+      <p className='globe-hint'>拖动旋转</p>
+    </div>
+  </div>
+);
+
+const LineIcon = ({ Icon }) => (
+  <span className='line-icon'>
+    <Icon size={20} strokeWidth={1.8} />
+  </span>
+);
+
+const HighlightedTerminal = () => (
+  <pre aria-label='NavtoAI API terminal setup'>
+    <code className='terminal-code'>
+      {terminalLines.map((line, lineIndex) => (
+        <span className='terminal-line' key={`terminal-line-${lineIndex}`}>
+          {line.map((part, partIndex) =>
+            typeof part === 'string' ? (
+              <React.Fragment key={`terminal-text-${lineIndex}-${partIndex}`}>
+                {part}
+              </React.Fragment>
+            ) : (
+              <span
+                className={part.className}
+                key={`terminal-token-${lineIndex}-${partIndex}`}
+              >
+                {part.text}
+              </span>
+            ),
+          )}
+        </span>
+      ))}
+    </code>
+  </pre>
+);
 
 const Home = () => {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const [statusState] = useContext(StatusContext);
   const actualTheme = useActualTheme();
   const [homePageContentLoaded, setHomePageContentLoaded] = useState(false);
-  const [homePageContent, setHomePageContent] = useState('');
+  const [homePageContent, setHomePageContent] = useState(
+    () => localStorage.getItem('home_page_content') || '',
+  );
   const [noticeVisible, setNoticeVisible] = useState(false);
+  const customHomeIframeRef = useRef(null);
   const isMobile = useIsMobile();
-  const isDemoSiteMode = statusState?.status?.demo_site_enabled || false;
-  const docsLink = statusState?.status?.docs_link || '';
-  const serverAddress =
-    statusState?.status?.server_address || `${window.location.origin}`;
-  const endpointItems = API_ENDPOINTS.map((e) => ({ value: e }));
-  const [endpointIndex, setEndpointIndex] = useState(0);
-  const isChinese = i18n.language.startsWith('zh');
+  const isLocalPreview =
+    import.meta.env.DEV &&
+    ['127.0.0.1', 'localhost'].includes(window.location.hostname);
 
-  const displayHomePageContent = async () => {
-    setHomePageContent(localStorage.getItem('home_page_content') || '');
-    const res = await API.get('/api/home_page_content');
-    const { success, message, data } = res.data;
-    if (success) {
-      let content = data;
-      if (!data.startsWith('https://')) {
-        content = marked.parse(data);
-      }
-      setHomePageContent(content);
-      localStorage.setItem('home_page_content', content);
+  const displayBrandName = 'NavtoAI';
+  const isSetupComplete = statusState?.status?.setup !== false;
+  const primaryLink = isSetupComplete ? '/console/token' : '/setup';
+  const primaryActionLabel = isSetupComplete ? '开始使用' : '完成初始化';
 
-      // 如果内容是 URL，则发送主题模式
-      if (data.startsWith('https://')) {
-        const iframe = document.querySelector('iframe');
-        if (iframe) {
-          iframe.onload = () => {
-            iframe.contentWindow.postMessage({ themeMode: actualTheme }, '*');
-            iframe.contentWindow.postMessage({ lang: i18n.language }, '*');
-          };
-        }
-      }
-    } else {
-      showError(message);
-      setHomePageContent('加载首页内容失败...');
-    }
-    setHomePageContentLoaded(true);
+  const docsLink = statusState?.status?.docs_link || '#quick-start';
+
+  const postIframePreferences = () => {
+    const iframe = customHomeIframeRef.current;
+    if (!iframe?.contentWindow) return;
+    iframe.contentWindow.postMessage({ themeMode: actualTheme }, '*');
+    iframe.contentWindow.postMessage({ lang: i18n.language }, '*');
   };
 
-  const handleCopyBaseURL = async () => {
-    const ok = await copy(serverAddress);
-    if (ok) {
-      showSuccess(t('已复制到剪切板'));
+  const displayHomePageContent = async () => {
+    try {
+      const res = await API.get('/api/home_page_content', {
+        skipErrorHandler: true,
+      });
+      const { success, data } = res.data;
+      if (success) {
+        let content = data;
+        if (!data.startsWith('https://')) {
+          content = marked.parse(data);
+        }
+        setHomePageContent(content);
+        localStorage.setItem('home_page_content', content);
+      } else {
+        setHomePageContent('');
+      }
+    } catch {
+      if (!homePageContent) {
+        setHomePageContent('');
+      }
+    } finally {
+      setHomePageContentLoaded(true);
     }
   };
 
   useEffect(() => {
+    if (isLocalPreview) return;
+
     const checkNoticeAndShow = async () => {
       const lastCloseDate = localStorage.getItem('notice_close_date');
       const today = new Date().toDateString();
       if (lastCloseDate !== today) {
         try {
-          const res = await API.get('/api/notice');
+          const res = await API.get('/api/notice', {
+            skipErrorHandler: true,
+          });
           const { success, data } = res.data;
           if (success && data && data.trim() !== '') {
             setNoticeVisible(true);
           }
-        } catch (error) {
-          console.error('获取公告失败:', error);
+        } catch {
+          // Ignore notice failures on the public homepage.
         }
       }
     };
 
     checkNoticeAndShow();
-  }, []);
+  }, [isLocalPreview]);
 
   useEffect(() => {
+    if (isLocalPreview) {
+      setHomePageContent('');
+      setHomePageContentLoaded(true);
+      return;
+    }
+
     displayHomePageContent().then();
-  }, []);
+  }, [isLocalPreview]);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setEndpointIndex((prev) => (prev + 1) % endpointItems.length);
-    }, 3000);
-    return () => clearInterval(timer);
-  }, [endpointItems.length]);
+    if (homePageContentLoaded && homePageContent === '') {
+      document.title = 'NavtoAI API';
+    }
+  }, [homePageContent, homePageContentLoaded]);
+
+  useEffect(() => {
+    if (homePageContent.startsWith('https://')) {
+      postIframePreferences();
+    }
+  }, [actualTheme, homePageContent, i18n.language]);
+
+  if (homePageContentLoaded && homePageContent !== '') {
+    return (
+      <div className='overflow-x-hidden w-full'>
+        <NoticeModal
+          visible={noticeVisible}
+          onClose={() => setNoticeVisible(false)}
+          isMobile={isMobile}
+        />
+        {homePageContent.startsWith('https://') ? (
+          <iframe
+            ref={customHomeIframeRef}
+            src={homePageContent}
+            title='Custom home page content'
+            className='w-full h-screen border-none'
+            onLoad={postIframePreferences}
+          />
+        ) : (
+          <div
+            className='mt-[60px]'
+            dangerouslySetInnerHTML={{ __html: homePageContent }}
+          />
+        )}
+      </div>
+    );
+  }
+
+  if (!homePageContentLoaded) {
+    return (
+      <div className='navto-site navto-site-loading'>
+        <NoticeModal
+          visible={noticeVisible}
+          onClose={() => setNoticeVisible(false)}
+          isMobile={isMobile}
+        />
+      </div>
+    );
+  }
 
   return (
-    <div className='w-full overflow-x-hidden'>
+    <main className='navto-site' id='top'>
       <NoticeModal
         visible={noticeVisible}
         onClose={() => setNoticeVisible(false)}
         isMobile={isMobile}
       />
-      {homePageContentLoaded && homePageContent === '' ? (
-        <div className='w-full overflow-x-hidden'>
-          {/* Banner 部分 */}
-          <div className='w-full border-b border-semi-color-border min-h-[500px] md:min-h-[600px] lg:min-h-[700px] relative overflow-x-hidden'>
-            {/* 背景模糊晕染球 */}
-            <div className='blur-ball blur-ball-indigo' />
-            <div className='blur-ball blur-ball-teal' />
-            <div className='flex items-center justify-center h-full px-4 py-20 md:py-24 lg:py-32 mt-10'>
-              {/* 居中内容区 */}
-              <div className='flex flex-col items-center justify-center text-center max-w-4xl mx-auto'>
-                <div className='flex flex-col items-center justify-center mb-6 md:mb-8'>
-                  <h1
-                    className={`text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-semi-color-text-0 leading-tight ${isChinese ? 'tracking-wide md:tracking-wider' : ''}`}
-                  >
-                    <>
-                      {t('统一的')}
-                      <br />
-                      <span className='shine-text'>{t('大模型接口网关')}</span>
-                    </>
-                  </h1>
-                  <p className='text-base md:text-lg lg:text-xl text-semi-color-text-1 mt-4 md:mt-6 max-w-xl'>
-                    {t('更好的价格，更好的稳定性，只需要将模型基址替换为：')}
-                  </p>
-                  {/* BASE URL 与端点选择 */}
-                  <div className='flex flex-col md:flex-row items-center justify-center gap-4 w-full mt-4 md:mt-6 max-w-md'>
-                    <Input
-                      readonly
-                      value={serverAddress}
-                      className='flex-1 !rounded-full'
-                      size={isMobile ? 'default' : 'large'}
-                      suffix={
-                        <div className='flex items-center gap-2'>
-                          <ScrollList
-                            bodyHeight={32}
-                            style={{ border: 'unset', boxShadow: 'unset' }}
-                          >
-                            <ScrollItem
-                              mode='wheel'
-                              cycled={true}
-                              list={endpointItems}
-                              selectedIndex={endpointIndex}
-                              onSelect={({ index }) => setEndpointIndex(index)}
-                            />
-                          </ScrollList>
-                          <Button
-                            type='primary'
-                            onClick={handleCopyBaseURL}
-                            icon={<IconCopy />}
-                            className='!rounded-full'
-                          />
-                        </div>
-                      }
-                    />
-                  </div>
-                </div>
 
-                {/* 操作按钮 */}
-                <div className='flex flex-row gap-4 justify-center items-center'>
-                  <Link to='/console'>
-                    <Button
-                      theme='solid'
-                      type='primary'
-                      size={isMobile ? 'default' : 'large'}
-                      className='!rounded-3xl px-8 py-2'
-                      icon={<IconPlay />}
-                    >
-                      {t('获取密钥')}
-                    </Button>
-                  </Link>
-                  {isDemoSiteMode && statusState?.status?.version ? (
-                    <Button
-                      size={isMobile ? 'default' : 'large'}
-                      className='flex items-center !rounded-3xl px-6 py-2'
-                      icon={<IconGithubLogo />}
-                      onClick={() =>
-                        window.open(
-                          'https://github.com/QuantumNous/new-api',
-                          '_blank',
-                        )
-                      }
-                    >
-                      {statusState.status.version}
-                    </Button>
-                  ) : (
-                    docsLink && (
-                      <Button
-                        size={isMobile ? 'default' : 'large'}
-                        className='flex items-center !rounded-3xl px-6 py-2'
-                        icon={<IconFile />}
-                        onClick={() => window.open(docsLink, '_blank')}
-                      >
-                        {t('文档')}
-                      </Button>
-                    )
-                  )}
-                </div>
+      <header className='site-header'>
+        <div className='site-container nav-inner'>
+          <Link
+            className='brand'
+            to='/'
+            aria-label={`${displayBrandName} 首页`}
+          >
+            <span className='brand-mark' aria-hidden='true'>
+              <img src='/navtoai-logo.svg' alt='' />
+            </span>
+            <span>{displayBrandName}</span>
+          </Link>
 
-                {/* 框架兼容性图标 */}
-                <div className='mt-12 md:mt-16 lg:mt-20 w-full'>
-                  <div className='flex items-center mb-6 md:mb-8 justify-center'>
-                    <Text
-                      type='tertiary'
-                      className='text-lg md:text-xl lg:text-2xl font-light'
-                    >
-                      {t('支持众多的大模型供应商')}
-                    </Text>
-                  </div>
-                  <div className='flex flex-wrap items-center justify-center gap-3 sm:gap-4 md:gap-6 lg:gap-8 max-w-5xl mx-auto px-4'>
-                    <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex items-center justify-center'>
-                      <Moonshot size={40} />
-                    </div>
-                    <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex items-center justify-center'>
-                      <OpenAI size={40} />
-                    </div>
-                    <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex items-center justify-center'>
-                      <XAI size={40} />
-                    </div>
-                    <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex items-center justify-center'>
-                      <Zhipu.Color size={40} />
-                    </div>
-                    <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex items-center justify-center'>
-                      <Volcengine.Color size={40} />
-                    </div>
-                    <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex items-center justify-center'>
-                      <Cohere.Color size={40} />
-                    </div>
-                    <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex items-center justify-center'>
-                      <Claude.Color size={40} />
-                    </div>
-                    <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex items-center justify-center'>
-                      <Gemini.Color size={40} />
-                    </div>
-                    <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex items-center justify-center'>
-                      <Suno size={40} />
-                    </div>
-                    <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex items-center justify-center'>
-                      <Minimax.Color size={40} />
-                    </div>
-                    <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex items-center justify-center'>
-                      <Wenxin.Color size={40} />
-                    </div>
-                    <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex items-center justify-center'>
-                      <Spark.Color size={40} />
-                    </div>
-                    <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex items-center justify-center'>
-                      <Qingyan.Color size={40} />
-                    </div>
-                    <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex items-center justify-center'>
-                      <DeepSeek.Color size={40} />
-                    </div>
-                    <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex items-center justify-center'>
-                      <Qwen.Color size={40} />
-                    </div>
-                    <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex items-center justify-center'>
-                      <Midjourney size={40} />
-                    </div>
-                    <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex items-center justify-center'>
-                      <Grok size={40} />
-                    </div>
-                    <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex items-center justify-center'>
-                      <AzureAI.Color size={40} />
-                    </div>
-                    <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex items-center justify-center'>
-                      <Hunyuan.Color size={40} />
-                    </div>
-                    <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex items-center justify-center'>
-                      <Xinference.Color size={40} />
-                    </div>
-                    <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex items-center justify-center'>
-                      <Typography.Text className='!text-lg sm:!text-xl md:!text-2xl lg:!text-3xl font-bold'>
-                        30+
-                      </Typography.Text>
-                    </div>
-                  </div>
-                </div>
-              </div>
+          <nav className='site-nav' aria-label='主导航'>
+            {navItems.map((item) =>
+              item.href.startsWith('#') ? (
+                <a key={item.label} href={item.href}>
+                  {item.label}
+                </a>
+              ) : (
+                <Link key={item.label} to={item.href}>
+                  {item.label}
+                </Link>
+              ),
+            )}
+          </nav>
+
+          <div className='nav-actions'>
+            <button className='icon-button' type='button' aria-label='通知'>
+              <Bell size={18} />
+            </button>
+            <button className='icon-button' type='button' aria-label='切换主题'>
+              <Sun size={18} />
+            </button>
+            <button className='icon-button' type='button' aria-label='语言'>
+              <Languages size={18} />
+            </button>
+            <div className='language-popover' aria-label='语言选项'>
+              <button type='button'>
+                <span>简体中文</span>
+                <b>ZH</b>
+              </button>
+              <button type='button'>
+                <span>English</span>
+                <b>EN</b>
+              </button>
             </div>
+            <Link className='login-link' to='/login'>
+              登录
+            </Link>
+            <Link className='orange-button nav-register' to='/register'>
+              注册
+            </Link>
           </div>
         </div>
-      ) : (
-        <div className='overflow-x-hidden w-full'>
-          {homePageContent.startsWith('https://') ? (
-            <iframe
-              src={homePageContent}
-              className='w-full h-screen border-none'
-            />
-          ) : (
-            <div
-              className='mt-[60px]'
-              dangerouslySetInnerHTML={{ __html: homePageContent }}
-            />
-          )}
+      </header>
+
+      <section className='hero-section'>
+        <div className='site-container hero-grid'>
+          <div className='hero-copy'>
+            <p className='eyebrow'>多模型统一网关</p>
+            <h1>
+              <span>一站式AI</span>
+              <span>大模型网关</span>
+            </h1>
+            <p className='hero-lead'>
+              {displayBrandName}{' '}
+              面向团队和开发者提供统一的模型网关入口，用一套控制台处理鉴权、额度、计费、日志和多端同步。
+            </p>
+            <div className='hero-actions'>
+              <Link className='orange-button' to={primaryLink}>
+                {primaryActionLabel}
+                <ArrowRight size={18} />
+              </Link>
+              <a className='ghost-button' href={docsLink}>
+                文档
+              </a>
+            </div>
+          </div>
+
+          <ProviderVisual />
         </div>
-      )}
-    </div>
+      </section>
+
+      <section className='provider-strip'>
+        <div className='site-container provider-inner'>
+          <p>兼容常见 API 接入习惯，统一管理模型调用、额度和日志</p>
+          <div>
+            <span>CHAT</span>
+            <span>CODE</span>
+            <span>IMAGE</span>
+            <span>AWS BEDROCK</span>
+          </div>
+        </div>
+      </section>
+
+      <section className='site-section quick-section' id='quick-start'>
+        <div className='site-container two-column'>
+          <div className='section-copy'>
+            <p className='section-kicker'>QUICK START</p>
+            <h2>几分钟接入常用 AI 工具</h2>
+            <p>
+              把 Base URL 和 API Key 指向 NavtoAI，即可让常见开发工具和兼容 SDK
+              走同一个网关；具体模型以控制台已开通为准。
+            </p>
+            <div className='feature-list'>
+              <article>
+                <LineIcon Icon={Code2} />
+                <div>
+                  <h3>兼容主流调用习惯</h3>
+                  <p>
+                    保留常见接口环境变量和请求格式，迁移成本更低；正式调用以控制台已开通模型为准。
+                  </p>
+                </div>
+              </article>
+              <article>
+                <LineIcon Icon={Route} />
+                <div>
+                  <h3>统一分发与计费</h3>
+                  <p>
+                    模型选择、额度扣减、请求日志和异常排查都收敛到同一个控制面。
+                  </p>
+                </div>
+              </article>
+            </div>
+            <div className='hero-actions compact'>
+              <a className='orange-button' href={docsLink}>
+                查看 API 文档
+              </a>
+              <Link className='ghost-button' to='/console/playground'>
+                打开 Playground
+              </Link>
+            </div>
+          </div>
+
+          <div className='terminal-card'>
+            <div className='terminal-top'>
+              <div className='traffic'>
+                <span />
+                <span />
+                <span />
+              </div>
+              <strong>TERMINAL - ZSH</strong>
+              <em>Chat</em>
+              <em>Code</em>
+            </div>
+            <HighlightedTerminal />
+          </div>
+        </div>
+      </section>
+
+      <section className='site-section trust-section'>
+        <div className='site-container'>
+          <div className='section-heading split'>
+            <div>
+              <p className='section-kicker'>REAL OPERATIONS</p>
+              <h2>NavtoAI，专注 AI 网关与企业级模型接入</h2>
+              <p>
+                {displayBrandName}{' '}
+                打造统一的大模型中转与管理平台，为个人开发者、团队和企业客户提供模型接入、Token
+                管理、渠道调度、用量监控、价格核算和客户支持等一体化服务。
+              </p>
+            </div>
+            <a className='ghost-button' href={docsLink}>
+              查看接入文档
+            </a>
+          </div>
+
+          <div className='company-intro'>
+            {operationCards.map((item) => (
+              <article key={item.title}>
+                <span>{item.title}</span>
+                <p>{item.body}</p>
+              </article>
+            ))}
+          </div>
+
+          <div
+            className='trust-gallery'
+            aria-label='NavtoAI 真实办公与交付现场'
+          >
+            <article className='trust-photo trust-photo-large'>
+              <img
+                src='/static/trust/office-wide-02.webp'
+                alt='AI 网关团队办公区全景，成员正在处理模型网关和客户接入工作'
+                loading='lazy'
+                decoding='async'
+              />
+              <div className='trust-caption'>
+                <span>办公现场</span>
+                <strong>稳定维护 AI 网关与模型渠道</strong>
+              </div>
+            </article>
+            <article className='trust-photo'>
+              <img
+                src='/static/trust/frontdesk-navtoai-generated.png'
+                alt='办公区前台与公司接待空间'
+                loading='lazy'
+                decoding='async'
+              />
+              <div className='trust-caption'>
+                <span>公司前台</span>
+                <strong>线下办公空间与客户接待区域</strong>
+              </div>
+            </article>
+            <article className='trust-photo'>
+              <img
+                src='/static/trust/meeting-room-discussion.webp'
+                alt='三位成员在会议室讨论 AI 网关和 Token 中转平台架构方案'
+                loading='lazy'
+                decoding='async'
+              />
+              <div className='trust-caption'>
+                <span>方案会议</span>
+                <strong>围绕接入流程、路由策略和客户交付协作</strong>
+              </div>
+            </article>
+            <article className='trust-photo trust-photo-wide'>
+              <img
+                src='/static/trust/customer-service-desk.webp'
+                alt='客服人员坐在屏幕前处理客户工单和 Token 配置问题'
+                loading='lazy'
+                decoding='async'
+              />
+              <div className='trust-caption'>
+                <span>客户支持</span>
+                <strong>工单、配额、Token 配置和异常请求持续跟进</strong>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section className='site-section core-section' id='models'>
+        <div className='site-container'>
+          <p className='section-kicker'>CORE CAPABILITIES</p>
+          <div className='section-heading'>
+            <h2>从 API 接入到本地开发工作流</h2>
+            <p>
+              统一入口负责模型分发、密钥额度、价格透明、日志排障，也提供
+              Playground 和提示词库帮助用户直接验证效果。
+            </p>
+          </div>
+          <div className='ability-grid'>
+            {capabilities.map(({ title, body, Icon }) => (
+              <article key={title}>
+                <LineIcon Icon={Icon} />
+                <h3>{title}</h3>
+                <p>{body}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className='site-section prompt-section'>
+        <div className='site-container prompt-layout'>
+          <div className='section-copy'>
+            <p className='section-kicker'>IMAGE PROMPTS</p>
+            <h2>从提示词案例开始生成图片</h2>
+            <p>
+              提示词库收录社区案例，支持按分类搜索、复制 prompt，并可直接带入
+              Playground 试图。
+            </p>
+            <div className='hero-actions compact'>
+              <Link
+                className='orange-button'
+                to='/console/playground?mode=image'
+              >
+                浏览提示词库
+              </Link>
+              <Link
+                className='ghost-button'
+                to='/console/playground?mode=image'
+              >
+                打开生图试验场
+              </Link>
+            </div>
+          </div>
+          <div className='prompt-cards'>
+            {promptCards.map(({ title, body, code, Icon }) => (
+              <article key={title}>
+                <LineIcon Icon={Icon} />
+                <h3>{title}</h3>
+                <p>{body}</p>
+                <code>{code}</code>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className='site-section affiliate-section' id='agent'>
+        <div className='site-container affiliate-layout'>
+          <div className='section-copy'>
+            <p className='section-kicker'>AGENT BENEFITS</p>
+            <h2>代理权益与成长支持</h2>
+            <p>
+              {displayBrandName}{' '}
+              为代理提供项目介绍、产品培训、推广素材和客户承接支持。适合愿意学习、愿意执行、愿意通过内容和私域长期积累客户的人。
+            </p>
+            <div className='hero-actions compact'>
+              <Link className='orange-button' to='/register'>
+                了解代理权益
+              </Link>
+            </div>
+          </div>
+          <div className='affiliate-list'>
+            {agentItems.map(({ title, body, Icon }) => (
+              <article key={title}>
+                <LineIcon Icon={Icon} />
+                <div>
+                  <h3>{title}</h3>
+                  <p>{body}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+          <aside className='commission-card'>
+            <div className='commission-head'>
+              <p>Agent rights</p>
+              <LineIcon Icon={BadgeCheck} />
+            </div>
+            <h3>99 启航代理权益</h3>
+            <dl>
+              <dt>项目培训</dt>
+              <dd>直播课讲解</dd>
+              <dt>素材支持</dt>
+              <dd>持续更新</dd>
+              <dt>客户支持</dt>
+              <dd>团队协助</dd>
+            </dl>
+            <div className='ledger'>
+              <strong>RIGHTS SNAPSHOT</strong>
+              <p>
+                <span>资料</span>
+                <b>项目介绍与话术</b>
+              </p>
+              <p>
+                <span>执行</span>
+                <b>7 天启动任务</b>
+              </p>
+              <p>
+                <span>支持</span>
+                <b>社群与团队协助</b>
+              </p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section className='site-section pricing-preview' id='pricing'>
+        <div className='site-container'>
+          <div className='section-heading split'>
+            <div>
+              <p className='section-kicker'>PRICING</p>
+              <h2>价格以控制台实际开通为准</h2>
+              <p>
+                模型供应正在按批次接入，官网不展示未确认的具体模型单价。客户注册后，以控制台显示、客服确认或团队价格表为准。
+              </p>
+            </div>
+            <a className='ghost-button' href='#pricing'>
+              查看价格说明
+            </a>
+          </div>
+          <div className='pricing-table'>
+            <div className='pricing-tabs'>
+              <strong>计费说明</strong>
+              <span>公开口径</span>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>对象</th>
+                  <th>方式</th>
+                  <th>说明</th>
+                </tr>
+              </thead>
+              <tbody>
+                {pricingRows.map(([target, method, description]) => (
+                  <tr key={target}>
+                    <td>{target}</td>
+                    <td>{method}</td>
+                    <td>{description}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section className='next-step'>
+        <div className='site-container next-card'>
+          <p className='section-kicker'>NEXT STEP</p>
+          <h2>立即开始使用 {displayBrandName}</h2>
+          <p>
+            接入模型、管理密钥、追踪消耗，并把代理增长和运营能力统一纳入控制台。
+          </p>
+          <div className='hero-actions compact center'>
+            <Link className='orange-button' to='/register'>
+              注册 {displayBrandName}
+            </Link>
+            <Link className='ghost-button' to='/login'>
+              登录控制台
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <footer className='site-footer'>
+        <div className='site-container footer-inner'>
+          <div>
+            <strong>{displayBrandName}</strong>
+            <p>
+              Unified gateway, quota management, and logging for AI
+              applications, teams, and channels.
+            </p>
+          </div>
+          <nav>
+            <a href='#models'>模型状态</a>
+            <a href='#pricing'>隐私</a>
+            <a href='#pricing'>条款</a>
+            <a href='#pricing'>退款</a>
+            <Link to='/login'>控制台</Link>
+          </nav>
+        </div>
+      </footer>
+    </main>
   );
 };
 

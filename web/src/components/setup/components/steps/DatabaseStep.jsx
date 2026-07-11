@@ -18,7 +18,13 @@ For commercial licensing, please contact support@quantumnous.com
 */
 
 import React from 'react';
-import { Banner } from '@douyinfe/semi-ui';
+import {
+  CircleCheck,
+  Database,
+  HardDrive,
+  Server,
+  TriangleAlert,
+} from 'lucide-react';
 
 /**
  * 数据库检查步骤组件
@@ -28,99 +34,94 @@ const DatabaseStep = ({ setupStatus, renderNavigationButtons, t }) => {
   // 检测是否在 Electron 环境中运行
   const isElectron =
     typeof window !== 'undefined' && window.electron?.isElectron;
+  const databaseType = setupStatus.database_type;
+  const databaseLabel =
+    databaseType === 'sqlite'
+      ? 'SQLite'
+      : databaseType === 'mysql'
+        ? 'MySQL'
+        : databaseType === 'postgres'
+          ? 'PostgreSQL'
+          : t('检测中');
+  const isProductionDatabase =
+    databaseType === 'postgres' || databaseType === 'mysql';
 
   return (
     <>
-      {/* 数据库警告 */}
-      {setupStatus.database_type === 'sqlite' && (
-        <Banner
-          type={isElectron ? 'info' : 'warning'}
-          closeIcon={null}
-          title={isElectron ? t('本地数据存储') : t('数据库警告')}
-          description={
-            isElectron ? (
-              <div>
-                <p>
-                  {t(
-                    '您的数据将安全地存储在本地计算机上。所有配置、用户信息和使用记录都会自动保存，关闭应用后不会丢失。',
-                  )}
-                </p>
-                {window.electron?.dataDir && (
-                  <p className='mt-2 text-sm opacity-80'>
-                    <strong>{t('数据存储位置：')}</strong>
-                    <br />
-                    <code className='bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded'>
-                      {window.electron.dataDir}
-                    </code>
-                  </p>
-                )}
-                <p className='mt-2 text-sm opacity-70'>
-                  💡 {t('提示：如需备份数据，只需复制上述目录即可')}
-                </p>
-              </div>
+      <div
+        className={`setup-db-status ${
+          isProductionDatabase ? 'is-ready' : 'is-warning'
+        }`}
+      >
+        <div className='setup-db-status-main'>
+          <div className='setup-db-icon'>
+            {isProductionDatabase ? (
+              <Server size={24} />
             ) : (
-              <div>
-                <p>
-                  {t(
-                    '您正在使用 SQLite 数据库。如果您在容器环境中运行，请确保已正确设置数据库文件的持久化映射，否则容器重启后所有数据将丢失！',
+              <HardDrive size={24} />
+            )}
+          </div>
+          <div>
+            <span className='setup-field-label'>{t('检测到的数据库')}</span>
+            <h4>{databaseLabel}</h4>
+            <p>
+              {databaseType === 'postgres'
+                ? t(
+                    '已连接到生产 PostgreSQL，初始化数据会写入持久化关系型数据库。',
+                  )
+                : databaseType === 'mysql'
+                  ? t('已连接到 MySQL，适合生产环境持久化运行。')
+                  : isElectron
+                    ? t('当前使用本地 SQLite 存储，适合桌面端单机运行。')
+                    : t(
+                        '当前使用 SQLite。容器环境请确保数据库文件已映射到持久化存储。',
+                      )}
+            </p>
+          </div>
+        </div>
+        <div
+          className={`setup-db-badge ${
+            isProductionDatabase ? 'is-good' : 'is-caution'
+          }`}
+        >
+          {isProductionDatabase ? (
+            <CircleCheck size={16} />
+          ) : (
+            <TriangleAlert size={16} />
+          )}
+          {isProductionDatabase ? t('生产可用') : t('需要确认')}
+        </div>
+      </div>
+
+      {databaseType === 'sqlite' && (
+        <div className='setup-notice is-warning'>
+          <TriangleAlert size={18} />
+          <div>
+            <strong>
+              {isElectron ? t('本地数据存储') : t('请持久化数据库文件')}
+            </strong>
+            <p>
+              {isElectron
+                ? t('所有配置、用户和使用记录会保存到本机数据目录。')
+                : t(
+                    '如果这不是本地单机环境，请在容器重启前确认 SQLite 文件已经挂载到持久化存储。',
                   )}
-                </p>
-                <p className='mt-1'>
-                  <strong>
-                    {t(
-                      '建议在生产环境中使用 MySQL 或 PostgreSQL 数据库，或确保 SQLite 数据库文件已映射到宿主机的持久化存储。',
-                    )}
-                  </strong>
-                </p>
-              </div>
-            )
-          }
-          className='!rounded-lg'
-          fullMode={false}
-          bordered
-        />
+            </p>
+            {isElectron && window.electron?.dataDir && (
+              <code className='setup-data-dir'>{window.electron.dataDir}</code>
+            )}
+          </div>
+        </div>
       )}
 
-      {/* MySQL数据库提示 */}
-      {setupStatus.database_type === 'mysql' && (
-        <Banner
-          type='success'
-          closeIcon={null}
-          title={t('数据库信息')}
-          description={
-            <div>
-              <p>
-                {t(
-                  '您正在使用 MySQL 数据库。MySQL 是一个可靠的关系型数据库管理系统，适合生产环境使用。',
-                )}
-              </p>
-            </div>
-          }
-          className='!rounded-lg'
-          fullMode={false}
-          bordered
-        />
-      )}
-
-      {/* PostgreSQL数据库提示 */}
-      {setupStatus.database_type === 'postgres' && (
-        <Banner
-          type='success'
-          closeIcon={null}
-          title={t('数据库信息')}
-          description={
-            <div>
-              <p>
-                {t(
-                  '您正在使用 PostgreSQL 数据库。PostgreSQL 是一个功能强大的开源关系型数据库系统，提供了出色的可靠性和数据完整性，适合生产环境使用。',
-                )}
-              </p>
-            </div>
-          }
-          className='!rounded-lg'
-          fullMode={false}
-          bordered
-        />
+      {isProductionDatabase && (
+        <div className='setup-notice is-success'>
+          <Database size={18} />
+          <div>
+            <strong>{t('数据库连接正常')}</strong>
+            <p>{t('下一步将创建管理员账号，并写入首次运行所需的基础配置。')}</p>
+          </div>
+        </div>
       )}
       {renderNavigationButtons && renderNavigationButtons()}
     </>

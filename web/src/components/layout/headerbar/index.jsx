@@ -65,7 +65,7 @@ const HeaderBar = ({ onMobileMenuToggle, drawerOpen }) => {
   const { mainNavLinks } = useNavigation(t, docsLink, headerNavModules);
 
   return (
-    <header className='text-semi-color-text-0 sticky top-0 z-50 transition-colors duration-300 bg-white/75 dark:bg-zinc-900/75 backdrop-blur-lg'>
+    <header className='sticky top-0 z-50 border-b border-[var(--console-divider)] bg-[var(--console-bg)] text-[var(--console-text-strong)] transition-colors duration-300 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-100'>
       <NoticeModal
         visible={noticeVisible}
         onClose={handleNoticeClose}
@@ -74,8 +74,8 @@ const HeaderBar = ({ onMobileMenuToggle, drawerOpen }) => {
         unreadKeys={getUnreadKeys()}
       />
 
-      <div className='w-full px-2'>
-        <div className='flex items-center justify-between h-16'>
+      <div className='w-full px-3 sm:px-4'>
+        <div className='flex h-[var(--app-header-height)] items-center justify-between'>
           <div className='flex items-center'>
             <MobileMenuButton
               isConsoleRoute={isConsoleRoute}
@@ -87,8 +87,6 @@ const HeaderBar = ({ onMobileMenuToggle, drawerOpen }) => {
             />
 
             <HeaderLogo
-              isMobile={isMobile}
-              isConsoleRoute={isConsoleRoute}
               logo={logo}
               logoLoaded={logoLoaded}
               isLoading={isLoading}
@@ -99,13 +97,15 @@ const HeaderBar = ({ onMobileMenuToggle, drawerOpen }) => {
             />
           </div>
 
-          <Navigation
-            mainNavLinks={mainNavLinks}
-            isMobile={isMobile}
-            isLoading={isLoading}
-            userState={userState}
-            pricingRequireAuth={pricingRequireAuth}
-          />
+          {(!isMobile || !isConsoleRoute) && (
+            <Navigation
+              mainNavLinks={mainNavLinks}
+              isMobile={isMobile}
+              isLoading={isLoading}
+              userState={userState}
+              pricingRequireAuth={pricingRequireAuth}
+            />
+          )}
 
           <ActionButtons
             isNewYear={isNewYear}

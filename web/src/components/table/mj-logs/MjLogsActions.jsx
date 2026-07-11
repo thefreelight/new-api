@@ -21,7 +21,6 @@ import React from 'react';
 import { Skeleton, Typography } from '@douyinfe/semi-ui';
 import { useMinimumLoadingTime } from '../../../hooks/common/useMinimumLoadingTime';
 import { IconEyeOpened } from '@douyinfe/semi-icons';
-import CompactModeToggle from '../../common/ui/CompactModeToggle';
 
 const { Text } = Typography;
 
@@ -29,8 +28,6 @@ const MjLogsActions = ({
   loading,
   showBanner,
   isAdminUser,
-  compactMode,
-  setCompactMode,
   t,
 }) => {
   const showSkeleton = useMinimumLoadingTime(loading);
@@ -56,12 +53,6 @@ const MjLogsActions = ({
           </Text>
         </div>
       </Skeleton>
-
-      <CompactModeToggle
-        compactMode={compactMode}
-        setCompactMode={setCompactMode}
-        t={t}
-      />
     </div>
   );
 };

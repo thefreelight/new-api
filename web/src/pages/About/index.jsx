@@ -18,7 +18,7 @@ For commercial licensing, please contact support@quantumnous.com
 */
 
 import React, { useEffect, useState } from 'react';
-import { API, showError } from '../../helpers';
+import { API, getSystemName, showError } from '../../helpers';
 import { marked } from 'marked';
 import { Empty } from '@douyinfe/semi-ui';
 import {
@@ -26,12 +26,15 @@ import {
   IllustrationConstructionDark,
 } from '@douyinfe/semi-illustrations';
 import { useTranslation } from 'react-i18next';
+import ConsoleShell from '../../components/layout/ConsoleShell';
 
 const About = () => {
   const { t } = useTranslation();
   const [about, setAbout] = useState('');
   const [aboutLoaded, setAboutLoaded] = useState(false);
   const currentYear = new Date().getFullYear();
+  const systemName = getSystemName();
+  const displayBrandName = systemName === 'New API' ? 'NavtoAI' : systemName;
 
   const displayAbout = async () => {
     setAbout(localStorage.getItem('about') || '');
@@ -62,14 +65,14 @@ const About = () => {
   const customDescription = (
     <div style={{ textAlign: 'center' }}>
       <p>{t('可在设置页面设置关于内容，支持 HTML & Markdown')}</p>
-      {t('New API项目仓库地址：')}
+      <p>{displayBrandName} GitHub</p>
       <a
         href='https://github.com/QuantumNous/new-api'
         target='_blank'
         rel='noopener noreferrer'
         className='!text-semi-color-primary'
       >
-        https://github.com/QuantumNous/new-api
+        GitHub Repository
       </a>
       <p>
         <a
@@ -78,18 +81,10 @@ const About = () => {
           rel='noopener noreferrer'
           className='!text-semi-color-primary'
         >
-          NewAPI
+          {displayBrandName}
         </a>{' '}
         {t('© {{currentYear}}', { currentYear })}{' '}
-        <a
-          href='https://github.com/QuantumNous'
-          target='_blank'
-          rel='noopener noreferrer'
-          className='!text-semi-color-primary'
-        >
-          QuantumNous
-        </a>{' '}
-        {t('| 基于')}{' '}
+        <span className='!text-semi-color-primary'>NavtoAI</span> {t('| 基于')}{' '}
         <a
           href='https://github.com/songquanpeng/one-api/releases/tag/v0.5.4'
           target='_blank'
@@ -133,40 +128,47 @@ const About = () => {
   );
 
   return (
-    <div className='mt-[60px] px-2'>
+    <ConsoleShell wide>
       {aboutLoaded && about === '' ? (
-        <div className='flex justify-center items-center h-screen p-8'>
-          <Empty
-            image={
-              <IllustrationConstruction style={{ width: 150, height: 150 }} />
-            }
-            darkModeImage={
-              <IllustrationConstructionDark
-                style={{ width: 150, height: 150 }}
-              />
-            }
-            description={t('管理员暂时未设置任何关于内容')}
-            style={emptyStyle}
-          >
-            {customDescription}
-          </Empty>
+        <div className='rounded-lg border border-[#dfe3e8] bg-[#fbfbf9] px-6 py-14 shadow-[0_24px_90px_rgba(17,23,34,0.06)]'>
+          <div className='flex min-h-[60vh] items-center justify-center p-4 sm:p-8'>
+            <Empty
+              image={
+                <IllustrationConstruction style={{ width: 150, height: 150 }} />
+              }
+              darkModeImage={
+                <IllustrationConstructionDark
+                  style={{ width: 150, height: 150 }}
+                />
+              }
+              description={t('管理员暂时未设置任何关于内容')}
+              style={emptyStyle}
+            >
+              {customDescription}
+            </Empty>
+          </div>
+        </div>
+      ) : about.startsWith('https://') ? (
+        <div className='overflow-hidden rounded-lg border border-[#dfe3e8] bg-[#fbfbf9] shadow-[0_24px_90px_rgba(17,23,34,0.06)]'>
+          <iframe
+            src={about}
+            title={t('关于内容')}
+            style={{
+              width: '100%',
+              height: 'calc(100vh - 140px)',
+              border: 'none',
+            }}
+          />
         </div>
       ) : (
-        <>
-          {about.startsWith('https://') ? (
-            <iframe
-              src={about}
-              style={{ width: '100%', height: '100vh', border: 'none' }}
-            />
-          ) : (
-            <div
-              style={{ fontSize: 'larger' }}
-              dangerouslySetInnerHTML={{ __html: about }}
-            ></div>
-          )}
-        </>
+        <article className='rounded-lg border border-[#dfe3e8] bg-[#fbfbf9] px-6 py-10 shadow-[0_24px_90px_rgba(17,23,34,0.06)] sm:px-10'>
+          <div
+            className='prose prose-neutral max-w-none text-[#171d27] prose-headings:tracking-[-0.03em] prose-a:text-[#ff5a1f] prose-strong:text-[#111722]'
+            dangerouslySetInnerHTML={{ __html: about }}
+          ></div>
+        </article>
       )}
-    </div>
+    </ConsoleShell>
   );
 };
 

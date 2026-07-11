@@ -18,7 +18,7 @@ For commercial licensing, please contact support@quantumnous.com
 */
 
 import React, { useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Avatar, Button, Dropdown, Typography } from '@douyinfe/semi-ui';
 import { ChevronDown } from 'lucide-react';
 import {
@@ -40,6 +40,22 @@ const UserArea = ({
   t,
 }) => {
   const dropdownRef = useRef(null);
+  const location = useLocation();
+  const isLoginRoute = location.pathname === '/login';
+  const isRegisterRoute = location.pathname === '/register';
+  const isResetRoute =
+    location.pathname === '/reset' || location.pathname === '/user/reset';
+  const isAuthRoute = isLoginRoute || isRegisterRoute || isResetRoute;
+  const dropdownMenuClassName =
+    '!rounded-lg !border !border-[var(--console-border)] !bg-white !p-1 !shadow-[0_18px_48px_rgba(24,24,20,0.08)]';
+  const dropdownItemClassName =
+    '!rounded-md !px-3 !py-2 !text-sm !font-medium !text-[var(--console-text)] transition-colors duration-150 hover:!bg-[var(--console-accent-soft)] hover:!text-[var(--console-text-strong)]';
+  const dropdownDangerItemClassName =
+    '!rounded-md !px-3 !py-2 !text-sm !font-medium !text-[#8a3d3d] transition-colors duration-150 hover:!bg-[#f8eceb] hover:!text-[#6f2525]';
+  const dropdownIconClassName = 'text-[var(--console-text-muted)]';
+  const guestButtonBaseClassName =
+    'flex h-9 items-center justify-center !rounded-md !px-3 text-sm font-medium transition duration-200';
+  const authButtonTextClassName = '!text-sm !text-inherit';
   if (isLoading) {
     return (
       <SkeletonWrapper
@@ -58,17 +74,17 @@ const UserArea = ({
           position='bottomRight'
           getPopupContainer={() => dropdownRef.current}
           render={
-            <Dropdown.Menu className='!bg-semi-color-bg-overlay !border-semi-color-border !shadow-lg !rounded-lg dark:!bg-gray-700 dark:!border-gray-600'>
+            <Dropdown.Menu className={dropdownMenuClassName}>
               <Dropdown.Item
                 onClick={() => {
                   navigate('/console/personal');
                 }}
-                className='!px-3 !py-1.5 !text-sm !text-semi-color-text-0 hover:!bg-semi-color-fill-1 dark:!text-gray-200 dark:hover:!bg-blue-500 dark:hover:!text-white'
+                className={dropdownItemClassName}
               >
                 <div className='flex items-center gap-2'>
                   <IconUserSetting
                     size='small'
-                    className='text-gray-500 dark:text-gray-400'
+                    className={dropdownIconClassName}
                   />
                   <span>{t('个人设置')}</span>
                 </div>
@@ -77,13 +93,10 @@ const UserArea = ({
                 onClick={() => {
                   navigate('/console/token');
                 }}
-                className='!px-3 !py-1.5 !text-sm !text-semi-color-text-0 hover:!bg-semi-color-fill-1 dark:!text-gray-200 dark:hover:!bg-blue-500 dark:hover:!text-white'
+                className={dropdownItemClassName}
               >
                 <div className='flex items-center gap-2'>
-                  <IconKey
-                    size='small'
-                    className='text-gray-500 dark:text-gray-400'
-                  />
+                  <IconKey size='small' className={dropdownIconClassName} />
                   <span>{t('令牌管理')}</span>
                 </div>
               </Dropdown.Item>
@@ -91,25 +104,22 @@ const UserArea = ({
                 onClick={() => {
                   navigate('/console/topup');
                 }}
-                className='!px-3 !py-1.5 !text-sm !text-semi-color-text-0 hover:!bg-semi-color-fill-1 dark:!text-gray-200 dark:hover:!bg-blue-500 dark:hover:!text-white'
+                className={dropdownItemClassName}
               >
                 <div className='flex items-center gap-2'>
                   <IconCreditCard
                     size='small'
-                    className='text-gray-500 dark:text-gray-400'
+                    className={dropdownIconClassName}
                   />
                   <span>{t('钱包管理')}</span>
                 </div>
               </Dropdown.Item>
               <Dropdown.Item
                 onClick={logout}
-                className='!px-3 !py-1.5 !text-sm !text-semi-color-text-0 hover:!bg-semi-color-fill-1 dark:!text-gray-200 dark:hover:!bg-red-500 dark:hover:!text-white'
+                className={dropdownDangerItemClassName}
               >
                 <div className='flex items-center gap-2'>
-                  <IconExit
-                    size='small'
-                    className='text-gray-500 dark:text-gray-400'
-                  />
+                  <IconExit size='small' className='text-[#b26b6b]' />
                   <span>{t('退出')}</span>
                 </div>
               </Dropdown.Item>
@@ -119,75 +129,61 @@ const UserArea = ({
           <Button
             theme='borderless'
             type='tertiary'
-            className='flex items-center gap-1.5 !p-1 !rounded-full hover:!bg-semi-color-fill-1 dark:hover:!bg-gray-700 !bg-semi-color-fill-0 dark:!bg-semi-color-fill-1 dark:hover:!bg-semi-color-fill-2'
+            className='flex !h-8 items-center gap-1.5 !rounded-md border border-[var(--console-border)] !bg-white !px-1.5 !py-1 shadow-none transition-colors duration-150 hover:!border-[var(--console-border-strong)] hover:!bg-[var(--console-panel-soft)]'
           >
             <Avatar
               size='extra-small'
               color={stringToColor(userState.user.username)}
-              className='mr-1'
+              className='mr-0.5'
             >
               {userState.user.username[0].toUpperCase()}
             </Avatar>
-            <span className='hidden md:inline'>
-              <Typography.Text className='!text-xs !font-medium !text-semi-color-text-1 dark:!text-gray-300 mr-1'>
+            <span className='hidden max-w-[132px] md:inline'>
+              <Typography.Text className='mr-1 block truncate !text-xs !font-medium !text-[var(--console-text-muted)]'>
                 {userState.user.username}
               </Typography.Text>
             </span>
             <ChevronDown
               size={14}
-              className='text-xs text-semi-color-text-2 dark:text-gray-400'
+              className='text-[var(--console-text-muted)]'
             />
           </Button>
         </Dropdown>
       </div>
     );
   } else {
-    const showRegisterButton = !isSelfUseMode;
-
-    const commonSizingAndLayoutClass =
-      'flex items-center justify-center !py-[10px] !px-1.5';
-
-    const loginButtonSpecificStyling =
-      '!bg-semi-color-fill-0 dark:!bg-semi-color-fill-1 hover:!bg-semi-color-fill-1 dark:hover:!bg-gray-700 transition-colors';
-    let loginButtonClasses = `${commonSizingAndLayoutClass} ${loginButtonSpecificStyling}`;
-
-    let registerButtonClasses = `${commonSizingAndLayoutClass}`;
-
-    const loginButtonTextSpanClass =
-      '!text-xs !text-semi-color-text-1 dark:!text-gray-300 !p-1.5';
-    const registerButtonTextSpanClass = '!text-xs !text-white !p-1.5';
-
-    if (showRegisterButton) {
-      if (isMobile) {
-        loginButtonClasses += ' !rounded-full';
-      } else {
-        loginButtonClasses += ' !rounded-l-full !rounded-r-none';
-      }
-      registerButtonClasses += ' !rounded-r-full !rounded-l-none';
-    } else {
-      loginButtonClasses += ' !rounded-full';
+    if (isAuthRoute) {
+      return null;
     }
 
+    const showRegisterButton = !isSelfUseMode && !isRegisterRoute;
+    const showLoginButton = !isLoginRoute;
+
+    const loginButtonClasses = `${guestButtonBaseClassName} border border-[var(--console-border)] !bg-white !text-[var(--console-text)] hover:!border-[var(--console-border-strong)] hover:!bg-[var(--console-panel-soft)]`;
+    const registerButtonClasses = `${guestButtonBaseClassName} min-w-[72px] !bg-[var(--console-accent)] !text-white shadow-none hover:!bg-[var(--console-accent-strong)]`;
+
     return (
-      <div className='flex items-center'>
-        <Link to='/login' className='flex'>
-          <Button
-            theme='borderless'
-            type='tertiary'
-            className={loginButtonClasses}
-          >
-            <span className={loginButtonTextSpanClass}>{t('登录')}</span>
-          </Button>
-        </Link>
+      <div className='flex items-center gap-2'>
+        {showLoginButton && (
+          <Link to='/login' className='flex'>
+            <Button
+              theme='borderless'
+              type='tertiary'
+              className={loginButtonClasses}
+            >
+              <span className={authButtonTextClassName}>{t('登录')}</span>
+            </Button>
+          </Link>
+        )}
         {showRegisterButton && (
           <div className='hidden md:block'>
-            <Link to='/register' className='flex -ml-px'>
+            <Link to='/register' className='flex'>
               <Button
                 theme='solid'
                 type='primary'
                 className={registerButtonClasses}
               >
-                <span className={registerButtonTextSpanClass}>{t('注册')}</span>
+                <span className='!text-sm !text-white'>{t('注册')}</span>
               </Button>
             </Link>
           </div>

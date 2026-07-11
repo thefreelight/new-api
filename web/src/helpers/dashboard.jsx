@@ -18,7 +18,7 @@ For commercial licensing, please contact support@quantumnous.com
 */
 
 import React from 'react';
-import { Progress, Divider, Empty } from '@douyinfe/semi-ui';
+import { Progress, Empty } from '@douyinfe/semi-ui';
 import {
   IllustrationConstruction,
   IllustrationConstructionDark,
@@ -195,47 +195,55 @@ export const renderMonitorList = (
     grouped[g].push(m);
   });
 
-  const renderItem = (monitor, idx) => (
-    <div key={idx} className='p-2 hover:bg-white rounded-lg transition-colors'>
-      <div className='flex items-center justify-between mb-1'>
-        <div className='flex items-center gap-2'>
-          <div
-            className='w-2 h-2 rounded-full flex-shrink-0'
-            style={{ backgroundColor: getUptimeStatusColor(monitor.status) }}
-          />
-          <span className='text-sm font-medium text-gray-900'>
-            {monitor.name}
+  const renderItem = (monitor, idx) => {
+    const uptimePercent = ((monitor.uptime || 0) * 100).toFixed(2);
+    const statusColor = getUptimeStatusColor(monitor.status);
+
+    return (
+      <div
+        key={idx}
+        className='px-4 py-3 transition-colors duration-150 hover:bg-[var(--console-panel-soft)]'
+      >
+        <div className='mb-2 flex items-center justify-between gap-3'>
+          <div className='flex min-w-0 items-center gap-2'>
+            <span
+              className='h-2 w-2 flex-shrink-0 rounded-full'
+              style={{ backgroundColor: statusColor }}
+            />
+            <span className='truncate text-sm font-medium text-[var(--console-text-strong)]'>
+              {monitor.name}
+            </span>
+          </div>
+          <span className='text-xs font-medium tabular-nums text-[var(--console-text-muted)]'>
+            {uptimePercent}%
           </span>
         </div>
-        <span className='text-xs text-gray-500'>
-          {((monitor.uptime || 0) * 100).toFixed(2)}%
-        </span>
-      </div>
-      <div className='flex items-center gap-2'>
-        <span className='text-xs text-gray-500'>
-          {getUptimeStatusText(monitor.status)}
-        </span>
-        <div className='flex-1'>
-          <Progress
-            percent={(monitor.uptime || 0) * 100}
-            showInfo={false}
-            aria-label={`${monitor.name} uptime`}
-            stroke={getUptimeStatusColor(monitor.status)}
-          />
+        <div className='flex items-center gap-2'>
+          <span className='w-14 shrink-0 text-xs text-[var(--console-text-faint)]'>
+            {getUptimeStatusText(monitor.status)}
+          </span>
+          <div className='min-w-0 flex-1'>
+            <Progress
+              percent={(monitor.uptime || 0) * 100}
+              showInfo={false}
+              aria-label={`${monitor.name} uptime`}
+              stroke={statusColor}
+            />
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return Object.entries(grouped).map(([gname, list]) => (
-    <div key={gname || 'default'} className='mb-2'>
+    <div
+      key={gname || 'default'}
+      className='divide-y divide-[var(--console-divider)]'
+    >
       {gname && (
-        <>
-          <div className='text-md font-semibold text-gray-500 px-2 py-1'>
-            {gname}
-          </div>
-          <Divider />
-        </>
+        <div className='bg-[var(--console-panel-soft)] px-4 py-2 text-xs font-semibold text-[var(--console-text-muted)]'>
+          {gname}
+        </div>
       )}
       {list.map(renderItem)}
     </div>

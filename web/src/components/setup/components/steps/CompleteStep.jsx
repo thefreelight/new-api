@@ -18,10 +18,7 @@ For commercial licensing, please contact support@quantumnous.com
 */
 
 import React from 'react';
-import { Avatar, Typography, Descriptions } from '@douyinfe/semi-ui';
-import { CheckCircle } from 'lucide-react';
-
-const { Text, Title } = Typography;
+import { CheckCircle2, Database, Settings2, UserRound } from 'lucide-react';
 
 /**
  * 完成步骤组件
@@ -33,39 +30,60 @@ const CompleteStep = ({
   renderNavigationButtons,
   t,
 }) => {
-  return (
-    <div className='text-center'>
-      <Avatar color='green' className='mx-auto mb-4 shadow-lg'>
-        <CheckCircle size={24} />
-      </Avatar>
-      <Title heading={3} className='mb-2'>
-        {t('准备完成初始化')}
-      </Title>
-      <Text type='secondary' className='mb-6 block'>
-        {t('请确认以下设置信息，点击"初始化系统"开始配置')}
-      </Text>
+  const databaseLabel =
+    setupStatus.database_type === 'sqlite'
+      ? 'SQLite'
+      : setupStatus.database_type === 'mysql'
+        ? 'MySQL'
+        : setupStatus.database_type === 'postgres'
+          ? 'PostgreSQL'
+          : t('未检测');
+  const usageModeLabel =
+    formData.usageMode === 'external'
+      ? t('对外运营模式')
+      : formData.usageMode === 'self'
+        ? t('自用模式')
+        : t('演示站点模式');
 
-      <Descriptions>
-        <Descriptions.Item itemKey={t('数据库类型')}>
-          {setupStatus.database_type === 'sqlite'
-            ? 'SQLite'
-            : setupStatus.database_type === 'mysql'
-              ? 'MySQL'
-              : 'PostgreSQL'}
-        </Descriptions.Item>
-        <Descriptions.Item itemKey={t('管理员账号')}>
-          {setupStatus.root_init
-            ? t('已初始化')
-            : formData.username || t('未设置')}
-        </Descriptions.Item>
-        <Descriptions.Item itemKey={t('使用模式')}>
-          {formData.usageMode === 'external'
-            ? t('对外运营模式')
-            : formData.usageMode === 'self'
-              ? t('自用模式')
-              : t('演示站点模式')}
-        </Descriptions.Item>
-      </Descriptions>
+  return (
+    <div>
+      <div className='setup-complete-hero'>
+        <div className='setup-complete-icon'>
+          <CheckCircle2 size={28} />
+        </div>
+        <div>
+          <h4>{t('准备完成初始化')}</h4>
+          <p>{t('请确认以下设置信息，点击"初始化系统"开始配置。')}</p>
+        </div>
+      </div>
+
+      <div className='setup-review-list'>
+        <div className='setup-review-row'>
+          <span className='setup-review-icon'>
+            <Database size={18} />
+          </span>
+          <span className='setup-review-label'>{t('数据库类型')}</span>
+          <strong>{databaseLabel}</strong>
+        </div>
+        <div className='setup-review-row'>
+          <span className='setup-review-icon'>
+            <UserRound size={18} />
+          </span>
+          <span className='setup-review-label'>{t('管理员账号')}</span>
+          <strong>
+            {setupStatus.root_init
+              ? t('已初始化')
+              : formData.username || t('未设置')}
+          </strong>
+        </div>
+        <div className='setup-review-row'>
+          <span className='setup-review-icon'>
+            <Settings2 size={18} />
+          </span>
+          <span className='setup-review-label'>{t('使用模式')}</span>
+          <strong>{usageModeLabel}</strong>
+        </div>
+      </div>
 
       {renderNavigationButtons && renderNavigationButtons()}
     </div>

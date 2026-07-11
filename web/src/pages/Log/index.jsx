@@ -19,11 +19,12 @@ For commercial licensing, please contact support@quantumnous.com
 
 import React from 'react';
 import UsageLogsTable from '../../components/table/usage-logs';
+import ConsoleShell from '../../components/layout/ConsoleShell';
 
 const Token = () => (
-  <div className='mt-[60px] px-2'>
+  <ConsoleShell wide>
     <UsageLogsTable />
-  </div>
+  </ConsoleShell>
 );
 
 export default Token;

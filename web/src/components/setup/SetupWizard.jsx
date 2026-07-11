@@ -18,7 +18,15 @@ For commercial licensing, please contact support@quantumnous.com
 */
 
 import React, { useEffect, useState, useRef } from 'react';
-import { Card, Divider, Steps, Form } from '@douyinfe/semi-ui';
+import { Form } from '@douyinfe/semi-ui';
+import {
+  CheckCircle2,
+  Database,
+  ShieldCheck,
+  SlidersHorizontal,
+  Sparkles,
+  UserRound,
+} from 'lucide-react';
 import { API, showError, showNotice } from '../../helpers';
 import { useTranslation } from 'react-i18next';
 
@@ -27,6 +35,7 @@ import DatabaseStep from './components/steps/DatabaseStep';
 import AdminStep from './components/steps/AdminStep';
 import UsageModeStep from './components/steps/UsageModeStep';
 import CompleteStep from './components/steps/CompleteStep';
+import './setup.css';
 
 const SetupWizard = () => {
   const { t } = useTranslation();
@@ -58,18 +67,22 @@ const SetupWizard = () => {
     {
       title: t('数据库检查'),
       description: t('验证数据库连接状态'),
+      icon: Database,
     },
     {
       title: t('管理员账号'),
       description: t('设置管理员登录信息'),
+      icon: UserRound,
     },
     {
       title: t('使用模式'),
       description: t('选择系统运行模式'),
+      icon: SlidersHorizontal,
     },
     {
       title: t('完成初始化'),
       description: t('确认设置并完成初始化'),
+      icon: ShieldCheck,
     },
   ];
 
@@ -268,60 +281,171 @@ const SetupWizard = () => {
     t,
   };
 
+  const databaseLabels = {
+    sqlite: 'SQLite',
+    mysql: 'MySQL',
+    postgres: 'PostgreSQL',
+  };
+  const usageModeLabels = {
+    external: t('对外运营模式'),
+    self: t('自用模式'),
+    demo: t('演示站点模式'),
+  };
+  const databaseLabel =
+    databaseLabels[setupStatus.database_type] || t('检测中');
+  const usageModeLabel = usageModeLabels[formData.usageMode] || t('未选择');
+  const activeStep = steps[currentStep];
+  const ActiveStepIcon = activeStep.icon;
+  const progressValue = Math.round(((currentStep + 1) / steps.length) * 100);
+  const setupHost =
+    typeof window !== 'undefined' && window.location?.host
+      ? window.location.host
+      : 'api.navtoai.com';
+
   return (
-    <div className='min-h-screen flex items-center justify-center px-4'>
-      <div className='w-full max-w-4xl'>
-        <Card className='!rounded-2xl shadow-sm border-0'>
-          <div className='mb-4'>
-            <div className='text-xl font-semibold'>{t('系统初始化')}</div>
-            <div className='text-xs text-gray-600'>
-              {t('欢迎使用，请完成以下设置以开始使用系统')}
-            </div>
-          </div>
+    <div className='navtoai-setup-page'>
+      <div className='navtoai-setup-hero'>
+        <div className='navtoai-setup-logo-wrap'>
+          <img
+            src='/navtoai-logo.svg'
+            alt='NavtoAI'
+            className='navtoai-setup-logo'
+          />
+        </div>
+        <div className='setup-kicker'>
+          <Sparkles size={14} />
+          <span>{t('NavtoAI API Gateway')}</span>
+        </div>
+        <h1>{t('初始化 New API')}</h1>
+        <p>{t('请按照引导步骤在首次登录前准备您的工作区。')}</p>
+      </div>
 
-          <div className='px-2 py-2'>
-            <Steps type='basic' current={currentStep}>
-              {steps.map((item, index) => (
-                <Steps.Step
-                  key={item.title}
-                  title={
-                    <span className={currentStep === index ? 'shine-text' : ''}>
-                      {item.title}
-                    </span>
+      <div className='setup-shell'>
+        <div className='setup-shell-header'>
+          <div>
+            <div className='setup-eyebrow'>{t('系统设置向导')}</div>
+            <h2>{t('完成这些步骤以完成初始安装。')}</h2>
+          </div>
+          <div className='setup-host-pill'>
+            <span className='setup-host-dot' />
+            {setupHost}
+          </div>
+        </div>
+
+        <div className='setup-step-grid'>
+          {steps.map((item, index) => {
+            const StepIcon = item.icon;
+            const stateClass =
+              index === currentStep
+                ? 'is-active'
+                : index < currentStep
+                  ? 'is-complete'
+                  : 'is-pending';
+
+            return (
+              <button
+                type='button'
+                key={item.title}
+                className={`setup-step-card ${stateClass}`}
+                disabled={index > currentStep}
+                onClick={() => {
+                  if (index < currentStep) {
+                    setCurrentStep(index);
                   }
-                  description={item.description}
-                />
-              ))}
-            </Steps>
-          </div>
+                }}
+              >
+                <span className='setup-step-index'>
+                  {index < currentStep ? <CheckCircle2 size={16} /> : index + 1}
+                </span>
+                <span className='setup-step-copy'>
+                  <span className='setup-step-title'>
+                    <StepIcon size={18} />
+                    {item.title}
+                  </span>
+                  <span className='setup-step-description'>
+                    {item.description}
+                  </span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
 
-          <Divider margin='12px' />
+        <div className='setup-progress-track'>
+          <span style={{ width: `${progressValue}%` }} />
+        </div>
 
-          {/* 表单容器 */}
-          <Form
-            getFormApi={(formApi) => {
-              formRef.current = formApi;
-            }}
-            initValues={formData}
-          >
-            {/* 步骤内容：保持所有字段挂载，仅隐藏非当前步骤 */}
-            <div className='steps-content'>
-              {[0, 1, 2, 3].map((idx) => (
-                <div
-                  key={idx}
-                  style={{ display: currentStep === idx ? 'block' : 'none' }}
-                >
-                  {React.cloneElement(getStepContent(idx), {
-                    ...stepNavigationProps,
-                    renderNavigationButtons: () => (
-                      <StepNavigation {...stepNavigationProps} />
-                    ),
-                  })}
+        <Form
+          getFormApi={(formApi) => {
+            formRef.current = formApi;
+          }}
+          initValues={formData}
+        >
+          <div className='setup-workspace'>
+            <section className='setup-main-panel'>
+              <div className='setup-panel-heading'>
+                <div className='setup-panel-icon'>
+                  <ActiveStepIcon size={22} />
                 </div>
-              ))}
-            </div>
-          </Form>
-        </Card>
+                <div>
+                  <h3>{activeStep.title}</h3>
+                  <p>{activeStep.description}</p>
+                </div>
+              </div>
+
+              <div className='setup-step-content'>
+                {[0, 1, 2, 3].map((idx) => (
+                  <div
+                    key={idx}
+                    style={{ display: currentStep === idx ? 'block' : 'none' }}
+                  >
+                    {React.cloneElement(getStepContent(idx), {
+                      ...stepNavigationProps,
+                      renderNavigationButtons: () => (
+                        <StepNavigation {...stepNavigationProps} />
+                      ),
+                    })}
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <aside className='setup-side-panel'>
+              <div className='setup-side-label'>{t('当前配置')}</div>
+              <div className='setup-side-list'>
+                <div className='setup-side-row'>
+                  <span>{t('数据库')}</span>
+                  <strong>{databaseLabel}</strong>
+                </div>
+                <div className='setup-side-row'>
+                  <span>{t('管理员账号')}</span>
+                  <strong>
+                    {setupStatus.root_init
+                      ? t('已初始化')
+                      : formData.username || t('待设置')}
+                  </strong>
+                </div>
+                <div className='setup-side-row'>
+                  <span>{t('运行模式')}</span>
+                  <strong>{usageModeLabel}</strong>
+                </div>
+              </div>
+              <div className='setup-side-status'>
+                <div className='setup-side-status-icon'>
+                  <ShieldCheck size={18} />
+                </div>
+                <div>
+                  <strong>{t('生产初始化')}</strong>
+                  <span>
+                    {setupStatus.database_type === 'postgres'
+                      ? t('PostgreSQL 已就绪')
+                      : t('确认数据库与管理员信息后完成安装')}
+                  </span>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </Form>
       </div>
     </div>
   );

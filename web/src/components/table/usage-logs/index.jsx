@@ -22,6 +22,7 @@ import CardPro from '../../common/ui/CardPro';
 import LogsTable from './UsageLogsTable';
 import LogsActions from './UsageLogsActions';
 import LogsFilters from './UsageLogsFilters';
+import UsageLogsDescription from './UsageLogsDescription';
 import ColumnSelectorModal from './modals/ColumnSelectorModal';
 import UserInfoModal from './modals/UserInfoModal';
 import ChannelAffinityUsageCacheModal from './modals/ChannelAffinityUsageCacheModal';
@@ -45,6 +46,13 @@ const LogsPage = () => {
       {/* Main Content */}
       <CardPro
         type='type2'
+        descriptionArea={
+          <UsageLogsDescription
+            compactMode={logsData.compactMode}
+            setCompactMode={logsData.setCompactMode}
+            t={logsData.t}
+          />
+        }
         statsArea={<LogsActions {...logsData} />}
         searchArea={<LogsFilters {...logsData} />}
         paginationArea={createCardProPagination({

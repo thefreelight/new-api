@@ -94,25 +94,23 @@ import {
   SiGitlab,
   SiGoogle,
   SiKeycloak,
-  SiLinkedin,
   SiNextcloud,
   SiNotion,
   SiOkta,
   SiOpenid,
   SiReddit,
-  SiSlack,
   SiTelegram,
   SiTwitch,
   SiWechat,
   SiX,
 } from 'react-icons/si';
+import { FaLinkedin, FaSlack } from 'react-icons/fa';
 
 // 获取侧边栏Lucide图标组件
 export function getLucideIcon(key, selected = false) {
   const size = 16;
   const strokeWidth = 2;
-  const SELECTED_COLOR = 'var(--semi-color-primary)';
-  const iconColor = selected ? SELECTED_COLOR : 'currentColor';
+  const iconColor = 'currentColor';
   const commonProps = {
     size,
     strokeWidth,
@@ -509,10 +507,10 @@ const oauthProviderIconMap = {
   google: SiGoogle,
   discord: SiDiscord,
   facebook: SiFacebook,
-  linkedin: SiLinkedin,
+  linkedin: FaLinkedin,
   x: SiX,
   twitter: SiX,
-  slack: SiSlack,
+  slack: FaSlack,
   telegram: SiTelegram,
   wechat: SiWechat,
   keycloak: SiKeycloak,
@@ -1627,10 +1625,9 @@ function renderPriceSimpleCore({
 
 export function renderTaskBillingProcess(other, content) {
   if (other?.task_id != null) {
-    return renderBillingArticle(
-      [content].filter(Boolean),
-      { showReferenceNote: false },
-    );
+    return renderBillingArticle([content].filter(Boolean), {
+      showReferenceNote: false,
+    });
   }
   return renderBillingArticle([
     buildBillingText('任务预扣费（将在任务完成后按实际token重算）'),
@@ -2247,7 +2244,10 @@ export function parseTiersFromExpr(exprStr) {
   try {
     const { body } = stripExprVersion(exprStr);
     const condGroup = `((?:(?:p|c|len)\\s*(?:<|<=|>|>=)\\s*[\\d.eE+]+)(?:\\s*&&\\s*(?:p|c|len)\\s*(?:<|<=|>|>=)\\s*[\\d.eE+]+)*)`;
-    const tierRe = new RegExp(`(?:${condGroup}\\s*\\?\\s*)?tier\\("([^"]*)",\\s*([^)]+)\\)`, 'g');
+    const tierRe = new RegExp(
+      `(?:${condGroup}\\s*\\?\\s*)?tier\\("([^"]*)",\\s*([^)]+)\\)`,
+      'g',
+    );
     const tiers = [];
     let m;
     while ((m = tierRe.exec(body)) !== null) {
@@ -2256,7 +2256,8 @@ export function parseTiersFromExpr(exprStr) {
       if (condStr) {
         for (const cp of condStr.split(/\s*&&\s*/)) {
           const cm = cp.trim().match(/^(p|c|len)\s*(<|<=|>|>=)\s*([\d.eE+]+)$/);
-          if (cm) conditions.push({ var: cm[1], op: cm[2], value: Number(cm[3]) });
+          if (cm)
+            conditions.push({ var: cm[1], op: cm[2], value: Number(cm[3]) });
         }
       }
       const tier = parseTierBody(m[3]);
@@ -2283,7 +2284,11 @@ export function renderTieredModelPrice(opts) {
     cache_creation_tokens_1h: cacheCreationTokens1h = 0,
   } = opts;
   let exprStr = '';
-  try { exprStr = atob(exprB64); } catch { /* ignore */ }
+  try {
+    exprStr = atob(exprB64);
+  } catch {
+    /* ignore */
+  }
   const tiers = parseTiersFromExpr(exprStr);
   if (tiers.length === 0) {
     return i18next.t('阶梯计费（表达式解析失败）');
@@ -2300,7 +2305,11 @@ export function renderTieredModelPrice(opts) {
     ...priceLines
       .filter(([field]) => tier[field] > 0)
       .map(([field, label]) =>
-        buildBillingPriceText(`${label}：{{symbol}}{{price}} / 1M tokens`, { symbol, usdAmount: tier[field], rate }),
+        buildBillingPriceText(`${label}：{{symbol}}{{price}} / 1M tokens`, {
+          symbol,
+          usdAmount: tier[field],
+          rate,
+        }),
       ),
   ];
 
@@ -2321,7 +2330,11 @@ export function renderTieredModelPriceSimple(opts) {
     outputMode = 'segments',
   } = opts;
   let exprStr = '';
-  try { exprStr = atob(exprB64); } catch { /* ignore */ }
+  try {
+    exprStr = atob(exprB64);
+  } catch {
+    /* ignore */
+  }
   const tiers = parseTiersFromExpr(exprStr);
   const tier = tiers.find((t) => t.label === matchedTier) || tiers[0];
 
@@ -2334,7 +2347,10 @@ export function renderTieredModelPriceSimple(opts) {
     ];
 
     if (tier && isPriceDisplayMode(displayMode)) {
-      const priceSegments = BILLING_PRICING_VARS.map((v) => [v.field, v.shortLabel]);
+      const priceSegments = BILLING_PRICING_VARS.map((v) => [
+        v.field,
+        v.shortLabel,
+      ]);
       for (const [field, label] of priceSegments) {
         if (tier[field] > 0) {
           segments.push({

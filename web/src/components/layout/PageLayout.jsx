@@ -49,6 +49,10 @@ const PageLayout = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { i18n } = useTranslation();
   const location = useLocation();
+  const isLocalHomePreview =
+    import.meta.env.DEV &&
+    location.pathname === '/' &&
+    ['127.0.0.1', 'localhost'].includes(window.location.hostname);
 
   const cardProPages = [
     '/console/channel',
@@ -61,8 +65,14 @@ const PageLayout = () => {
     '/console/models',
     '/pricing',
   ];
+  const authRoutes = ['/login', '/register', '/reset', '/user/reset'];
+  const fullscreenRoutes = ['/setup'];
 
-  const shouldHideFooter = cardProPages.includes(location.pathname);
+  const shouldHideFooter =
+    location.pathname === '/' ||
+    authRoutes.includes(location.pathname) ||
+    fullscreenRoutes.includes(location.pathname) ||
+    cardProPages.includes(location.pathname);
 
   const shouldInnerPadding =
     location.pathname.includes('/console') &&
@@ -71,6 +81,8 @@ const PageLayout = () => {
 
   const isConsoleRoute = location.pathname.startsWith('/console');
   const showSider = isConsoleRoute && (!isMobile || drawerOpen);
+  const shouldHideHeader =
+    location.pathname === '/' || fullscreenRoutes.includes(location.pathname);
 
   useEffect(() => {
     if (isMobile && drawerOpen && collapsed) {
@@ -88,31 +100,36 @@ const PageLayout = () => {
 
   const loadStatus = async () => {
     try {
-      const res = await API.get('/api/status');
+      const res = await API.get('/api/status', { skipErrorHandler: true });
       const { success, data } = res.data;
       if (success) {
         statusDispatch({ type: 'set', payload: data });
         setStatusData(data);
-      } else {
+      } else if (location.pathname !== '/') {
         showError('Unable to connect to server');
       }
     } catch (error) {
-      showError('Failed to load status');
+      if (location.pathname !== '/') {
+        showError('Failed to load status');
+      }
     }
   };
 
   useEffect(() => {
     loadUser();
-    loadStatus().catch(console.error);
+    if (!isLocalHomePreview) {
+      loadStatus().catch(console.error);
+    }
     let systemName = getSystemName();
     if (systemName) {
       document.title = systemName;
     }
     let logo = getLogo();
-    if (logo) {
+    const favicon = logo === '/navtoai-logo.svg' ? '/favicon.svg' : logo;
+    if (favicon) {
       let linkElement = document.querySelector("link[rel~='icon']");
       if (linkElement) {
-        linkElement.href = logo;
+        linkElement.href = favicon;
       }
     }
   }, []);
@@ -153,22 +170,24 @@ const PageLayout = () => {
         overflow: isMobile ? 'visible' : 'hidden',
       }}
     >
-      <Header
-        style={{
-          padding: 0,
-          height: 'auto',
-          lineHeight: 'normal',
-          position: 'fixed',
-          width: '100%',
-          top: 0,
-          zIndex: 100,
-        }}
-      >
-        <HeaderBar
-          onMobileMenuToggle={() => setDrawerOpen((prev) => !prev)}
-          drawerOpen={drawerOpen}
-        />
-      </Header>
+      {!shouldHideHeader && (
+        <Header
+          style={{
+            padding: 0,
+            height: 'auto',
+            lineHeight: 'normal',
+            position: 'fixed',
+            width: '100%',
+            top: 0,
+            zIndex: 100,
+          }}
+        >
+          <HeaderBar
+            onMobileMenuToggle={() => setDrawerOpen((prev) => !prev)}
+            drawerOpen={drawerOpen}
+          />
+        </Header>
+      )}
       <Layout
         style={{
           overflow: isMobile ? 'visible' : 'auto',
@@ -182,7 +201,7 @@ const PageLayout = () => {
             style={{
               position: 'fixed',
               left: 0,
-              top: '64px',
+              top: 'var(--app-header-height)',
               zIndex: 99,
               border: 'none',
               paddingRight: '0',
@@ -213,7 +232,11 @@ const PageLayout = () => {
               flex: '1 0 auto',
               overflowY: isMobile ? 'visible' : 'hidden',
               WebkitOverflowScrolling: 'touch',
-              padding: shouldInnerPadding ? (isMobile ? '5px' : '24px') : '0',
+              padding: shouldInnerPadding
+                ? isMobile
+                  ? '64px 5px 5px'
+                  : 'var(--app-header-height) 12px 18px'
+                : '0',
               position: 'relative',
             }}
           >

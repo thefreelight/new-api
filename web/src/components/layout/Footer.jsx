@@ -19,7 +19,7 @@ For commercial licensing, please contact support@quantumnous.com
 
 import React, { useEffect, useState, useMemo, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Typography } from '@douyinfe/semi-ui';
+import { useLocation } from 'react-router-dom';
 import { getFooterHTML, getLogo, getSystemName } from '../../helpers';
 import { StatusContext } from '../../context/Status';
 
@@ -27,9 +27,14 @@ const FooterBar = () => {
   const { t } = useTranslation();
   const [footer, setFooter] = useState(getFooterHTML());
   const systemName = getSystemName();
+  const displaySystemName = systemName === 'New API' ? 'NavtoAI' : systemName;
   const logo = getLogo();
   const [statusState] = useContext(StatusContext);
   const isDemoSiteMode = statusState?.status?.demo_site_enabled || false;
+  const location = useLocation();
+  const isAuthRoute = ['/login', '/register', '/reset', '/user/reset'].includes(
+    location.pathname,
+  );
 
   const loadFooter = () => {
     let footer_html = localStorage.getItem('footer_html');
@@ -39,206 +44,170 @@ const FooterBar = () => {
   };
 
   const currentYear = new Date().getFullYear();
+  const footerSections = useMemo(
+    () => [
+      {
+        title: t('关于我们'),
+        links: [
+          {
+            href: 'https://docs.newapi.pro/wiki/project-introduction/',
+            label: t('关于项目'),
+          },
+          {
+            href: 'https://docs.newapi.pro/support/community-interaction/',
+            label: t('联系我们'),
+          },
+          {
+            href: 'https://docs.newapi.pro/wiki/features-introduction/',
+            label: t('功能特性'),
+          },
+        ],
+      },
+      {
+        title: t('文档'),
+        links: [
+          {
+            href: 'https://docs.newapi.pro/getting-started/',
+            label: t('快速开始'),
+          },
+          {
+            href: 'https://docs.newapi.pro/installation/',
+            label: t('安装指南'),
+          },
+          {
+            href: 'https://docs.newapi.pro/api/',
+            label: t('API 文档'),
+          },
+        ],
+      },
+      {
+        title: t('相关项目'),
+        links: [
+          {
+            href: 'https://github.com/songquanpeng/one-api',
+            label: 'One API',
+          },
+          {
+            href: 'https://github.com/novicezk/midjourney-proxy',
+            label: 'Midjourney-Proxy',
+          },
+          {
+            href: 'https://github.com/Calcium-Ion/neko-api-key-tool',
+            label: 'neko-api-key-tool',
+          },
+        ],
+      },
+      {
+        title: t('友情链接'),
+        links: [
+          {
+            href: 'https://github.com/Calcium-Ion/new-api-horizon',
+            label: 'new-api-horizon',
+          },
+          {
+            href: 'https://github.com/coaidev/coai',
+            label: 'CoAI',
+          },
+          {
+            href: 'https://www.gpt-load.com/',
+            label: 'GPT-Load',
+          },
+        ],
+      },
+    ],
+    [t],
+  );
 
   const customFooter = useMemo(
     () => (
-      <footer className='relative h-auto py-16 px-6 md:px-24 w-full flex flex-col items-center justify-between overflow-hidden'>
-        <div className='absolute hidden md:block top-[204px] left-[-100px] w-[151px] h-[151px] rounded-full bg-[#FFD166]'></div>
-        <div className='absolute md:hidden bottom-[20px] left-[-50px] w-[80px] h-[80px] rounded-full bg-[#FFD166] opacity-60'></div>
-
-        {isDemoSiteMode && (
-          <div className='flex flex-col md:flex-row justify-between w-full max-w-[1110px] mb-10 gap-8'>
-            <div className='flex-shrink-0'>
-              <img
-                src={logo}
-                alt={systemName}
-                className='w-16 h-16 rounded-full bg-gray-800 p-1.5 object-contain'
-              />
-            </div>
-
-            <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 w-full'>
-              <div className='text-left'>
-                <p className='!text-semi-color-text-0 font-semibold mb-5'>
-                  {t('关于我们')}
-                </p>
-                <div className='flex flex-col gap-4'>
-                  <a
-                    href='https://docs.newapi.pro/wiki/project-introduction/'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    className='!text-semi-color-text-1'
-                  >
-                    {t('关于项目')}
-                  </a>
-                  <a
-                    href='https://docs.newapi.pro/support/community-interaction/'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    className='!text-semi-color-text-1'
-                  >
-                    {t('联系我们')}
-                  </a>
-                  <a
-                    href='https://docs.newapi.pro/wiki/features-introduction/'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    className='!text-semi-color-text-1'
-                  >
-                    {t('功能特性')}
-                  </a>
+      <footer className='relative w-full overflow-hidden border-t border-[#e5e8ec] bg-[#f7f8f6] text-[#111722] dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-100'>
+        <div className='pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#ffb58f] to-transparent dark:via-[#2f4b3b]' />
+        <div className='relative mx-auto w-full max-w-[1180px] px-6 py-10 sm:px-8 lg:px-10'>
+          {isDemoSiteMode && (
+            <div className='grid gap-10 border-b border-[#e3e7eb] pb-10 md:grid-cols-[minmax(0,0.92fr)_minmax(0,1.6fr)] md:gap-12 dark:border-zinc-800/80'>
+              <div className='max-w-[320px]'>
+                <div className='inline-flex items-center gap-4'>
+                  <div className='grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-2xl border border-[#dde3e8] bg-white/80 p-2 shadow-[0_18px_40px_rgba(17,23,34,0.06)] dark:border-zinc-800 dark:bg-zinc-900/70 dark:shadow-none'>
+                    <img
+                      src={logo}
+                      alt={systemName}
+                      className='h-10 w-10 object-contain'
+                    />
+                  </div>
+                  <div className='min-w-0'>
+                    <p className='text-[11px] font-medium uppercase text-[#6e7783] dark:text-zinc-500'>
+                      NavtoAI
+                    </p>
+                    <h2 className='truncate text-[24px] font-medium text-[#111722] dark:text-zinc-100'>
+                      {displaySystemName}
+                    </h2>
+                  </div>
                 </div>
+                <p className='mt-5 max-w-[28ch] text-sm leading-7 text-[#5b6470] dark:text-zinc-400'>
+                  © {currentYear} {displaySystemName}. {t('版权所有')}
+                </p>
               </div>
 
-              <div className='text-left'>
-                <p className='!text-semi-color-text-0 font-semibold mb-5'>
-                  {t('文档')}
-                </p>
-                <div className='flex flex-col gap-4'>
-                  <a
-                    href='https://docs.newapi.pro/getting-started/'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    className='!text-semi-color-text-1'
-                  >
-                    {t('快速开始')}
-                  </a>
-                  <a
-                    href='https://docs.newapi.pro/installation/'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    className='!text-semi-color-text-1'
-                  >
-                    {t('安装指南')}
-                  </a>
-                  <a
-                    href='https://docs.newapi.pro/api/'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    className='!text-semi-color-text-1'
-                  >
-                    {t('API 文档')}
-                  </a>
-                </div>
-              </div>
-
-              <div className='text-left'>
-                <p className='!text-semi-color-text-0 font-semibold mb-5'>
-                  {t('相关项目')}
-                </p>
-                <div className='flex flex-col gap-4'>
-                  <a
-                    href='https://github.com/songquanpeng/one-api'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    className='!text-semi-color-text-1'
-                  >
-                    One API
-                  </a>
-                  <a
-                    href='https://github.com/novicezk/midjourney-proxy'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    className='!text-semi-color-text-1'
-                  >
-                    Midjourney-Proxy
-                  </a>
-                  <a
-                    href='https://github.com/Calcium-Ion/neko-api-key-tool'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    className='!text-semi-color-text-1'
-                  >
-                    neko-api-key-tool
-                  </a>
-                </div>
-              </div>
-
-              <div className='text-left'>
-                <p className='!text-semi-color-text-0 font-semibold mb-5'>
-                  {t('友情链接')}
-                </p>
-                <div className='flex flex-col gap-4'>
-                  <a
-                    href='https://github.com/Calcium-Ion/new-api-horizon'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    className='!text-semi-color-text-1'
-                  >
-                    new-api-horizon
-                  </a>
-                  <a
-                    href='https://github.com/coaidev/coai'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    className='!text-semi-color-text-1'
-                  >
-                    CoAI
-                  </a>
-                  <a
-                    href='https://www.gpt-load.com/'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    className='!text-semi-color-text-1'
-                  >
-                    GPT-Load
-                  </a>
-                </div>
+              <div className='grid grid-cols-1 gap-8 sm:grid-cols-2 xl:grid-cols-4'>
+                {footerSections.map((section) => (
+                  <div key={section.title} className='text-left'>
+                    <p className='text-[11px] font-medium uppercase text-[#6e7783] dark:text-zinc-500'>
+                      {section.title}
+                    </p>
+                    <div className='mt-5 flex flex-col gap-3.5'>
+                      {section.links.map((link) => (
+                        <a
+                          key={link.href}
+                          href={link.href}
+                          target='_blank'
+                          rel='noopener noreferrer'
+                          className='group inline-flex items-center gap-3 text-sm text-[#4f5864] transition-colors duration-200 hover:text-[#111722] dark:text-zinc-400 dark:hover:text-zinc-100'
+                        >
+                          <span className='h-1.5 w-1.5 rounded-full bg-[#c4ccd4] transition-all duration-200 group-hover:w-3 group-hover:bg-[#ff5a1f] dark:bg-zinc-700 dark:group-hover:bg-[#ff8a4c]' />
+                          <span>{link.label}</span>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        <div className='flex flex-col md:flex-row items-center justify-between w-full max-w-[1110px] gap-6'>
-          <div className='flex flex-wrap items-center gap-2'>
-            <Typography.Text className='text-sm !text-semi-color-text-1'>
-              © {currentYear} {systemName}. {t('版权所有')}
-            </Typography.Text>
-          </div>
-
-          <div className='text-sm'>
-            <span className='!text-semi-color-text-1'>
-              {t('设计与开发由')}{' '}
-            </span>
-            <a
-              href='https://github.com/QuantumNous/new-api'
-              target='_blank'
-              rel='noopener noreferrer'
-              className='!text-semi-color-primary font-medium'
-            >
-              New API
-            </a>
+          <div className={isDemoSiteMode ? 'pt-8' : ''}>
+            <div className='flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-center text-sm text-[#5b6470] dark:text-zinc-400 md:justify-start md:text-left'>
+              <span>
+                © {currentYear} {displaySystemName}. {t('版权所有')}
+              </span>
+              <span className='hidden h-1 w-1 rounded-full bg-[#c4ccd4] md:inline-block dark:bg-zinc-700' />
+              <span className='text-[#6c7682] dark:text-zinc-500'>NavtoAI</span>
+            </div>
           </div>
         </div>
       </footer>
     ),
-    [logo, systemName, t, currentYear, isDemoSiteMode],
+    [logo, displaySystemName, t, currentYear, isDemoSiteMode, footerSections],
   );
 
   useEffect(() => {
     loadFooter();
   }, []);
 
+  if (isAuthRoute) {
+    return null;
+  }
+
   return (
     <div className='w-full'>
       {footer ? (
-        <footer className='relative h-auto py-4 px-6 md:px-24 w-full flex items-center justify-center overflow-hidden'>
-          <div className='flex flex-col md:flex-row items-center justify-between w-full max-w-[1110px] gap-4'>
-            <div
-              className='custom-footer na-cb6feafeb3990c78 text-sm !text-semi-color-text-1'
-              dangerouslySetInnerHTML={{ __html: footer }}
-            ></div>
-            <div className='text-sm flex-shrink-0'>
-              <span className='!text-semi-color-text-1'>
-                {t('设计与开发由')}{' '}
-              </span>
-              <a
-                href='https://github.com/QuantumNous/new-api'
-                target='_blank'
-                rel='noopener noreferrer'
-                className='!text-semi-color-primary font-medium'
-              >
-                New API
-              </a>
+        <footer className='relative w-full overflow-hidden border-t border-[#e5e8ec] bg-[#f7f8f6] text-[#111722] dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-100'>
+          <div className='pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#ffb58f] to-transparent dark:via-[#2f4b3b]' />
+          <div className='relative mx-auto w-full max-w-[1180px] px-6 py-6 sm:px-8 lg:px-10'>
+            <div className='rounded-[24px] border border-[#e3e7eb] bg-[#fbfbf9]/88 px-5 py-5 shadow-[0_18px_50px_rgba(17,23,34,0.05)] backdrop-blur-sm md:px-7 dark:border-zinc-800 dark:bg-zinc-900/60 dark:shadow-none'>
+              <div
+                className='custom-footer na-cb6feafeb3990c78 min-w-0 flex-1 break-words text-sm leading-7 text-[#5b6470] dark:text-zinc-400 [&_a]:font-medium [&_a]:text-[#ff5a1f] [&_a]:transition-colors [&_a]:duration-200 [&_a:hover]:text-[#d94a15] [&_ol]:m-0 [&_ol]:pl-5 [&_p]:m-0 [&_p+p]:mt-2 [&_ul]:m-0 [&_ul]:pl-5 dark:[&_a]:text-[#ff8a4c] dark:[&_a:hover]:text-[#ffac7a]'
+                dangerouslySetInnerHTML={{ __html: footer }}
+              ></div>
             </div>
           </div>
         </footer>

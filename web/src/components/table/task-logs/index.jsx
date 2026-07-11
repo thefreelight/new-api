@@ -23,6 +23,7 @@ import CardPro from '../../common/ui/CardPro';
 import TaskLogsTable from './TaskLogsTable';
 import TaskLogsActions from './TaskLogsActions';
 import TaskLogsFilters from './TaskLogsFilters';
+import TaskLogsDescription from './TaskLogsDescription';
 import ColumnSelectorModal from './modals/ColumnSelectorModal';
 import ContentModal from './modals/ContentModal';
 import AudioPreviewModal from './modals/AudioPreviewModal';
@@ -55,6 +56,13 @@ const TaskLogsPage = () => {
       <Layout>
         <CardPro
           type='type2'
+          descriptionArea={
+            <TaskLogsDescription
+              compactMode={taskLogsData.compactMode}
+              setCompactMode={taskLogsData.setCompactMode}
+              t={taskLogsData.t}
+            />
+          }
           statsArea={<TaskLogsActions {...taskLogsData} />}
           searchArea={<TaskLogsFilters {...taskLogsData} />}
           paginationArea={createCardProPagination({

@@ -26,7 +26,6 @@ import {
   Typography,
   Select,
 } from '@douyinfe/semi-ui';
-import CompactModeToggle from '../../common/ui/CompactModeToggle';
 
 const ChannelsActions = ({
   enableBatchDelete,
@@ -40,8 +39,6 @@ const ChannelsActions = ({
   detectAllUpstreamUpdates,
   detectAllUpstreamUpdatesLoading,
   applyAllUpstreamUpdatesLoading,
-  compactMode,
-  setCompactMode,
   idSort,
   setIdSort,
   setEnableBatchDelete,
@@ -223,11 +220,6 @@ const ChannelsActions = ({
             </Button>
           </Dropdown>
 
-          <CompactModeToggle
-            compactMode={compactMode}
-            setCompactMode={setCompactMode}
-            t={t}
-          />
         </div>
 
         {/* 右侧：设置开关区域 */}

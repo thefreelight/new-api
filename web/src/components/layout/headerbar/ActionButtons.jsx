@@ -40,23 +40,41 @@ const ActionButtons = ({
   navigate,
   t,
 }) => {
+  const utilityGroupClassName =
+    'flex items-center gap-0.5 rounded-md border border-[var(--console-divider)] bg-white p-0.5 shadow-none dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none';
+  const utilityButtonClassName =
+    'flex !h-7 !w-7 items-center justify-center !rounded-md !border !border-transparent !bg-transparent !p-0 !text-[var(--console-text-muted)] !shadow-none transition-colors duration-150 hover:!border-transparent hover:!bg-[var(--console-accent-soft)] hover:!text-[var(--console-text-strong)] focus:!border-transparent focus:!bg-[var(--console-accent-soft)] focus:!text-[var(--console-text-strong)] dark:!text-zinc-400 dark:hover:!border-zinc-800 dark:hover:!bg-zinc-800/80 dark:hover:!text-zinc-100 dark:focus:!border-zinc-800 dark:focus:!bg-zinc-800/80 dark:focus:!text-zinc-100';
+  const utilityMenuClassName =
+    '!min-w-[12.5rem] !rounded-lg !border !border-[var(--console-border)] !bg-white !p-1.5 !shadow-[0_18px_48px_rgba(24,24,20,0.08)] dark:!border-zinc-800 dark:!bg-zinc-900/95 dark:!shadow-[0_24px_60px_rgba(0,0,0,0.35)]';
+
   return (
-    <div className='flex items-center gap-2 md:gap-3'>
-      <NewYearButton isNewYear={isNewYear} />
+    <div className='flex items-center gap-1.5 md:gap-2'>
+      <div className={utilityGroupClassName}>
+        <NewYearButton isNewYear={isNewYear} />
 
-      <NotificationButton
-        unreadCount={unreadCount}
-        onNoticeOpen={onNoticeOpen}
-        t={t}
-      />
+        <NotificationButton
+          unreadCount={unreadCount}
+          onNoticeOpen={onNoticeOpen}
+          t={t}
+          buttonClassName={utilityButtonClassName}
+        />
 
-      <ThemeToggle theme={theme} onThemeToggle={onThemeToggle} t={t} />
+        <ThemeToggle
+          theme={theme}
+          onThemeToggle={onThemeToggle}
+          t={t}
+          buttonClassName={utilityButtonClassName}
+          menuClassName={utilityMenuClassName}
+        />
 
-      <LanguageSelector
-        currentLang={currentLang}
-        onLanguageChange={onLanguageChange}
-        t={t}
-      />
+        <LanguageSelector
+          currentLang={currentLang}
+          onLanguageChange={onLanguageChange}
+          t={t}
+          buttonClassName={utilityButtonClassName}
+          menuClassName={utilityMenuClassName}
+        />
+      </div>
 
       <UserArea
         userState={userState}

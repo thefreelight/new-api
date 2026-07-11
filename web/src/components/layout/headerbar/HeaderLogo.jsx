@@ -23,8 +23,6 @@ import { Typography, Tag } from '@douyinfe/semi-ui';
 import SkeletonWrapper from '../components/SkeletonWrapper';
 
 const HeaderLogo = ({
-  isMobile,
-  isConsoleRoute,
   logo,
   logoLoaded,
   isLoading,
@@ -33,42 +31,33 @@ const HeaderLogo = ({
   isDemoSiteMode,
   t,
 }) => {
-  if (isMobile && isConsoleRoute) {
-    return null;
-  }
-
   return (
     <Link to='/' className='group flex items-center gap-2'>
-      <div className='relative w-8 h-8 md:w-8 md:h-8'>
+      <div className='relative h-5 w-5 overflow-hidden rounded-md bg-transparent dark:bg-zinc-900'>
         <SkeletonWrapper loading={isLoading || !logoLoaded} type='image' />
         <img
           src={logo}
           alt='logo'
-          className={`absolute inset-0 w-full h-full transition-all duration-200 group-hover:scale-110 rounded-full ${!isLoading && logoLoaded ? 'opacity-100' : 'opacity-0'}`}
+          className={`absolute inset-0 h-full w-full object-cover transition-all duration-200 ${!isLoading && logoLoaded ? 'opacity-100' : 'opacity-0'}`}
         />
       </div>
-      <div className='hidden md:flex items-center gap-2'>
+      <div className='hidden md:flex items-center gap-1.5'>
         <div className='flex items-center gap-2'>
           <SkeletonWrapper
             loading={isLoading}
             type='title'
-            width={120}
-            height={24}
+            width={82}
+            height={18}
           >
             <Typography.Title
               heading={4}
-              className='!text-lg !font-semibold !mb-0'
+              className='!mb-0 !text-[13px] !font-semibold !leading-5 !text-[var(--console-text-strong)] dark:!text-zinc-100'
             >
               {systemName}
             </Typography.Title>
           </SkeletonWrapper>
           {(isSelfUseMode || isDemoSiteMode) && !isLoading && (
-            <Tag
-              color={isSelfUseMode ? 'purple' : 'blue'}
-              className='text-xs px-1.5 py-0.5 rounded whitespace-nowrap shadow-sm'
-              size='small'
-              shape='circle'
-            >
+            <Tag color='white' className='!hidden' size='small' shape='circle'>
               {isSelfUseMode ? t('自用模式') : t('演示站点')}
             </Tag>
           )}

@@ -18,14 +18,7 @@ For commercial licensing, please contact support@quantumnous.com
 */
 
 import React, { useEffect, useState } from 'react';
-import {
-  API,
-  copy,
-  showError,
-  showNotice,
-  getLogo,
-  getSystemName,
-} from '../../helpers';
+import { API, copy, showError, showNotice } from '../../helpers';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Button, Card, Form, Typography, Banner } from '@douyinfe/semi-ui';
 import { IconMail, IconLock, IconCopy } from '@douyinfe/semi-icons';
@@ -46,11 +39,17 @@ const PasswordResetConfirm = () => {
   const [disableButton, setDisableButton] = useState(false);
   const [countdown, setCountdown] = useState(30);
   const [newPassword, setNewPassword] = useState('');
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [formApi, setFormApi] = useState(null);
-
-  const logo = getLogo();
-  const systemName = getSystemName();
+  const authFormClassName =
+    'space-y-4 [&_.semi-input-wrapper]:!rounded-md [&_.semi-input-wrapper]:!border [&_.semi-input-wrapper]:!border-[#dfe3e8] [&_.semi-input-wrapper]:!bg-[#fbfbf9] [&_.semi-input-wrapper]:!shadow-none [&_.semi-input-wrapper:hover]:!border-[#cbd1d8] [&_.semi-input-wrapper:focus-within]:!border-[#ff5a1f] [&_.semi-input-wrapper:focus-within]:!bg-white [&_.semi-input-wrapper:focus-within]:!shadow-[0_0_0_3px_rgba(255,90,31,0.14)] [&_.semi-input]:!text-[#171d27] [&_.semi-input-prefix]:!text-[#7b8490] [&_.semi-input-suffix]:!text-[#7b8490]';
+  const primaryButtonClassName =
+    'flex h-11 w-full items-center justify-center !rounded-md !bg-[#ff5a1f] font-medium !text-[#14100d] transition duration-200 hover:!bg-[#ff6a32] disabled:!bg-[#f0b49b] disabled:!text-[#fff5ef]';
+  const subtleActionButtonClassName =
+    'h-8 !rounded-md border border-[#dfe3e8] !bg-white px-3 !text-xs font-medium !text-[#4f5864] transition duration-200 hover:!border-[#cbd1d8] hover:!bg-[#fbfbf9] hover:!text-[#171d27]';
+  const authLinkClassName =
+    'font-medium text-[#ff5a1f] underline decoration-transparent decoration-1 underline-offset-4 transition-colors duration-200 hover:text-[#d94a15] hover:decoration-current';
+  const auxiliaryTextClassName = '!text-[#6d7681]';
 
   useEffect(() => {
     let token = searchParams.get('token');
@@ -80,7 +79,7 @@ const PasswordResetConfirm = () => {
     return () => clearInterval(countdownInterval);
   }, [disableButton, countdown]);
 
-  async function handleSubmit(e) {
+  async function handleSubmit() {
     if (!email || !token) {
       showError(t('无效的重置链接，请重新发起密码重置请求'));
       return;
@@ -104,33 +103,28 @@ const PasswordResetConfirm = () => {
   }
 
   return (
-    <div className='relative overflow-hidden bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8'>
-      {/* 背景模糊晕染球 */}
-      <div
-        className='blur-ball blur-ball-indigo'
-        style={{ top: '-80px', right: '-80px', transform: 'none' }}
-      />
-      <div
-        className='blur-ball blur-ball-teal'
-        style={{ top: '50%', left: '-120px' }}
-      />
-      <div className='w-full max-w-sm mt-[60px]'>
+    <div className='relative flex min-h-[calc(100vh-64px)] items-center justify-center overflow-hidden bg-[linear-gradient(#eef2f4_1px,transparent_1px),linear-gradient(90deg,#eef2f4_1px,transparent_1px),#fbfaf8] bg-[length:42px_42px] px-4 pb-12 pt-10 sm:px-6 sm:pb-16 sm:pt-14 lg:px-8'>
+      <div className='relative z-10 w-full max-w-[440px]'>
         <div className='flex flex-col items-center'>
           <div className='w-full max-w-md'>
-            <div className='flex items-center justify-center mb-6 gap-2'>
-              <img src={logo} alt='Logo' className='h-10 rounded-full' />
-              <Title heading={3} className='!text-gray-800'>
-                {systemName}
-              </Title>
-            </div>
-
-            <Card className='border-0 !rounded-2xl overflow-hidden'>
-              <div className='flex justify-center pt-6 pb-2'>
-                <Title heading={3} className='text-gray-800 dark:text-gray-200'>
+            <Card className='overflow-hidden border border-[#dfe3e8] !rounded-lg bg-[#ffffff] shadow-[0_24px_90px_rgba(17,23,34,0.08)]'>
+              <div className='flex justify-center px-8 pb-2 pt-8'>
+                <Title
+                  heading={3}
+                  className='!m-0 !text-[24px] !font-medium !text-[#111722]'
+                >
                   {t('密码重置确认')}
                 </Title>
               </div>
-              <div className='px-2 py-8'>
+              <div className='px-7 pb-8 pt-7 sm:px-8'>
+                {newPassword && (
+                  <div className='mb-5 rounded-lg border border-[#d8e6dc] bg-[#f5fbf7] px-4 py-4 text-sm text-[#2d5c46]'>
+                    <p className='font-medium'>{t('密码已重置')}</p>
+                    <p className='mt-1 text-[#52715f]'>
+                      {t('新密码已生成，并已自动复制到剪贴板。')}
+                    </p>
+                  </div>
+                )}
                 {!isValidResetLink && (
                   <Banner
                     type='danger'
@@ -145,13 +139,14 @@ const PasswordResetConfirm = () => {
                     email: email || '',
                     newPassword: newPassword || '',
                   }}
-                  className='space-y-4'
+                  className={authFormClassName}
                 >
                   <Form.Input
                     field='email'
                     label={t('邮箱')}
                     name='email'
                     disabled={true}
+                    autoComplete='email'
                     prefix={<IconMail />}
                     placeholder={email ? '' : t('等待获取邮箱信息...')}
                   />
@@ -167,7 +162,8 @@ const PasswordResetConfirm = () => {
                         <Button
                           icon={<IconCopy />}
                           type='tertiary'
-                          theme='borderless'
+                          theme='outline'
+                          className={subtleActionButtonClassName}
                           onClick={async () => {
                             await copy(newPassword);
                             showNotice(
@@ -184,7 +180,7 @@ const PasswordResetConfirm = () => {
                   <div className='space-y-2 pt-2'>
                     <Button
                       theme='solid'
-                      className='w-full !rounded-full'
+                      className={primaryButtonClassName}
                       type='primary'
                       htmlType='submit'
                       onClick={handleSubmit}
@@ -193,17 +189,18 @@ const PasswordResetConfirm = () => {
                         disableButton || newPassword || !isValidResetLink
                       }
                     >
-                      {newPassword ? t('密码重置完成') : t('确认重置密码')}
+                      {newPassword
+                        ? t('密码重置完成')
+                        : disableButton
+                          ? `${t('重试')} (${countdown})`
+                          : t('确认重置密码')}
                     </Button>
                   </div>
                 </Form>
 
                 <div className='mt-6 text-center text-sm'>
-                  <Text>
-                    <Link
-                      to='/login'
-                      className='text-blue-600 hover:text-blue-800 font-medium'
-                    >
+                  <Text className={auxiliaryTextClassName}>
+                    <Link to='/login' className={authLinkClassName}>
                       {t('返回登录')}
                     </Link>
                   </Text>

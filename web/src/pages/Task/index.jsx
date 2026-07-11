@@ -19,11 +19,12 @@ For commercial licensing, please contact support@quantumnous.com
 
 import React from 'react';
 import TaskLogsTable from '../../components/table/task-logs';
+import ConsoleShell from '../../components/layout/ConsoleShell';
 
 const Task = () => (
-  <div className='mt-[60px] px-2'>
+  <ConsoleShell wide>
     <TaskLogsTable />
-  </div>
+  </ConsoleShell>
 );
 
 export default Task;

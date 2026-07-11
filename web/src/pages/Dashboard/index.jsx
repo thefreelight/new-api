@@ -19,11 +19,12 @@ For commercial licensing, please contact support@quantumnous.com
 
 import React from 'react';
 import Dashboard from '../../components/dashboard';
+import ConsoleShell from '../../components/layout/ConsoleShell';
 
 const Detail = () => (
-  <div className='mt-[60px] px-2'>
+  <ConsoleShell wide>
     <Dashboard />
-  </div>
+  </ConsoleShell>
 );
 
 export default Detail;

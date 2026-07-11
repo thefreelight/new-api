@@ -22,6 +22,7 @@ import CardPro from '../../common/ui/CardPro';
 import DeploymentsTable from './DeploymentsTable';
 import DeploymentsActions from './DeploymentsActions';
 import DeploymentsFilters from './DeploymentsFilters';
+import DeploymentsDescription from './DeploymentsDescription';
 import EditDeploymentModal from './modals/EditDeploymentModal';
 import CreateDeploymentModal from './modals/CreateDeploymentModal';
 import ColumnSelectorModal from './modals/ColumnSelectorModal';
@@ -102,6 +103,13 @@ const DeploymentsPage = () => {
       {/* Main Content */}
       <CardPro
         type='type3'
+        descriptionArea={
+          <DeploymentsDescription
+            compactMode={compactMode}
+            setCompactMode={setCompactMode}
+            t={t}
+          />
+        }
         actionsArea={
           <div className='flex flex-col md:flex-row justify-between items-center gap-2 w-full'>
             <DeploymentsActions
@@ -111,8 +119,6 @@ const DeploymentsPage = () => {
               setShowEdit={setShowEdit}
               batchDeleteDeployments={batchDeleteDeployments}
               batchOperationsEnabled={batchOperationsEnabled}
-              compactMode={compactMode}
-              setCompactMode={setCompactMode}
               showCreateModal={showCreateModal}
               setShowCreateModal={setShowCreateModal}
               setShowColumnSelector={setShowColumnSelector}

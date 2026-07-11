@@ -195,13 +195,13 @@ const SkeletonWrapper = ({
 
   // 完整侧边栏骨架屏 - 1:1 还原，去重实现
   const renderSidebarSkeleton = () => {
-    const NAV_WIDTH = 164;
-    const NAV_HEIGHT = 30;
-    const COLLAPSED_WIDTH = 44;
-    const COLLAPSED_HEIGHT = 44;
+    const NAV_WIDTH = 180;
+    const NAV_HEIGHT = 34;
+    const COLLAPSED_WIDTH = 38;
+    const COLLAPSED_HEIGHT = 38;
     const ICON_SIZE = 16;
     const TITLE_HEIGHT = 12;
-    const TEXT_HEIGHT = 16;
+    const TEXT_HEIGHT = 14;
 
     const renderIcon = () => (
       <Skeleton
@@ -228,11 +228,12 @@ const SkeletonWrapper = ({
 
     const NavRow = ({ labelWidth }) => (
       <div
-        className='flex items-center p-2 mb-1 rounded-md'
+        className='flex items-center rounded-lg'
         style={{
           width: `${NAV_WIDTH}px`,
           height: `${NAV_HEIGHT}px`,
-          margin: '3px 8px',
+          margin: '1px 0',
+          padding: '8px 9px 8px 10px',
         }}
       >
         <div className='sidebar-icon-container flex-shrink-0'>
@@ -249,7 +250,7 @@ const SkeletonWrapper = ({
         style={{
           width: `${COLLAPSED_WIDTH}px`,
           height: `${COLLAPSED_HEIGHT}px`,
-          margin: '0 8px 4px 8px',
+          margin: '0 auto 2px',
         }}
       >
         <Skeleton
@@ -267,8 +268,8 @@ const SkeletonWrapper = ({
 
     if (collapsed) {
       return (
-        <div className={`w-full ${className}`} style={{ paddingTop: '12px' }}>
-          {Array(2)
+        <div className={`w-full ${className}`} style={{ paddingTop: '2px' }}>
+          {Array(1)
             .fill(null)
             .map((_, i) => (
               <CollapsedRow keyPrefix='c-chat' index={i} />
@@ -293,7 +294,7 @@ const SkeletonWrapper = ({
     }
 
     const sections = [
-      { key: 'chat', titleWidth: 32, itemWidths: [54, 32], wrapper: 'section' },
+      { key: 'chat', titleWidth: 32, itemWidths: [54], wrapper: 'section' },
       { key: 'console', titleWidth: 48, itemWidths: [64, 64, 64, 64, 64] },
       { key: 'personal', titleWidth: 64, itemWidths: [64, 64] },
       ...(showAdmin
@@ -302,14 +303,14 @@ const SkeletonWrapper = ({
     ];
 
     return (
-      <div className={`w-full ${className}`} style={{ paddingTop: '12px' }}>
+      <div className={`w-full ${className}`} style={{ paddingTop: '2px' }}>
         {sections.map((sec, idx) => (
           <React.Fragment key={sec.key}>
             {sec.wrapper === 'section' ? (
               <div className='sidebar-section'>
                 <div
                   className='sidebar-group-label'
-                  style={{ padding: '4px 15px 8px' }}
+                  style={{ padding: '10px 9px 6px' }}
                 >
                   <Skeleton
                     loading={true}
@@ -329,7 +330,7 @@ const SkeletonWrapper = ({
               <div>
                 <div
                   className='sidebar-group-label'
-                  style={{ padding: '4px 15px 8px' }}
+                  style={{ padding: '10px 9px 6px' }}
                 >
                   <Skeleton
                     loading={true}

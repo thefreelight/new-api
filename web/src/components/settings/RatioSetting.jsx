@@ -18,8 +18,9 @@ For commercial licensing, please contact support@quantumnous.com
 */
 
 import React, { useEffect, useState } from 'react';
-import { Card, Spin, Tabs } from '@douyinfe/semi-ui';
+import { Spin, Tabs } from '@douyinfe/semi-ui';
 import { useTranslation } from 'react-i18next';
+import { Coins, Users, FileX, RefreshCw, Settings2 } from 'lucide-react';
 
 import ModelPricingCombined from '../../pages/Setting/Ratio/ModelPricingCombined';
 import GroupRatioSettings from '../../pages/Setting/Ratio/GroupRatioSettings';
@@ -28,6 +29,27 @@ import UpstreamRatioSync from '../../pages/Setting/Ratio/UpstreamRatioSync';
 import ToolPriceSettings from '../../pages/Setting/Ratio/ToolPriceSettings';
 
 import { API, showError, toBoolean } from '../../helpers';
+
+const PREMIUM_SUBTAB_STYLES = `
+  .settings-premium-subtabs.semi-tabs .semi-tabs-bar {
+    margin-bottom: 8px !important;
+  }
+
+  .settings-premium-subtabs .semi-tabs-tab {
+    min-height: 32px !important;
+    margin: 0 6px 6px 0 !important;
+    padding: 0 10px !important;
+  }
+`;
+
+const tabLabel = (Icon, label) => (
+  <span className='settings-premium-tab-label'>
+    <span className='settings-premium-tab-icon'>
+      <Icon size={16} />
+    </span>
+    <span>{label}</span>
+  </span>
+);
 
 const RatioSetting = () => {
   const { t } = useTranslation();
@@ -95,25 +117,48 @@ const RatioSetting = () => {
 
   return (
     <Spin spinning={loading} size='large'>
-      <Card style={{ marginTop: '10px' }}>
-        <Tabs type='card' defaultActiveKey='pricing'>
-          <Tabs.TabPane tab={t('模型定价设置')} itemKey='pricing'>
-            <ModelPricingCombined options={inputs} refresh={onRefresh} />
-          </Tabs.TabPane>
-          <Tabs.TabPane tab={t('分组相关设置')} itemKey='group'>
-            <GroupRatioSettings options={inputs} refresh={onRefresh} />
-          </Tabs.TabPane>
-          <Tabs.TabPane tab={t('未设置价格模型')} itemKey='unset_models'>
-            <ModelRatioNotSetEditor options={inputs} refresh={onRefresh} />
-          </Tabs.TabPane>
-          <Tabs.TabPane tab={t('上游价格同步')} itemKey='upstream_sync'>
-            <UpstreamRatioSync options={inputs} refresh={onRefresh} />
-          </Tabs.TabPane>
-          <Tabs.TabPane tab={t('工具调用定价')} itemKey='tool_price'>
-            <ToolPriceSettings options={inputs} />
-          </Tabs.TabPane>
-        </Tabs>
-      </Card>
+      <style>{PREMIUM_SUBTAB_STYLES}</style>
+      <div className='relative rounded-lg border border-[#e2e7ec] bg-white p-3 shadow-none sm:p-4'>
+        <div className='relative'>
+          <Tabs
+            className='settings-premium-tabs settings-premium-subtabs'
+            type='card'
+            defaultActiveKey='pricing'
+            contentStyle={{ paddingTop: 12 }}
+          >
+            <Tabs.TabPane
+              tab={tabLabel(Coins, t('模型定价设置'))}
+              itemKey='pricing'
+            >
+              <ModelPricingCombined options={inputs} refresh={onRefresh} />
+            </Tabs.TabPane>
+            <Tabs.TabPane
+              tab={tabLabel(Users, t('分组相关设置'))}
+              itemKey='group'
+            >
+              <GroupRatioSettings options={inputs} refresh={onRefresh} />
+            </Tabs.TabPane>
+            <Tabs.TabPane
+              tab={tabLabel(FileX, t('未设置价格模型'))}
+              itemKey='unset_models'
+            >
+              <ModelRatioNotSetEditor options={inputs} refresh={onRefresh} />
+            </Tabs.TabPane>
+            <Tabs.TabPane
+              tab={tabLabel(RefreshCw, t('上游价格同步'))}
+              itemKey='upstream_sync'
+            >
+              <UpstreamRatioSync options={inputs} refresh={onRefresh} />
+            </Tabs.TabPane>
+            <Tabs.TabPane
+              tab={tabLabel(Settings2, t('工具调用定价'))}
+              itemKey='tool_price'
+            >
+              <ToolPriceSettings options={inputs} />
+            </Tabs.TabPane>
+          </Tabs>
+        </div>
+      </div>
     </Spin>
   );
 };

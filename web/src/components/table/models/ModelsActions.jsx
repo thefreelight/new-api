@@ -23,7 +23,6 @@ import PrefillGroupManagement from './modals/PrefillGroupManagement';
 import EditPrefillGroupModal from './modals/EditPrefillGroupModal';
 import { Button, Modal, Popover, RadioGroup, Radio } from '@douyinfe/semi-ui';
 import { showSuccess, showError, copy } from '../../../helpers';
-import CompactModeToggle from '../../common/ui/CompactModeToggle';
 import SelectionNotification from './components/SelectionNotification';
 import UpstreamConflictModal from './modals/UpstreamConflictModal';
 import SyncWizardModal from './modals/SyncWizardModal';
@@ -39,8 +38,6 @@ const ModelsActions = ({
   syncUpstream,
   previewUpstreamDiff,
   applyUpstreamOverwrite,
-  compactMode,
-  setCompactMode,
   t,
 }) => {
   // Modal states
@@ -172,11 +169,6 @@ const ModelsActions = ({
           {t('预填组管理')}
         </Button>
 
-        <CompactModeToggle
-          compactMode={compactMode}
-          setCompactMode={setCompactMode}
-          t={t}
-        />
       </div>
 
       <SelectionNotification

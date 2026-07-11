@@ -19,12 +19,13 @@ For commercial licensing, please contact support@quantumnous.com
 
 import React from 'react';
 import TokensTable from '../../components/table/tokens';
+import ConsoleShell from '../../components/layout/ConsoleShell';
 
 const Token = () => {
   return (
-    <div className='mt-[60px] px-2'>
+    <ConsoleShell wide>
       <TokensTable />
-    </div>
+    </ConsoleShell>
   );
 };
 

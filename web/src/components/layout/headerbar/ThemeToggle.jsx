@@ -22,7 +22,13 @@ import { Button, Dropdown } from '@douyinfe/semi-ui';
 import { Sun, Moon, Monitor } from 'lucide-react';
 import { useActualTheme } from '../../../context/Theme';
 
-const ThemeToggle = ({ theme, onThemeToggle, t }) => {
+const ThemeToggle = ({
+  theme,
+  onThemeToggle,
+  t,
+  buttonClassName,
+  menuClassName,
+}) => {
   const actualTheme = useActualTheme();
 
   const themeOptions = useMemo(
@@ -54,8 +60,8 @@ const ThemeToggle = ({ theme, onThemeToggle, t }) => {
 
   const getItemClassName = (isSelected) =>
     isSelected
-      ? '!bg-semi-color-primary-light-default !font-semibold'
-      : 'hover:!bg-semi-color-fill-1';
+      ? '!bg-[#edf4ef] !font-medium !text-[#111722] dark:!bg-zinc-800 dark:!text-zinc-100'
+      : 'hover:!bg-[#f1f3f0] hover:!text-[#111722] dark:hover:!bg-zinc-800/80 dark:hover:!text-zinc-100';
 
   const currentButtonIcon = useMemo(() => {
     const currentOption = themeOptions.find((option) => option.key === theme);
@@ -66,17 +72,24 @@ const ThemeToggle = ({ theme, onThemeToggle, t }) => {
     <Dropdown
       position='bottomRight'
       render={
-        <Dropdown.Menu>
+        <Dropdown.Menu
+          className={
+            menuClassName ||
+            '!rounded-2xl !border !border-[#e3e7eb] !bg-[#fbfbf9]/95 !p-1.5 !shadow-[0_24px_60px_rgba(17,23,34,0.08)] backdrop-blur-xl dark:!border-zinc-800 dark:!bg-zinc-900/95 dark:!shadow-[0_24px_60px_rgba(0,0,0,0.35)]'
+          }
+        >
           {themeOptions.map((option) => (
             <Dropdown.Item
               key={option.key}
               icon={option.icon}
               onClick={() => onThemeToggle(option.key)}
-              className={getItemClassName(theme === option.key)}
+              className={`!rounded-xl !px-3 !py-2 !text-[#5b6470] dark:!text-zinc-300 ${getItemClassName(
+                theme === option.key,
+              )}`}
             >
               <div className='flex flex-col'>
-                <span>{option.label}</span>
-                <span className='text-xs text-semi-color-text-2'>
+                <span className='text-sm font-medium'>{option.label}</span>
+                <span className='text-[11px] leading-5 text-[#7b8490] dark:text-zinc-500'>
                   {option.description}
                 </span>
               </div>
@@ -86,7 +99,7 @@ const ThemeToggle = ({ theme, onThemeToggle, t }) => {
           {theme === 'auto' && (
             <>
               <Dropdown.Divider />
-              <div className='px-3 py-2 text-xs text-semi-color-text-2'>
+              <div className='mx-1 rounded-xl border border-[#e8ecef] bg-white/70 px-3 py-2 text-xs text-[#6b7280] dark:border-zinc-800 dark:bg-zinc-950/60 dark:text-zinc-400'>
                 {t('当前跟随系统')}：
                 {actualTheme === 'dark' ? t('深色') : t('浅色')}
               </div>
@@ -101,7 +114,10 @@ const ThemeToggle = ({ theme, onThemeToggle, t }) => {
           aria-label={t('切换主题')}
           theme='borderless'
           type='tertiary'
-          className='!p-1.5 !text-current focus:!bg-semi-color-fill-1 !rounded-full !bg-semi-color-fill-0 hover:!bg-semi-color-fill-1'
+          className={
+            buttonClassName ||
+            '!p-1.5 !text-current focus:!bg-semi-color-fill-1 !rounded-full !bg-semi-color-fill-0 hover:!bg-semi-color-fill-1'
+          }
         />
       </span>
     </Dropdown>

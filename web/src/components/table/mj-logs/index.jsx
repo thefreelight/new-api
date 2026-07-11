@@ -23,6 +23,7 @@ import CardPro from '../../common/ui/CardPro';
 import MjLogsTable from './MjLogsTable';
 import MjLogsActions from './MjLogsActions';
 import MjLogsFilters from './MjLogsFilters';
+import MjLogsDescription from './MjLogsDescription';
 import ColumnSelectorModal from './modals/ColumnSelectorModal';
 import ContentModal from './modals/ContentModal';
 import { useMjLogsData } from '../../../hooks/mj-logs/useMjLogsData';
@@ -42,6 +43,13 @@ const MjLogsPage = () => {
       <Layout>
         <CardPro
           type='type2'
+          descriptionArea={
+            <MjLogsDescription
+              compactMode={mjLogsData.compactMode}
+              setCompactMode={mjLogsData.setCompactMode}
+              t={mjLogsData.t}
+            />
+          }
           statsArea={<MjLogsActions {...mjLogsData} />}
           searchArea={<MjLogsFilters {...mjLogsData} />}
           paginationArea={createCardProPagination({

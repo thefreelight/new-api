@@ -67,7 +67,6 @@ const SiderBar = ({ onNavigate = () => {} }) => {
   const [openedKeys, setOpenedKeys] = useState([]);
   const location = useLocation();
   const [routerMapState, setRouterMapState] = useState(routerMap);
-
   const workspaceItems = useMemo(() => {
     const items = [
       {
@@ -107,13 +106,7 @@ const SiderBar = ({ onNavigate = () => {} }) => {
       },
     ];
 
-    // 根据配置过滤项目
-    const filteredItems = items.filter((item) => {
-      const configVisible = isModuleVisible('console', item.itemKey);
-      return configVisible;
-    });
-
-    return filteredItems;
+    return items.filter((item) => isModuleVisible('console', item.itemKey));
   }, [
     localStorage.getItem('enable_data_export'),
     localStorage.getItem('enable_drawing'),
@@ -136,13 +129,7 @@ const SiderBar = ({ onNavigate = () => {} }) => {
       },
     ];
 
-    // 根据配置过滤项目
-    const filteredItems = items.filter((item) => {
-      const configVisible = isModuleVisible('personal', item.itemKey);
-      return configVisible;
-    });
-
-    return filteredItems;
+    return items.filter((item) => isModuleVisible('personal', item.itemKey));
   }, [t, isModuleVisible]);
 
   const adminItems = useMemo(() => {
@@ -191,13 +178,7 @@ const SiderBar = ({ onNavigate = () => {} }) => {
       },
     ];
 
-    // 根据配置过滤项目
-    const filteredItems = items.filter((item) => {
-      const configVisible = isModuleVisible('admin', item.itemKey);
-      return configVisible;
-    });
-
-    return filteredItems;
+    return items.filter((item) => isModuleVisible('admin', item.itemKey));
   }, [isAdmin(), isRoot(), t, isModuleVisible]);
 
   const chatMenuItems = useMemo(() => {
@@ -207,23 +188,19 @@ const SiderBar = ({ onNavigate = () => {} }) => {
         itemKey: 'playground',
         to: '/playground',
       },
-      {
+    ];
+
+    if (chatItems.length > 0) {
+      items.push({
         text: t('聊天'),
         itemKey: 'chat',
         items: chatItems,
-      },
-    ];
+      });
+    }
 
-    // 根据配置过滤项目
-    const filteredItems = items.filter((item) => {
-      const configVisible = isModuleVisible('chat', item.itemKey);
-      return configVisible;
-    });
-
-    return filteredItems;
+    return items.filter((item) => isModuleVisible('chat', item.itemKey));
   }, [chatItems, t, isModuleVisible]);
 
-  // 更新路由映射，添加聊天路由
   const updateRouterMapWithChats = (chats) => {
     const newRouterMap = { ...routerMap };
 
@@ -237,20 +214,19 @@ const SiderBar = ({ onNavigate = () => {} }) => {
     return newRouterMap;
   };
 
-  // 加载聊天项
   useEffect(() => {
     let chats = localStorage.getItem('chats');
     if (chats) {
       try {
         chats = JSON.parse(chats);
         if (Array.isArray(chats)) {
-          let chatItems = [];
+          let nextChatItems = [];
           for (let i = 0; i < chats.length; i++) {
             let shouldSkip = false;
             let chat = {};
             for (let key in chats[i]) {
               let link = chats[i][key];
-              if (typeof link !== 'string') continue; // 确保链接是字符串
+              if (typeof link !== 'string') continue;
               if (link.startsWith('fluent') || link.startsWith('ccswitch')) {
                 shouldSkip = true;
                 break;
@@ -259,10 +235,10 @@ const SiderBar = ({ onNavigate = () => {} }) => {
               chat.itemKey = 'chat' + i;
               chat.to = '/console/chat/' + i;
             }
-            if (shouldSkip || !chat.text) continue; // 避免推入空项
-            chatItems.push(chat);
+            if (shouldSkip || !chat.text) continue;
+            nextChatItems.push(chat);
           }
-          setChatItems(chatItems);
+          setChatItems(nextChatItems);
           updateRouterMapWithChats(chats);
         }
       } catch (e) {
@@ -271,14 +247,12 @@ const SiderBar = ({ onNavigate = () => {} }) => {
     }
   }, []);
 
-  // 根据当前路径设置选中的菜单项
   useEffect(() => {
     const currentPath = location.pathname;
     let matchingKey = Object.keys(routerMapState).find(
       (key) => routerMapState[key] === currentPath,
     );
 
-    // 处理聊天路由
     if (!matchingKey && currentPath.startsWith('/console/chat/')) {
       const chatIndex = currentPath.split('/').pop();
       if (!isNaN(chatIndex)) {
@@ -288,13 +262,16 @@ const SiderBar = ({ onNavigate = () => {} }) => {
       }
     }
 
-    // 如果找到匹配的键，更新选中的键
     if (matchingKey) {
       setSelectedKeys([matchingKey]);
+      if (matchingKey.startsWith('chat') && matchingKey !== 'chat') {
+        setOpenedKeys((prev) =>
+          prev.includes('chat') ? prev : [...prev, 'chat'],
+        );
+      }
     }
   }, [location.pathname, routerMapState]);
 
-  // 监控折叠状态变化以更新 body class
   useEffect(() => {
     if (collapsed) {
       document.body.classList.add('sidebar-collapsed');
@@ -303,16 +280,15 @@ const SiderBar = ({ onNavigate = () => {} }) => {
     }
   }, [collapsed]);
 
-  // 选中高亮颜色（统一）
-  const SELECTED_COLOR = 'var(--semi-color-primary)';
+  const SELECTED_TEXT_COLOR = 'var(--console-text-strong)';
 
-  // 渲染自定义菜单项
   const renderNavItem = (item) => {
-    // 跳过隐藏的项目
     if (item.className === 'tableHiddle') return null;
 
     const isSelected = selectedKeys.includes(item.itemKey);
-    const textColor = isSelected ? SELECTED_COLOR : 'inherit';
+    const textColor = isSelected
+      ? SELECTED_TEXT_COLOR
+      : 'var(--console-text-muted)';
 
     return (
       <Nav.Item
@@ -320,7 +296,7 @@ const SiderBar = ({ onNavigate = () => {} }) => {
         itemKey={item.itemKey}
         text={
           <span
-            className='truncate font-medium text-sm'
+            className='truncate text-[13px] font-medium'
             style={{ color: textColor }}
           >
             {item.text}
@@ -336,11 +312,14 @@ const SiderBar = ({ onNavigate = () => {} }) => {
     );
   };
 
-  // 渲染子菜单项
   const renderSubItem = (item) => {
     if (item.items && item.items.length > 0) {
-      const isSelected = selectedKeys.includes(item.itemKey);
-      const textColor = isSelected ? SELECTED_COLOR : 'inherit';
+      const isSelected =
+        selectedKeys.includes(item.itemKey) ||
+        item.items.some((subItem) => selectedKeys.includes(subItem.itemKey));
+      const textColor = isSelected
+        ? SELECTED_TEXT_COLOR
+        : 'var(--console-text-muted)';
 
       return (
         <Nav.Sub
@@ -348,7 +327,7 @@ const SiderBar = ({ onNavigate = () => {} }) => {
           itemKey={item.itemKey}
           text={
             <span
-              className='truncate font-medium text-sm'
+              className='truncate text-[13px] font-medium'
               style={{ color: textColor }}
             >
               {item.text}
@@ -362,15 +341,18 @@ const SiderBar = ({ onNavigate = () => {} }) => {
         >
           {item.items.map((subItem) => {
             const isSubSelected = selectedKeys.includes(subItem.itemKey);
-            const subTextColor = isSubSelected ? SELECTED_COLOR : 'inherit';
+            const subTextColor = isSubSelected
+              ? SELECTED_TEXT_COLOR
+              : 'var(--console-text-muted)';
 
             return (
               <Nav.Item
+                className='sidebar-sub-nav-item'
                 key={subItem.itemKey}
                 itemKey={subItem.itemKey}
                 text={
                   <span
-                    className='truncate font-medium text-sm'
+                    className='truncate text-[13px] font-medium'
                     style={{ color: subTextColor }}
                   >
                     {subItem.text}
@@ -381,14 +363,14 @@ const SiderBar = ({ onNavigate = () => {} }) => {
           })}
         </Nav.Sub>
       );
-    } else {
-      return renderNavItem(item);
     }
+
+    return renderNavItem(item);
   };
 
   return (
     <div
-      className='sidebar-container'
+      className='sidebar-container admin-sidebar'
       style={{
         width: 'var(--sidebar-current-width)',
       }}
@@ -413,11 +395,11 @@ const SiderBar = ({ onNavigate = () => {} }) => {
             const to =
               routerMapState[props.itemKey] || routerMap[props.itemKey];
 
-            // 如果没有路由，直接返回元素
             if (!to) return itemElement;
 
             return (
               <Link
+                className='sidebar-nav-link'
                 style={{ textDecoration: 'none' }}
                 to={to}
                 onClick={onNavigate}
@@ -427,7 +409,6 @@ const SiderBar = ({ onNavigate = () => {} }) => {
             );
           }}
           onSelect={(key) => {
-            // 如果点击的是已经展开的子菜单的父项，则收起子菜单
             if (openedKeys.includes(key.itemKey)) {
               setOpenedKeys(openedKeys.filter((k) => k !== key.itemKey));
             }
@@ -439,7 +420,6 @@ const SiderBar = ({ onNavigate = () => {} }) => {
             setOpenedKeys(data.openKeys);
           }}
         >
-          {/* 聊天区域 */}
           {hasSectionVisibleModules('chat') && (
             <div className='sidebar-section'>
               {!collapsed && (
@@ -449,7 +429,6 @@ const SiderBar = ({ onNavigate = () => {} }) => {
             </div>
           )}
 
-          {/* 控制台区域 */}
           {hasSectionVisibleModules('console') && (
             <>
               <Divider className='sidebar-divider' />
@@ -462,7 +441,6 @@ const SiderBar = ({ onNavigate = () => {} }) => {
             </>
           )}
 
-          {/* 个人中心区域 */}
           {hasSectionVisibleModules('personal') && (
             <>
               <Divider className='sidebar-divider' />
@@ -475,7 +453,6 @@ const SiderBar = ({ onNavigate = () => {} }) => {
             </>
           )}
 
-          {/* 管理员区域 - 只在管理员时显示且配置允许时显示 */}
           {isAdmin() && hasSectionVisibleModules('admin') && (
             <>
               <Divider className='sidebar-divider' />
@@ -490,39 +467,40 @@ const SiderBar = ({ onNavigate = () => {} }) => {
         </Nav>
       </SkeletonWrapper>
 
-      {/* 底部折叠按钮 */}
       <div className='sidebar-collapse-button'>
         <SkeletonWrapper
           loading={showSkeleton}
           type='button'
-          width={collapsed ? 36 : 156}
+          width={collapsed ? 40 : 164}
           height={24}
           className='w-full'
         >
-          <Button
-            theme='outline'
-            type='tertiary'
-            size='small'
-            icon={
-              <ChevronLeft
-                size={16}
-                strokeWidth={2.5}
-                color='var(--semi-color-text-2)'
-                style={{
-                  transform: collapsed ? 'rotate(180deg)' : 'rotate(0deg)',
-                }}
-              />
-            }
-            onClick={toggleCollapsed}
-            icononly={collapsed}
-            style={
-              collapsed
-                ? { width: 36, height: 24, padding: 0 }
-                : { padding: '4px 12px', width: '100%' }
-            }
-          >
-            {!collapsed ? t('收起侧边栏') : null}
-          </Button>
+          <div className='sidebar-collapse-button-inner'>
+            <Button
+              className='sidebar-collapse-trigger'
+              theme='outline'
+              type='tertiary'
+              size='small'
+              icon={
+                <ChevronLeft
+                  size={16}
+                  strokeWidth={2.5}
+                  color='currentColor'
+                  style={{
+                    transform: collapsed ? 'rotate(180deg)' : 'rotate(0deg)',
+                  }}
+                />
+              }
+              onClick={toggleCollapsed}
+              style={
+                collapsed
+                  ? { width: 40, height: 40, padding: 0 }
+                  : { padding: '6px 16px', width: '100%', height: 44 }
+              }
+            >
+              {!collapsed ? t('收起侧边栏') : null}
+            </Button>
+          </div>
         </SkeletonWrapper>
       </div>
     </div>

@@ -18,15 +18,36 @@ For commercial licensing, please contact support@quantumnous.com
 */
 
 import React, { useEffect, useState } from 'react';
-import { Card, Spin, Tabs } from '@douyinfe/semi-ui';
+import { Spin, Tabs } from '@douyinfe/semi-ui';
 import SettingsGeneralPayment from '../../pages/Setting/Payment/SettingsGeneralPayment';
 import SettingsPaymentGateway from '../../pages/Setting/Payment/SettingsPaymentGateway';
 import SettingsPaymentGatewayStripe from '../../pages/Setting/Payment/SettingsPaymentGatewayStripe';
 import SettingsPaymentGatewayCreem from '../../pages/Setting/Payment/SettingsPaymentGatewayCreem';
 import SettingsPaymentGatewayWaffo from '../../pages/Setting/Payment/SettingsPaymentGatewayWaffo';
-import SettingsPaymentGatewayWaffoPancake from '../../pages/Setting/Payment/SettingsPaymentGatewayWaffoPancake';
 import { API, showError, toBoolean } from '../../helpers';
 import { useTranslation } from 'react-i18next';
+import { Wallet, CreditCard, ShieldCheck, Sparkles, Coins } from 'lucide-react';
+
+const PREMIUM_SUBTAB_STYLES = `
+  .settings-premium-subtabs.semi-tabs .semi-tabs-bar {
+    margin-bottom: 8px !important;
+  }
+
+  .settings-premium-subtabs .semi-tabs-tab {
+    min-height: 32px !important;
+    margin: 0 6px 6px 0 !important;
+    padding: 0 10px !important;
+  }
+`;
+
+const tabLabel = (Icon, label) => (
+  <span className='settings-premium-tab-label'>
+    <span className='settings-premium-tab-icon'>
+      <Icon size={16} />
+    </span>
+    <span>{label}</span>
+  </span>
+);
 
 const PaymentSetting = () => {
   const { t } = useTranslation();
@@ -157,56 +178,68 @@ const PaymentSetting = () => {
   return (
     <>
       <Spin spinning={loading} size='large'>
-        <Card style={{ marginTop: '10px' }}>
-          <Tabs
-            type='card'
-            defaultActiveKey='general'
-            contentStyle={{ paddingTop: 24 }}
-          >
-            <Tabs.TabPane tab={t('通用设置')} itemKey='general'>
-              <SettingsGeneralPayment
-                options={inputs}
-                refresh={onRefresh}
-                hideSectionTitle
-              />
-            </Tabs.TabPane>
-            <Tabs.TabPane tab={t('易支付设置')} itemKey='epay'>
-              <SettingsPaymentGateway
-                options={inputs}
-                refresh={onRefresh}
-                hideSectionTitle
-              />
-            </Tabs.TabPane>
-            <Tabs.TabPane tab={t('Stripe 设置')} itemKey='stripe'>
-              <SettingsPaymentGatewayStripe
-                options={inputs}
-                refresh={onRefresh}
-                hideSectionTitle
-              />
-            </Tabs.TabPane>
-            <Tabs.TabPane tab={t('Creem 设置')} itemKey='creem'>
-              <SettingsPaymentGatewayCreem
-                options={inputs}
-                refresh={onRefresh}
-                hideSectionTitle
-              />
-            </Tabs.TabPane>
-            <Tabs.TabPane tab={t('Waffo 设置')} itemKey='waffo'>
-              <SettingsPaymentGatewayWaffo
-                options={inputs}
-                refresh={onRefresh}
-                hideSectionTitle
-              />
-            </Tabs.TabPane>
-            {/*<Tabs.TabPane tab={t('Waffo Pancake 设置')} itemKey='waffo-pancake'>*/}
-            {/*  <SettingsPaymentGatewayWaffoPancake*/}
-            {/*    options={inputs}*/}
-            {/*    refresh={onRefresh}*/}
-            {/*    hideSectionTitle*/}
-            {/*  />*/}
-            {/*</Tabs.TabPane>*/}
-          </Tabs>
-        </Card>
+        <style>{PREMIUM_SUBTAB_STYLES}</style>
+        <div className='relative rounded-lg border border-[#e2e7ec] bg-white p-3 shadow-none sm:p-4'>
+          <div className='relative'>
+            <Tabs
+              className='settings-premium-tabs settings-premium-subtabs'
+              type='card'
+              defaultActiveKey='general'
+              contentStyle={{ paddingTop: 12 }}
+            >
+              <Tabs.TabPane
+                tab={tabLabel(Wallet, t('通用设置'))}
+                itemKey='general'
+              >
+                <SettingsGeneralPayment
+                  options={inputs}
+                  refresh={onRefresh}
+                  hideSectionTitle
+                />
+              </Tabs.TabPane>
+              <Tabs.TabPane
+                tab={tabLabel(Coins, t('易支付设置'))}
+                itemKey='epay'
+              >
+                <SettingsPaymentGateway
+                  options={inputs}
+                  refresh={onRefresh}
+                  hideSectionTitle
+                />
+              </Tabs.TabPane>
+              <Tabs.TabPane
+                tab={tabLabel(CreditCard, t('Stripe 设置'))}
+                itemKey='stripe'
+              >
+                <SettingsPaymentGatewayStripe
+                  options={inputs}
+                  refresh={onRefresh}
+                  hideSectionTitle
+                />
+              </Tabs.TabPane>
+              <Tabs.TabPane
+                tab={tabLabel(Sparkles, t('Creem 设置'))}
+                itemKey='creem'
+              >
+                <SettingsPaymentGatewayCreem
+                  options={inputs}
+                  refresh={onRefresh}
+                  hideSectionTitle
+                />
+              </Tabs.TabPane>
+              <Tabs.TabPane
+                tab={tabLabel(ShieldCheck, t('Waffo 设置'))}
+                itemKey='waffo'
+              >
+                <SettingsPaymentGatewayWaffo
+                  options={inputs}
+                  refresh={onRefresh}
+                  hideSectionTitle
+                />
+              </Tabs.TabPane>
+            </Tabs>
+          </div>
+        </div>
       </Spin>
     </>
   );

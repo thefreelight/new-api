@@ -18,13 +18,19 @@ For commercial licensing, please contact support@quantumnous.com
 */
 
 import React, { useEffect, useState, useMemo } from 'react';
-import { Card, Spin, Button, Modal } from '@douyinfe/semi-ui';
+import { Spin, Modal } from '@douyinfe/semi-ui';
 import { API, showError, showSuccess, toBoolean } from '../../helpers';
 import SettingsAPIInfo from '../../pages/Setting/Dashboard/SettingsAPIInfo';
 import SettingsAnnouncements from '../../pages/Setting/Dashboard/SettingsAnnouncements';
 import SettingsFAQ from '../../pages/Setting/Dashboard/SettingsFAQ';
 import SettingsUptimeKuma from '../../pages/Setting/Dashboard/SettingsUptimeKuma';
 import SettingsDataDashboard from '../../pages/Setting/Dashboard/SettingsDataDashboard';
+
+const SectionShell = ({ children }) => (
+  <section className='relative rounded-lg border border-[#e2e7ec] bg-white p-4 shadow-none sm:p-5'>
+    <div className='relative'>{children}</div>
+  </section>
+);
 
 const DashboardSetting = () => {
   let [inputs, setInputs] = useState({
@@ -141,30 +147,27 @@ const DashboardSetting = () => {
           </p>
         </Modal>
 
-        {/* 数据看板设置 */}
-        <Card style={{ marginTop: '10px' }}>
-          <SettingsDataDashboard options={inputs} refresh={onRefresh} />
-        </Card>
+        <div className='space-y-4'>
+          <SectionShell>
+            <SettingsDataDashboard options={inputs} refresh={onRefresh} />
+          </SectionShell>
 
-        {/* 系统公告管理 */}
-        <Card style={{ marginTop: '10px' }}>
-          <SettingsAnnouncements options={inputs} refresh={onRefresh} />
-        </Card>
+          <SectionShell>
+            <SettingsAnnouncements options={inputs} refresh={onRefresh} />
+          </SectionShell>
 
-        {/* API信息管理 */}
-        <Card style={{ marginTop: '10px' }}>
-          <SettingsAPIInfo options={inputs} refresh={onRefresh} />
-        </Card>
+          <SectionShell>
+            <SettingsAPIInfo options={inputs} refresh={onRefresh} />
+          </SectionShell>
 
-        {/* 常见问答管理 */}
-        <Card style={{ marginTop: '10px' }}>
-          <SettingsFAQ options={inputs} refresh={onRefresh} />
-        </Card>
+          <SectionShell>
+            <SettingsFAQ options={inputs} refresh={onRefresh} />
+          </SectionShell>
 
-        {/* Uptime Kuma 监控设置 */}
-        <Card style={{ marginTop: '10px' }}>
-          <SettingsUptimeKuma options={inputs} refresh={onRefresh} />
-        </Card>
+          <SectionShell>
+            <SettingsUptimeKuma options={inputs} refresh={onRefresh} />
+          </SectionShell>
+        </div>
       </Spin>
     </>
   );

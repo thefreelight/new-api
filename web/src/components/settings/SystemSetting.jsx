@@ -30,9 +30,8 @@ import {
   Spin,
   Card,
   Radio,
-  Select,
 } from '@douyinfe/semi-ui';
-const { Text } = Typography;
+const { Text, Title } = Typography;
 import {
   API,
   removeTrailingSlash,
@@ -696,23 +695,539 @@ const SystemSetting = () => {
     setShowPasswordLoginConfirmModal(false);
   };
 
+  const systemSectionCount = 15;
+  const enabledLoginMethods = [
+    'PasswordLoginEnabled',
+    'GitHubOAuthEnabled',
+    'discord.enabled',
+    'oidc.enabled',
+    'passkey.enabled',
+    'TelegramOAuthEnabled',
+    'WeChatAuthEnabled',
+    'LinuxDOOAuthEnabled',
+  ].filter((key) => Boolean(inputs[key])).length;
+  const activeSecurityControls = [
+    'fetch_setting.enable_ssrf_protection',
+    'fetch_setting.apply_ip_filter_for_domain',
+    'TurnstileCheckEnabled',
+    'EmailDomainRestrictionEnabled',
+    'passkey.enabled',
+  ].filter((key) => Boolean(inputs[key])).length;
+  const systemSettingShellStyles = `
+    .system-setting-shell {
+      position: relative;
+      padding: 8px 0 32px;
+    }
+
+    .system-setting-shell::before {
+      content: '';
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 320px;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at top left, rgba(198, 145, 86, 0.18), transparent 38%),
+        radial-gradient(circle at top right, rgba(87, 103, 145, 0.14), transparent 42%);
+    }
+
+    .system-setting-shell__hero {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      gap: 22px;
+      padding: clamp(24px, 4vw, 34px);
+      margin-bottom: 18px;
+      border-radius: 28px;
+      background:
+        linear-gradient(135deg, rgba(31, 38, 54, 0.98) 0%, rgba(62, 72, 102, 0.94) 48%, rgba(182, 143, 92, 0.9) 100%);
+      box-shadow: 0 28px 60px rgba(35, 45, 66, 0.18);
+      color: #f8f3eb;
+    }
+
+    .system-setting-shell__hero::after {
+      content: '';
+      position: absolute;
+      top: -104px;
+      right: -44px;
+      width: 220px;
+      height: 220px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.32), transparent 70%);
+    }
+
+    .system-setting-shell__hero-copy,
+    .system-setting-shell__hero-metrics {
+      position: relative;
+      z-index: 1;
+    }
+
+    .system-setting-shell__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 12px;
+      margin-bottom: 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.1);
+      color: rgba(255, 247, 238, 0.9);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .system-setting-shell__eyebrow::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: rgba(255, 235, 210, 0.96);
+      box-shadow: 0 0 0 6px rgba(255, 247, 238, 0.08);
+    }
+
+    .system-setting-shell__title {
+      margin: 0 !important;
+      color: #fffdfa !important;
+    }
+
+    .system-setting-shell__subtitle {
+      display: block;
+      max-width: 760px;
+      margin-top: 10px;
+      color: rgba(255, 247, 238, 0.78);
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    .system-setting-shell__hero-metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+    }
+
+    .system-setting-shell__metric {
+      padding: 14px 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    .system-setting-shell__metric span {
+      display: block;
+      margin-bottom: 6px;
+      color: rgba(255, 247, 238, 0.62);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .system-setting-shell__metric strong {
+      display: block;
+      color: #fff9f2;
+      font-size: clamp(24px, 2.8vw, 32px);
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .system-setting-shell__cards {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .system-setting-shell .semi-card {
+      overflow: hidden;
+      border-radius: 24px;
+      border: 1px solid rgba(160, 136, 103, 0.16);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(249, 246, 241, 0.92) 100%);
+      box-shadow: 0 18px 40px rgba(35, 45, 66, 0.08);
+      transition:
+        transform 0.28s ease,
+        box-shadow 0.28s ease,
+        border-color 0.28s ease;
+    }
+
+    .system-setting-shell .semi-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(160, 136, 103, 0.28);
+      box-shadow: 0 24px 54px rgba(35, 45, 66, 0.12);
+    }
+
+    .system-setting-shell .semi-card-body {
+      padding: clamp(20px, 3vw, 30px);
+    }
+
+    .system-setting-shell .semi-form-section {
+      margin-top: 0;
+    }
+
+    .system-setting-shell .semi-form-section-text {
+      margin-bottom: 22px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(151, 127, 95, 0.18);
+      color: #6f5c47;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .system-setting-shell .semi-banner {
+      border-radius: 18px;
+      border: 1px solid rgba(177, 146, 105, 0.2);
+      background:
+        linear-gradient(135deg, rgba(247, 239, 227, 0.96) 0%, rgba(255, 255, 255, 0.92) 100%);
+    }
+
+    .system-setting-shell .semi-banner-content,
+    .system-setting-shell .semi-banner-description {
+      color: #5e503e;
+    }
+
+    .system-setting-shell .semi-input-wrapper,
+    .system-setting-shell .semi-input-number,
+    .system-setting-shell .semi-input-number-wrapper,
+    .system-setting-shell .semi-input-textarea-wrapper,
+    .system-setting-shell .semi-select,
+    .system-setting-shell .semi-tagInput-wrapper {
+      border-radius: 16px;
+      border: 1px solid rgba(172, 149, 118, 0.2);
+      background: rgba(255, 255, 255, 0.86);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+      transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease,
+        background-color 0.2s ease;
+    }
+
+    .system-setting-shell .semi-input-wrapper:hover,
+    .system-setting-shell .semi-input-number:hover,
+    .system-setting-shell .semi-input-number-wrapper:hover,
+    .system-setting-shell .semi-input-textarea-wrapper:hover,
+    .system-setting-shell .semi-select:hover,
+    .system-setting-shell .semi-tagInput-wrapper:hover {
+      border-color: rgba(172, 149, 118, 0.34);
+      background: rgba(255, 255, 255, 0.94);
+    }
+
+    .system-setting-shell .semi-input-wrapper:focus-within,
+    .system-setting-shell .semi-input-number:focus-within,
+    .system-setting-shell .semi-input-number-wrapper:focus-within,
+    .system-setting-shell .semi-input-textarea-wrapper:focus-within,
+    .system-setting-shell .semi-select:focus-within,
+    .system-setting-shell .semi-tagInput-wrapper:focus-within {
+      border-color: rgba(121, 95, 63, 0.44);
+      box-shadow:
+        0 0 0 4px rgba(186, 154, 113, 0.14),
+        inset 0 1px 0 rgba(255, 255, 255, 0.84);
+    }
+
+    .system-setting-shell .semi-button {
+      border-radius: 999px;
+      font-weight: 600;
+    }
+
+    .system-setting-shell .semi-button:not(.semi-button-borderless) {
+      border-color: transparent;
+      background:
+        linear-gradient(135deg, rgba(56, 73, 106, 1) 0%, rgba(129, 86, 49, 0.96) 100%);
+      box-shadow: 0 14px 26px rgba(86, 80, 92, 0.14);
+      color: #fffaf4;
+    }
+
+    .system-setting-shell .semi-button:not(.semi-button-borderless):hover {
+      opacity: 0.96;
+      transform: translateY(-1px);
+    }
+
+    .system-setting-shell a {
+      color: #7a5232;
+      text-decoration-color: rgba(122, 82, 50, 0.3);
+    }
+
+    @media (max-width: 768px) {
+      .system-setting-shell__hero {
+        border-radius: 24px;
+        padding: 22px 18px;
+      }
+
+      .system-setting-shell__metric strong {
+        font-size: 24px;
+      }
+
+      .system-setting-shell .semi-card-body {
+        padding: 20px 18px;
+      }
+    }
+
+    .system-setting-shell {
+      padding: 0;
+    }
+
+    .system-setting-shell::before,
+    .system-setting-shell__hero::after {
+      display: none;
+    }
+
+    .system-setting-shell__cards {
+      gap: 12px;
+    }
+
+    .system-setting-shell__hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 0;
+      padding: 14px 16px;
+      border: 1px solid #e2e7ec;
+      border-radius: 8px;
+      background: #ffffff;
+      box-shadow: none;
+      color: #141a22;
+    }
+
+    .system-setting-shell__hero-copy,
+    .system-setting-shell__hero-metrics {
+      z-index: auto;
+    }
+
+    .system-setting-shell__eyebrow {
+      margin-bottom: 6px;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      color: #697584;
+      font-size: 11px;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    .system-setting-shell__eyebrow::before {
+      width: 6px;
+      height: 6px;
+      background: #2f5f8f;
+      box-shadow: none;
+    }
+
+    .system-setting-shell__title {
+      color: #141a22 !important;
+      font-size: 18px !important;
+      line-height: 24px !important;
+    }
+
+    .system-setting-shell__subtitle {
+      margin-top: 4px;
+      color: #697584;
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    .system-setting-shell__hero-metrics {
+      display: flex;
+      grid-template-columns: none;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .system-setting-shell__metric {
+      min-width: 104px;
+      padding: 8px 10px;
+      border: 1px solid #e2e7ec;
+      border-radius: 8px;
+      background: #f7f9fb;
+      backdrop-filter: none;
+    }
+
+    .system-setting-shell__metric span {
+      margin-bottom: 2px;
+      color: #697584;
+      font-size: 11px;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    .system-setting-shell__metric strong {
+      color: #141a22;
+      font-size: 18px;
+      line-height: 24px;
+    }
+
+    .system-setting-shell .semi-card {
+      border-color: #e2e7ec;
+      border-radius: 8px;
+      background: #ffffff;
+      box-shadow: none;
+      transition: none;
+    }
+
+    .system-setting-shell .semi-card:hover {
+      transform: none;
+      border-color: #d8e0e8;
+      box-shadow: none;
+    }
+
+    .system-setting-shell .semi-card-body {
+      padding: 16px;
+    }
+
+    .system-setting-shell .semi-form-section-text {
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eef2f5;
+      color: #4c5968;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    .system-setting-shell .semi-banner {
+      border-radius: 8px;
+      border-color: #dfe7ef;
+      background: #f6f8fa;
+    }
+
+    .system-setting-shell .semi-banner-content,
+    .system-setting-shell .semi-banner-description {
+      color: #4c5968;
+    }
+
+    .system-setting-shell .semi-input-wrapper,
+    .system-setting-shell .semi-input-number,
+    .system-setting-shell .semi-input-number-wrapper,
+    .system-setting-shell .semi-input-textarea-wrapper,
+    .system-setting-shell .semi-select,
+    .system-setting-shell .semi-tagInput-wrapper {
+      border-radius: 6px;
+      border-color: #dfe5eb;
+      background: #ffffff;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .system-setting-shell .semi-input-wrapper:hover,
+    .system-setting-shell .semi-input-number:hover,
+    .system-setting-shell .semi-input-number-wrapper:hover,
+    .system-setting-shell .semi-input-textarea-wrapper:hover,
+    .system-setting-shell .semi-select:hover,
+    .system-setting-shell .semi-tagInput-wrapper:hover {
+      border-color: #cfd8e2;
+      background: #ffffff;
+    }
+
+    .system-setting-shell .semi-input-wrapper:focus-within,
+    .system-setting-shell .semi-input-number:focus-within,
+    .system-setting-shell .semi-input-number-wrapper:focus-within,
+    .system-setting-shell .semi-input-textarea-wrapper:focus-within,
+    .system-setting-shell .semi-select:focus-within,
+    .system-setting-shell .semi-tagInput-wrapper:focus-within {
+      border-color: #b9c6d4;
+      box-shadow: 0 0 0 3px rgba(47, 95, 143, 0.08);
+    }
+
+    .system-setting-shell .semi-button {
+      border-radius: 6px;
+      font-weight: 600;
+      transform: none;
+    }
+
+    .system-setting-shell .semi-button:not(.semi-button-borderless) {
+      border-color: #dfe5eb;
+      background: #ffffff;
+      box-shadow: none;
+      color: #4c5968;
+    }
+
+    .system-setting-shell .semi-button-primary,
+    .system-setting-shell .semi-button-primary:not(.semi-button-borderless) {
+      border-color: #17202b;
+      background: #17202b;
+      color: #ffffff;
+    }
+
+    .system-setting-shell .semi-button:not(.semi-button-borderless):hover {
+      opacity: 1;
+      transform: none;
+      border-color: #cfd8e2;
+      background: #f3f6f9;
+    }
+
+    .system-setting-shell .semi-button-primary:hover,
+    .system-setting-shell .semi-button-primary:not(.semi-button-borderless):hover {
+      border-color: #0f1721;
+      background: #0f1721;
+      color: #ffffff;
+    }
+
+    .system-setting-shell a {
+      color: #2f5f8f;
+      text-decoration-color: rgba(47, 95, 143, 0.28);
+    }
+
+    @media (max-width: 768px) {
+      .system-setting-shell__hero {
+        display: block;
+        border-radius: 8px;
+        padding: 14px;
+      }
+
+      .system-setting-shell__hero-metrics {
+        justify-content: flex-start;
+        margin-top: 12px;
+      }
+
+      .system-setting-shell .semi-card-body {
+        padding: 14px;
+      }
+    }
+  `;
+
   return (
-    <div>
+    <div className='system-setting-shell'>
+      <style>{systemSettingShellStyles}</style>
       {isLoaded ? (
         <Form
           initValues={inputs}
           onValueChange={handleFormChange}
           getFormApi={(api) => (formApiRef.current = api)}
         >
-          {({ formState, values, formApi }) => (
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '10px',
-                marginTop: '10px',
-              }}
-            >
+          {() => (
+            <div className='system-setting-shell__cards'>
+              <div className='system-setting-shell__hero'>
+                <div className='system-setting-shell__hero-copy'>
+                  <span className='system-setting-shell__eyebrow'>
+                    System Settings
+                  </span>
+                  <Title heading={3} className='system-setting-shell__title'>
+                    {t('系统设置')}
+                  </Title>
+                  <Text className='system-setting-shell__subtitle'>
+                    {t('统一管理接入地址、认证方式、安全策略与通知能力')}
+                  </Text>
+                </div>
+                <div className='system-setting-shell__hero-metrics'>
+                  <div className='system-setting-shell__metric'>
+                    <span>{t('配置分区')}</span>
+                    <strong>{systemSectionCount}</strong>
+                  </div>
+                  <div className='system-setting-shell__metric'>
+                    <span>{t('启用登录方式')}</span>
+                    <strong>{enabledLoginMethods}</strong>
+                  </div>
+                  <div className='system-setting-shell__metric'>
+                    <span>{t('安全防护项')}</span>
+                    <strong>{activeSecurityControls}</strong>
+                  </div>
+                </div>
+              </div>
               <Card>
                 <Form.Section text={t('通用设置')}>
                   <Row

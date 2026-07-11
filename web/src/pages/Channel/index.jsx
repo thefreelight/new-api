@@ -19,12 +19,13 @@ For commercial licensing, please contact support@quantumnous.com
 
 import React from 'react';
 import ChannelsTable from '../../components/table/channels';
+import ConsoleShell from '../../components/layout/ConsoleShell';
 
 const File = () => {
   return (
-    <div className='mt-[60px] px-2'>
+    <ConsoleShell wide>
       <ChannelsTable />
-    </div>
+    </ConsoleShell>
   );
 };
 

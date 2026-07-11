@@ -19,11 +19,12 @@ For commercial licensing, please contact support@quantumnous.com
 
 import React from 'react';
 import MjLogsTable from '../../components/table/mj-logs';
+import ConsoleShell from '../../components/layout/ConsoleShell';
 
 const Midjourney = () => (
-  <div className='mt-[60px] px-2'>
+  <ConsoleShell wide>
     <MjLogsTable />
-  </div>
+  </ConsoleShell>
 );
 
 export default Midjourney;

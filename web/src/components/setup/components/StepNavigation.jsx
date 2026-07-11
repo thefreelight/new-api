@@ -19,7 +19,7 @@ For commercial licensing, please contact support@quantumnous.com
 
 import React from 'react';
 import { Button } from '@douyinfe/semi-ui';
-import { IconCheckCircleStroked } from '@douyinfe/semi-icons';
+import { ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 /**
  * 步骤导航组件
@@ -35,19 +35,29 @@ const StepNavigation = ({
   t,
 }) => {
   return (
-    <div className='flex justify-between items-center pt-4'>
+    <div className='setup-nav'>
       {/* 上一步按钮 */}
       {currentStep > 0 && (
-        <Button onClick={prev} className='!rounded-lg'>
+        <Button
+          onClick={prev}
+          className='setup-nav-button setup-nav-button-secondary'
+          icon={<ArrowLeft size={16} />}
+        >
           {t('上一步')}
         </Button>
       )}
 
-      <div className='flex-1'></div>
+      <div className='setup-nav-spacer'></div>
 
       {/* 下一步按钮 */}
       {currentStep < steps.length - 1 && (
-        <Button type='primary' onClick={next} className='!rounded-lg'>
+        <Button
+          type='primary'
+          onClick={next}
+          className='setup-nav-button setup-nav-button-primary'
+          icon={<ArrowRight size={16} />}
+          iconPosition='right'
+        >
           {t('下一步')}
         </Button>
       )}
@@ -58,8 +68,8 @@ const StepNavigation = ({
           type='primary'
           onClick={onSubmit}
           loading={loading}
-          className='!rounded-lg'
-          icon={<IconCheckCircleStroked />}
+          className='setup-nav-button setup-nav-button-primary'
+          icon={<CheckCircle2 size={16} />}
         >
           {t('初始化系统')}
         </Button>
