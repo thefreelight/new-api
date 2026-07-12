@@ -15,7 +15,7 @@ services:
       - TZ=Asia/Shanghai
       - SESSION_SECRET=${SESSION_SECRET}
       - FRONTEND_BASE_URL=${FRONTEND_BASE_URL}
-      - TRUSTED_REDIRECT_DOMAINS=${TRUSTED_REDIRECT_DOMAINS:-navtoai.com}
+      - TRUSTED_REDIRECT_DOMAINS=${TRUSTED_REDIRECT_DOMAINS:-api.navtoai.com}
       - ERROR_LOG_ENABLED=true
       - BATCH_UPDATE_ENABLED=true
       - NODE_NAME=navtoai-new-api-racknerd-gf
