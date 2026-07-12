@@ -35,6 +35,20 @@ export const reducer = (state, action) => {
   }
 };
 
+const loadStoredUser = () => {
+  if (typeof localStorage === 'undefined') {
+    return undefined;
+  }
+
+  try {
+    const rawUser = localStorage.getItem('user');
+    return rawUser ? JSON.parse(rawUser) : undefined;
+  } catch (e) {
+    localStorage.removeItem('user');
+    return undefined;
+  }
+};
+
 export const initialState = {
-  user: undefined,
+  user: loadStoredUser(),
 };

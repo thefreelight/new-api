@@ -41,6 +41,7 @@ import {
 import { API } from '../../helpers';
 import NoticeModal from '../../components/layout/NoticeModal';
 import { StatusContext } from '../../context/Status';
+import { UserContext } from '../../context/User';
 import { useActualTheme } from '../../context/Theme';
 import { useIsMobile } from '../../hooks/common/useIsMobile';
 import ModelGlobe from '../../components/home/ModelGlobe';
@@ -279,6 +280,7 @@ const HighlightedTerminal = () => (
 const Home = () => {
   const { i18n } = useTranslation();
   const [statusState] = useContext(StatusContext);
+  const [userState] = useContext(UserContext);
   const actualTheme = useActualTheme();
   const [homePageContentLoaded, setHomePageContentLoaded] = useState(false);
   const [homePageContent, setHomePageContent] = useState(
@@ -292,6 +294,9 @@ const Home = () => {
     ['127.0.0.1', 'localhost'].includes(window.location.hostname);
 
   const displayBrandName = 'NavtoAI';
+  const currentUser = userState?.user;
+  const accountLabel =
+    currentUser?.display_name || currentUser?.username || '我的账户';
   const isSetupComplete = statusState?.status?.setup !== false;
   const primaryLink = isSetupComplete ? '/console/token' : '/setup';
   const primaryActionLabel = isSetupComplete ? '开始使用' : '完成初始化';
@@ -469,12 +474,28 @@ const Home = () => {
                 <b>EN</b>
               </button>
             </div>
-            <Link className='login-link' to='/login'>
-              登录
-            </Link>
-            <Link className='orange-button nav-register' to='/register'>
-              注册
-            </Link>
+            {currentUser ? (
+              <>
+                <Link className='login-link' to='/console'>
+                  控制台
+                </Link>
+                <Link
+                  className='orange-button nav-register'
+                  to='/console/personal'
+                >
+                  {accountLabel}
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link className='login-link' to='/login'>
+                  登录
+                </Link>
+                <Link className='orange-button nav-register' to='/register'>
+                  注册
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -822,11 +843,17 @@ const Home = () => {
             接入模型、管理密钥、追踪消耗，并把代理增长和运营能力统一纳入控制台。
           </p>
           <div className='hero-actions compact center'>
-            <Link className='orange-button' to='/register'>
-              注册 {displayBrandName}
+            <Link
+              className='orange-button'
+              to={currentUser ? '/console' : '/register'}
+            >
+              {currentUser ? '打开控制台' : `注册 ${displayBrandName}`}
             </Link>
-            <Link className='ghost-button' to='/login'>
-              登录控制台
+            <Link
+              className='ghost-button'
+              to={currentUser ? '/console/token' : '/login'}
+            >
+              {currentUser ? '管理令牌' : '登录控制台'}
             </Link>
           </div>
         </div>
@@ -846,7 +873,7 @@ const Home = () => {
             <a href='#pricing'>隐私</a>
             <a href='#pricing'>条款</a>
             <a href='#pricing'>退款</a>
-            <Link to='/login'>控制台</Link>
+            <Link to={currentUser ? '/console' : '/login'}>控制台</Link>
           </nav>
         </div>
       </footer>
