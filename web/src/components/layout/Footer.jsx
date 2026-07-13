@@ -50,15 +50,15 @@ const FooterBar = () => {
         title: t('关于我们'),
         links: [
           {
-            href: 'https://docs.newapi.pro/wiki/project-introduction/',
+            href: '/about',
             label: t('关于项目'),
           },
           {
-            href: 'https://docs.newapi.pro/support/community-interaction/',
+            href: '/docs#support',
             label: t('联系我们'),
           },
           {
-            href: 'https://docs.newapi.pro/wiki/features-introduction/',
+            href: '/docs#api-overview',
             label: t('功能特性'),
           },
         ],
@@ -67,15 +67,15 @@ const FooterBar = () => {
         title: t('文档'),
         links: [
           {
-            href: 'https://docs.newapi.pro/getting-started/',
+            href: '/docs#quick-start',
             label: t('快速开始'),
           },
           {
-            href: 'https://docs.newapi.pro/installation/',
+            href: '/docs#tools',
             label: t('安装指南'),
           },
           {
-            href: 'https://docs.newapi.pro/api/',
+            href: '/docs#chat-api',
             label: t('API 文档'),
           },
         ],

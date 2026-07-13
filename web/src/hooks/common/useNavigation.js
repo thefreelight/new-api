@@ -50,6 +50,11 @@ export const useNavigation = (t, docsLink, headerNavModules) => {
         to: '/pricing',
       },
       {
+        text: t('文档'),
+        itemKey: 'docs',
+        to: '/docs',
+      },
+      {
         text: t('关于'),
         itemKey: 'about',
         to: '/about',

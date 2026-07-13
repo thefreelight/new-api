@@ -66,7 +66,7 @@ const PageLayout = () => {
     '/pricing',
   ];
   const authRoutes = ['/login', '/register', '/reset', '/user/reset'];
-  const fullscreenRoutes = ['/setup'];
+  const fullscreenRoutes = ['/setup', '/docs'];
 
   const shouldHideFooter =
     location.pathname === '/' ||

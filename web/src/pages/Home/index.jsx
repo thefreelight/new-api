@@ -54,7 +54,7 @@ const navItems = [
   { label: '代理合作', href: '#agent' },
   { label: '试验场', href: '/console/playground' },
   { label: '提示词库', href: '/console/playground?mode=image' },
-  { label: '文档', href: '#quick-start' },
+  { label: '文档', href: '/docs' },
 ];
 
 const capabilities = [
@@ -301,7 +301,7 @@ const Home = () => {
   const primaryLink = isSetupComplete ? '/console/token' : '/setup';
   const primaryActionLabel = isSetupComplete ? '开始使用' : '完成初始化';
 
-  const docsLink = statusState?.status?.docs_link || '#quick-start';
+  const docsLink = '/docs';
 
   const postIframePreferences = () => {
     const iframe = customHomeIframeRef.current;
