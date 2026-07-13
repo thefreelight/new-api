@@ -117,7 +117,7 @@ const PageLayout = () => {
 
   useEffect(() => {
     loadUser();
-    if (!isLocalHomePreview) {
+    if (!isLocalHomePreview && location.pathname !== '/docs') {
       loadStatus().catch(console.error);
     }
     let systemName = getSystemName();
