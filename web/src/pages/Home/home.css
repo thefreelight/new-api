@@ -3419,16 +3419,19 @@
   }
 
   .globe-stage {
-    width: min(540px, 132vw);
+    width: 100%;
     min-height: 520px;
-    transform: translateX(-4%);
+    transform: none;
   }
 
   .globe-canvas-shell {
+    width: 128%;
+    margin-left: -14%;
     min-height: 500px;
   }
 
   .globe-label {
+    max-width: min(210px, 64vw);
     min-height: 46px;
     padding: 9px 14px 9px 12px;
     column-gap: 9px;
@@ -3447,6 +3450,36 @@
 
   .globe-label small {
     font-size: 12px;
+  }
+
+  .globe-label-models {
+    left: 0;
+    top: 82px;
+  }
+
+  .globe-label-batch {
+    right: 0;
+    left: auto;
+    top: 12px;
+  }
+
+  .globe-label-code {
+    right: 0;
+    top: 220px;
+  }
+
+  .globe-label-image {
+    left: 0;
+    bottom: 68px;
+  }
+
+  .globe-label-api {
+    right: 0;
+    bottom: 18px;
+  }
+
+  .globe-hint {
+    display: none;
   }
 
   .terminal-code {

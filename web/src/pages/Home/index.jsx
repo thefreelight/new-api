@@ -226,25 +226,28 @@ const terminalLines = [
   ],
 ];
 
-const ProviderVisual = () => (
-  <div className='model-globe' aria-label='NavtoAI 多模型网络地球仪'>
-    <div className='globe-stage'>
-      <div className='globe-canvas-shell'>
-        <ModelGlobe />
-      </div>
-
-      {globeLabels.map((label) => (
-        <div className={`globe-label ${label.className}`} key={label.title}>
-          <span />
-          <strong>{label.title}</strong>
-          <small>{label.body}</small>
+const ProviderVisual = () => {
+  const { t } = useTranslation();
+  return (
+    <div className='model-globe' aria-label={t('NavtoAI 多模型网络地球仪')}>
+      <div className='globe-stage'>
+        <div className='globe-canvas-shell'>
+          <ModelGlobe />
         </div>
-      ))}
 
-      <p className='globe-hint'>拖动旋转</p>
+        {globeLabels.map((label) => (
+          <div className={`globe-label ${label.className}`} key={label.title}>
+            <span />
+            <strong>{t(label.title)}</strong>
+            <small>{t(label.body)}</small>
+          </div>
+        ))}
+
+        <p className='globe-hint'>DRAG TO ROTATE</p>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const LineIcon = ({ Icon }) => (
   <span className='line-icon'>
@@ -252,33 +255,36 @@ const LineIcon = ({ Icon }) => (
   </span>
 );
 
-const HighlightedTerminal = () => (
-  <pre aria-label='NavtoAI API terminal setup'>
-    <code className='terminal-code'>
-      {terminalLines.map((line, lineIndex) => (
-        <span className='terminal-line' key={`terminal-line-${lineIndex}`}>
-          {line.map((part, partIndex) =>
-            typeof part === 'string' ? (
-              <React.Fragment key={`terminal-text-${lineIndex}-${partIndex}`}>
-                {part}
-              </React.Fragment>
-            ) : (
-              <span
-                className={part.className}
-                key={`terminal-token-${lineIndex}-${partIndex}`}
-              >
-                {part.text}
-              </span>
-            ),
-          )}
-        </span>
-      ))}
-    </code>
-  </pre>
-);
+const HighlightedTerminal = () => {
+  const { t } = useTranslation();
+  return (
+    <pre aria-label='NavtoAI API terminal setup'>
+      <code className='terminal-code'>
+        {terminalLines.map((line, lineIndex) => (
+          <span className='terminal-line' key={`terminal-line-${lineIndex}`}>
+            {line.map((part, partIndex) =>
+              typeof part === 'string' ? (
+                <React.Fragment key={`terminal-text-${lineIndex}-${partIndex}`}>
+                  {part}
+                </React.Fragment>
+              ) : (
+                <span
+                  className={part.className}
+                  key={`terminal-token-${lineIndex}-${partIndex}`}
+                >
+                  {t(part.text)}
+                </span>
+              ),
+            )}
+          </span>
+        ))}
+      </code>
+    </pre>
+  );
+};
 
 const Home = () => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [statusState] = useContext(StatusContext);
   const [userState] = useContext(UserContext);
   const actualTheme = useActualTheme();
@@ -296,10 +302,17 @@ const Home = () => {
   const displayBrandName = 'NavtoAI';
   const currentUser = userState?.user;
   const accountLabel =
-    currentUser?.display_name || currentUser?.username || '我的账户';
+    currentUser?.display_name || currentUser?.username || t('我的账户');
   const isSetupComplete = statusState?.status?.setup !== false;
   const primaryLink = isSetupComplete ? '/console/token' : '/setup';
-  const primaryActionLabel = isSetupComplete ? '开始使用' : '完成初始化';
+  const primaryActionLabel = isSetupComplete ? t('开始使用') : t('完成初始化');
+  const languageName = {
+    'zh-CN': ['简体中文', 'ZH'],
+    'zh-TW': ['繁體中文', 'ZH'],
+    en: ['English', 'EN'],
+    ja: ['日本語', 'JA'],
+    ko: ['한국어', 'KO'],
+  }[i18n.language] || ['English', 'EN'];
 
   const docsLink = '/docs';
 
@@ -432,7 +445,7 @@ const Home = () => {
           <Link
             className='brand'
             to='/'
-            aria-label={`${displayBrandName} 首页`}
+            aria-label={`${displayBrandName} ${t('首页')}`}
           >
             <span className='brand-mark' aria-hidden='true'>
               <img src='/navtoai-logo.svg' alt='' />
@@ -440,44 +453,52 @@ const Home = () => {
             <span>{displayBrandName}</span>
           </Link>
 
-          <nav className='site-nav' aria-label='主导航'>
+          <nav className='site-nav' aria-label={t('主导航')}>
             {navItems.map((item) =>
               item.href.startsWith('#') ? (
                 <a key={item.label} href={item.href}>
-                  {item.label}
+                  {t(item.label)}
                 </a>
               ) : (
                 <Link key={item.label} to={item.href}>
-                  {item.label}
+                  {t(item.label)}
                 </Link>
               ),
             )}
           </nav>
 
           <div className='nav-actions'>
-            <button className='icon-button' type='button' aria-label='通知'>
+            <button
+              className='icon-button'
+              type='button'
+              aria-label={t('通知')}
+            >
               <Bell size={18} />
             </button>
-            <button className='icon-button' type='button' aria-label='切换主题'>
+            <button
+              className='icon-button'
+              type='button'
+              aria-label={t('切换主题')}
+            >
               <Sun size={18} />
             </button>
-            <button className='icon-button' type='button' aria-label='语言'>
+            <button
+              className='icon-button'
+              type='button'
+              aria-label={t('语言')}
+            >
               <Languages size={18} />
             </button>
-            <div className='language-popover' aria-label='语言选项'>
-              <button type='button'>
-                <span>简体中文</span>
-                <b>ZH</b>
-              </button>
-              <button type='button'>
-                <span>English</span>
-                <b>EN</b>
+            <div className='language-popover' aria-label={t('语言选项')}>
+              <button type='button' disabled>
+                <span>{languageName[0]}</span>
+                <b>{languageName[1]}</b>
               </button>
             </div>
             {currentUser ? (
               <>
                 <Link className='login-link' to='/console'>
-                  控制台
+                  {t('控制台')}
                 </Link>
                 <Link
                   className='orange-button nav-register'
@@ -489,10 +510,10 @@ const Home = () => {
             ) : (
               <>
                 <Link className='login-link' to='/login'>
-                  登录
+                  {t('登录')}
                 </Link>
                 <Link className='orange-button nav-register' to='/register'>
-                  注册
+                  {t('注册')}
                 </Link>
               </>
             )}
@@ -503,14 +524,15 @@ const Home = () => {
       <section className='hero-section'>
         <div className='site-container hero-grid'>
           <div className='hero-copy'>
-            <p className='eyebrow'>多模型统一网关</p>
+            <p className='eyebrow'>{t('多模型统一网关')}</p>
             <h1>
-              <span>一站式AI</span>
-              <span>大模型网关</span>
+              <span>{t('一站式AI')}</span>
+              <span>{t('大模型网关')}</span>
             </h1>
             <p className='hero-lead'>
-              {displayBrandName}{' '}
-              面向团队和开发者提供统一的模型网关入口，用一套控制台处理鉴权、额度、计费、日志和多端同步。
+              {t(
+                'NavtoAI 面向团队和开发者提供统一的模型网关入口，用一套控制台处理鉴权、额度、计费、日志和多端同步。',
+              )}
             </p>
             <div className='hero-actions'>
               <Link className='orange-button' to={primaryLink}>
@@ -518,7 +540,7 @@ const Home = () => {
                 <ArrowRight size={18} />
               </Link>
               <a className='ghost-button' href={docsLink}>
-                文档
+                {t('文档')}
               </a>
             </div>
           </div>
@@ -529,7 +551,7 @@ const Home = () => {
 
       <section className='provider-strip'>
         <div className='site-container provider-inner'>
-          <p>兼容常见 API 接入习惯，统一管理模型调用、额度和日志</p>
+          <p>{t('兼容常见 API 接入习惯，统一管理模型调用、额度和日志')}</p>
           <div>
             <span>CHAT</span>
             <span>CODE</span>
@@ -543,37 +565,42 @@ const Home = () => {
         <div className='site-container two-column'>
           <div className='section-copy'>
             <p className='section-kicker'>QUICK START</p>
-            <h2>几分钟接入常用 AI 工具</h2>
+            <h2>{t('几分钟接入常用 AI 工具')}</h2>
             <p>
-              把 Base URL 和 API Key 指向 NavtoAI，即可让常见开发工具和兼容 SDK
-              走同一个网关；具体模型以控制台已开通为准。
+              {t(
+                '把 Base URL 和 API Key 指向 NavtoAI，即可让常见开发工具和兼容 SDK 走同一个网关；具体模型以控制台已开通为准。',
+              )}
             </p>
             <div className='feature-list'>
               <article>
                 <LineIcon Icon={Code2} />
                 <div>
-                  <h3>兼容主流调用习惯</h3>
+                  <h3>{t('兼容主流调用习惯')}</h3>
                   <p>
-                    保留常见接口环境变量和请求格式，迁移成本更低；正式调用以控制台已开通模型为准。
+                    {t(
+                      '保留常见接口环境变量和请求格式，迁移成本更低；正式调用以控制台已开通模型为准。',
+                    )}
                   </p>
                 </div>
               </article>
               <article>
                 <LineIcon Icon={Route} />
                 <div>
-                  <h3>统一分发与计费</h3>
+                  <h3>{t('统一分发与计费')}</h3>
                   <p>
-                    模型选择、额度扣减、请求日志和异常排查都收敛到同一个控制面。
+                    {t(
+                      '模型选择、额度扣减、请求日志和异常排查都收敛到同一个控制面。',
+                    )}
                   </p>
                 </div>
               </article>
             </div>
             <div className='hero-actions compact'>
               <a className='orange-button' href={docsLink}>
-                查看 API 文档
+                {t('查看 API 文档')}
               </a>
               <Link className='ghost-button' to='/console/playground'>
-                打开 Playground
+                {t('打开 Playground')}
               </Link>
             </div>
           </div>
@@ -599,77 +626,77 @@ const Home = () => {
           <div className='section-heading split'>
             <div>
               <p className='section-kicker'>REAL OPERATIONS</p>
-              <h2>NavtoAI，专注 AI 网关与企业级模型接入</h2>
+              <h2>{t('NavtoAI，专注 AI 网关与企业级模型接入')}</h2>
               <p>
-                {displayBrandName}{' '}
-                打造统一的大模型中转与管理平台，为个人开发者、团队和企业客户提供模型接入、Token
-                管理、渠道调度、用量监控、价格核算和客户支持等一体化服务。
+                {t(
+                  'NavtoAI 打造统一的大模型中转与管理平台，为个人开发者、团队和企业客户提供模型接入、Token 管理、渠道调度、用量监控、价格核算和客户支持等一体化服务。',
+                )}
               </p>
             </div>
             <a className='ghost-button' href={docsLink}>
-              查看接入文档
+              {t('查看接入文档')}
             </a>
           </div>
 
           <div className='company-intro'>
             {operationCards.map((item) => (
               <article key={item.title}>
-                <span>{item.title}</span>
-                <p>{item.body}</p>
+                <span>{t(item.title)}</span>
+                <p>{t(item.body)}</p>
               </article>
             ))}
           </div>
 
           <div
             className='trust-gallery'
-            aria-label='NavtoAI 真实办公与交付现场'
+            aria-label={t('NavtoAI 国际团队与交付现场')}
           >
             <article className='trust-photo trust-photo-large'>
               <img
-                src='/static/trust/office-wide-02.webp'
-                alt='AI 网关团队办公区全景，成员正在处理模型网关和客户接入工作'
+                src='/static/trust/global/international-engineering-office.webp'
+                alt={t('国际 AI 网关工程团队在开放式办公室工作')}
                 loading='lazy'
                 decoding='async'
               />
               <div className='trust-caption'>
-                <span>办公现场</span>
-                <strong>稳定维护 AI 网关与模型渠道</strong>
+                <span>{t('全球工程团队')}</span>
+                <strong>{t('跨时区维护 AI 网关与模型渠道')}</strong>
               </div>
             </article>
             <article className='trust-photo'>
               <img
-                src='/static/trust/frontdesk-navtoai-generated.png'
-                alt='办公区前台与公司接待空间'
+                src='/static/trust/global/international-reception.webp'
+                alt={t('海外科技公司前台接待企业客户')}
                 loading='lazy'
                 decoding='async'
               />
               <div className='trust-caption'>
-                <span>公司前台</span>
-                <strong>线下办公空间与客户接待区域</strong>
+                <span>{t('客户接待')}</span>
+                <strong>{t('为海外企业客户提供专业接入服务')}</strong>
               </div>
             </article>
             <article className='trust-photo'>
               <img
-                src='/static/trust/meeting-room-discussion.webp'
-                alt='三位成员在会议室讨论 AI 网关和 Token 中转平台架构方案'
+                src='/static/trust/global/international-strategy-meeting.webp'
+                alt={t('多元化国际团队讨论 API 架构和模型路由')}
                 loading='lazy'
                 decoding='async'
               />
               <div className='trust-caption'>
-                <span>方案会议</span>
-                <strong>围绕接入流程、路由策略和客户交付协作</strong>
+                <span>{t('方案会议')}</span>
+                <strong>{t('围绕 API 架构、路由策略和企业交付协作')}</strong>
               </div>
             </article>
             <article className='trust-photo trust-photo-wide'>
               <img
-                src='/static/trust/customer-service-desk.webp'
-                alt='客服人员坐在屏幕前处理客户工单和 Token 配置问题'
+                src='/static/trust/global/international-customer-success.webp'
+                alt={t('海外客户成功团队处理 API 用量和账单请求')}
                 loading='lazy'
                 decoding='async'
               />
               <div className='trust-caption'>
-                <span>客户支持</span>
-                <strong>工单、配额、Token 配置和异常请求持续跟进</strong>
+                <span>{t('客户成功')}</span>
+                <strong>{t('持续跟进工单、配额、API Key 和异常请求')}</strong>
               </div>
             </article>
           </div>
@@ -680,18 +707,19 @@ const Home = () => {
         <div className='site-container'>
           <p className='section-kicker'>CORE CAPABILITIES</p>
           <div className='section-heading'>
-            <h2>从 API 接入到本地开发工作流</h2>
+            <h2>{t('从 API 接入到本地开发工作流')}</h2>
             <p>
-              统一入口负责模型分发、密钥额度、价格透明、日志排障，也提供
-              Playground 和提示词库帮助用户直接验证效果。
+              {t(
+                '统一入口负责模型分发、密钥额度、价格透明、日志排障，也提供 Playground 和提示词库帮助用户直接验证效果。',
+              )}
             </p>
           </div>
           <div className='ability-grid'>
             {capabilities.map(({ title, body, Icon }) => (
               <article key={title}>
                 <LineIcon Icon={Icon} />
-                <h3>{title}</h3>
-                <p>{body}</p>
+                <h3>{t(title)}</h3>
+                <p>{t(body)}</p>
               </article>
             ))}
           </div>
@@ -702,23 +730,24 @@ const Home = () => {
         <div className='site-container prompt-layout'>
           <div className='section-copy'>
             <p className='section-kicker'>IMAGE PROMPTS</p>
-            <h2>从提示词案例开始生成图片</h2>
+            <h2>{t('从提示词案例开始生成图片')}</h2>
             <p>
-              提示词库收录社区案例，支持按分类搜索、复制 prompt，并可直接带入
-              Playground 试图。
+              {t(
+                '提示词库收录社区案例，支持按分类搜索、复制 prompt，并可直接带入 Playground 试图。',
+              )}
             </p>
             <div className='hero-actions compact'>
               <Link
                 className='orange-button'
                 to='/console/playground?mode=image'
               >
-                浏览提示词库
+                {t('浏览提示词库')}
               </Link>
               <Link
                 className='ghost-button'
                 to='/console/playground?mode=image'
               >
-                打开生图试验场
+                {t('打开生图试验场')}
               </Link>
             </div>
           </div>
@@ -726,8 +755,8 @@ const Home = () => {
             {promptCards.map(({ title, body, code, Icon }) => (
               <article key={title}>
                 <LineIcon Icon={Icon} />
-                <h3>{title}</h3>
-                <p>{body}</p>
+                <h3>{t(title)}</h3>
+                <p>{t(body)}</p>
                 <code>{code}</code>
               </article>
             ))}
@@ -739,14 +768,15 @@ const Home = () => {
         <div className='site-container affiliate-layout'>
           <div className='section-copy'>
             <p className='section-kicker'>AGENT BENEFITS</p>
-            <h2>代理权益与成长支持</h2>
+            <h2>{t('合作伙伴权益与成长支持')}</h2>
             <p>
-              {displayBrandName}{' '}
-              为代理提供项目介绍、产品培训、推广素材和客户承接支持。适合愿意学习、愿意执行、愿意通过内容和私域长期积累客户的人。
+              {t(
+                'NavtoAI 为合作伙伴提供产品介绍、技术培训、推广素材和客户接入支持，帮助团队在本地市场长期服务客户。',
+              )}
             </p>
             <div className='hero-actions compact'>
               <Link className='orange-button' to='/register'>
-                了解代理权益
+                {t('了解合作伙伴计划')}
               </Link>
             </div>
           </div>
@@ -755,8 +785,8 @@ const Home = () => {
               <article key={title}>
                 <LineIcon Icon={Icon} />
                 <div>
-                  <h3>{title}</h3>
-                  <p>{body}</p>
+                  <h3>{t(title)}</h3>
+                  <p>{t(body)}</p>
                 </div>
               </article>
             ))}
@@ -766,28 +796,28 @@ const Home = () => {
               <p>Agent rights</p>
               <LineIcon Icon={BadgeCheck} />
             </div>
-            <h3>99 启航代理权益</h3>
+            <h3>{t('合作伙伴支持方案')}</h3>
             <dl>
-              <dt>项目培训</dt>
-              <dd>直播课讲解</dd>
-              <dt>素材支持</dt>
-              <dd>持续更新</dd>
-              <dt>客户支持</dt>
-              <dd>团队协助</dd>
+              <dt>{t('产品培训')}</dt>
+              <dd>{t('在线技术课程')}</dd>
+              <dt>{t('市场素材')}</dt>
+              <dd>{t('持续更新')}</dd>
+              <dt>{t('客户支持')}</dt>
+              <dd>{t('团队协助')}</dd>
             </dl>
             <div className='ledger'>
               <strong>RIGHTS SNAPSHOT</strong>
               <p>
-                <span>资料</span>
-                <b>项目介绍与话术</b>
+                <span>{t('资料')}</span>
+                <b>{t('产品介绍与销售资料')}</b>
               </p>
               <p>
-                <span>执行</span>
-                <b>7 天启动任务</b>
+                <span>{t('启用')}</span>
+                <b>{t('7 天上线计划')}</b>
               </p>
               <p>
-                <span>支持</span>
-                <b>社群与团队协助</b>
+                <span>{t('支持')}</span>
+                <b>{t('社区与团队协助')}</b>
               </p>
             </div>
           </aside>
@@ -799,34 +829,36 @@ const Home = () => {
           <div className='section-heading split'>
             <div>
               <p className='section-kicker'>PRICING</p>
-              <h2>价格以控制台实际开通为准</h2>
+              <h2>{t('以控制台显示的实时价格为准')}</h2>
               <p>
-                模型供应正在按批次接入，官网不展示未确认的具体模型单价。客户注册后，以控制台显示、客服确认或团队价格表为准。
+                {t(
+                  '模型和区域会分批开放。注册后可在控制台查看当前可用模型、实时价格和团队方案。',
+                )}
               </p>
             </div>
             <a className='ghost-button' href='#pricing'>
-              查看价格说明
+              {t('查看价格说明')}
             </a>
           </div>
           <div className='pricing-table'>
             <div className='pricing-tabs'>
-              <strong>计费说明</strong>
-              <span>公开口径</span>
+              <strong>{t('计费说明')}</strong>
+              <span>{t('透明定价')}</span>
             </div>
             <table>
               <thead>
                 <tr>
-                  <th>对象</th>
-                  <th>方式</th>
-                  <th>说明</th>
+                  <th>{t('对象')}</th>
+                  <th>{t('方式')}</th>
+                  <th>{t('说明')}</th>
                 </tr>
               </thead>
               <tbody>
                 {pricingRows.map(([target, method, description]) => (
                   <tr key={target}>
-                    <td>{target}</td>
-                    <td>{method}</td>
-                    <td>{description}</td>
+                    <td>{t(target)}</td>
+                    <td>{t(method)}</td>
+                    <td>{t(description)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -838,22 +870,24 @@ const Home = () => {
       <section className='next-step'>
         <div className='site-container next-card'>
           <p className='section-kicker'>NEXT STEP</p>
-          <h2>立即开始使用 {displayBrandName}</h2>
+          <h2>{t('立即开始使用 NavtoAI')}</h2>
           <p>
-            接入模型、管理密钥、追踪消耗，并把代理增长和运营能力统一纳入控制台。
+            {t(
+              '接入模型、管理 API Key、追踪用量，并通过一个控制台服务全球团队。',
+            )}
           </p>
           <div className='hero-actions compact center'>
             <Link
               className='orange-button'
               to={currentUser ? '/console' : '/register'}
             >
-              {currentUser ? '打开控制台' : `注册 ${displayBrandName}`}
+              {currentUser ? t('打开控制台') : t('注册 NavtoAI')}
             </Link>
             <Link
               className='ghost-button'
               to={currentUser ? '/console/token' : '/login'}
             >
-              {currentUser ? '管理令牌' : '登录控制台'}
+              {currentUser ? t('管理令牌') : t('登录控制台')}
             </Link>
           </div>
         </div>
@@ -869,11 +903,11 @@ const Home = () => {
             </p>
           </div>
           <nav>
-            <a href='#models'>模型状态</a>
-            <a href='#pricing'>隐私</a>
-            <a href='#pricing'>条款</a>
-            <a href='#pricing'>退款</a>
-            <Link to={currentUser ? '/console' : '/login'}>控制台</Link>
+            <a href='#models'>{t('模型状态')}</a>
+            <a href='#pricing'>{t('隐私')}</a>
+            <a href='#pricing'>{t('条款')}</a>
+            <a href='#pricing'>{t('退款')}</a>
+            <Link to={currentUser ? '/console' : '/login'}>{t('控制台')}</Link>
           </nav>
         </div>
       </footer>

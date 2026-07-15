@@ -13,10 +13,42 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const geoLanguageCookie = "navtoai_geo_language"
+
+func languageForCountry(country string) string {
+	switch strings.ToUpper(strings.TrimSpace(country)) {
+	case "CN":
+		return "zh-CN"
+	case "TW", "HK", "MO":
+		return "zh-TW"
+	case "JP":
+		return "ja"
+	case "KR":
+		return "ko"
+	case "":
+		return ""
+	default:
+		return "en"
+	}
+}
+
+func lockLanguageByCountry(c *gin.Context) {
+	language := languageForCountry(c.GetHeader("CF-IPCountry"))
+	if language == "" {
+		return
+	}
+
+	secure := c.Request.TLS != nil || strings.EqualFold(c.GetHeader("X-Forwarded-Proto"), "https")
+	c.SetSameSite(http.SameSiteLaxMode)
+	c.SetCookie(geoLanguageCookie, language, 86400, "/", "", secure, false)
+	c.Header("X-NavtoAI-Language", language)
+}
+
 func SetWebRouter(router *gin.Engine, buildFS embed.FS, indexPage []byte) {
 	router.Use(gzip.Gzip(gzip.DefaultCompression))
 	router.Use(middleware.GlobalWebRateLimit())
 	router.Use(middleware.Cache())
+	router.Use(lockLanguageByCountry)
 	router.Use(static.Serve("/", common.EmbedFolder(buildFS, "web/dist")))
 	router.NoRoute(func(c *gin.Context) {
 		c.Set(middleware.RouteTagKey, "web")

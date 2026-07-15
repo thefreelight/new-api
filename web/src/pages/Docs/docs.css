@@ -465,7 +465,7 @@
   }
   .docs-overlay {
     position: fixed;
-    inset: 0;
+    inset: 64px 0 0;
     z-index: 55;
     display: block;
     border: 0;
@@ -508,6 +508,9 @@
   }
   .docs-sidebar {
     width: min(88vw, 320px);
+  }
+  .docs-overlay {
+    inset: 58px 0 0;
   }
   .docs-main {
     display: block;

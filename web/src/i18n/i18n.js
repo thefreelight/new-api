@@ -27,8 +27,13 @@ import zhCNTranslation from './locales/zh-CN.json';
 import zhTWTranslation from './locales/zh-TW.json';
 import ruTranslation from './locales/ru.json';
 import jaTranslation from './locales/ja.json';
+import koTranslation from './locales/ko.json';
 import viTranslation from './locales/vi.json';
 import { supportedLanguages } from './language';
+import { getGeoLockedLanguage } from './geoLanguage';
+import { withMarketingTranslations } from './marketingTranslations';
+
+const geoLockedLanguage = getGeoLockedLanguage();
 
 i18n
   .use(LanguageDetector)
@@ -37,20 +42,31 @@ i18n
     load: 'currentOnly',
     supportedLngs: supportedLanguages,
     resources: {
-      en: enTranslation,
+      en: withMarketingTranslations(enTranslation, 'en'),
       'zh-CN': zhCNTranslation,
       'zh-TW': zhTWTranslation,
       fr: frTranslation,
       ru: ruTranslation,
-      ja: jaTranslation,
+      ja: withMarketingTranslations(jaTranslation, 'ja'),
+      ko: withMarketingTranslations(koTranslation, 'ko'),
       vi: viTranslation,
     },
-    fallbackLng: 'zh-CN',
+    lng: geoLockedLanguage || undefined,
+    fallbackLng: {
+      ko: ['en'],
+      default: ['zh-CN'],
+    },
     nsSeparator: false,
     interpolation: {
       escapeValue: false,
     },
   });
+
+if (geoLockedLanguage) {
+  const changeLanguage = i18n.changeLanguage.bind(i18n);
+  i18n.changeLanguage = () => changeLanguage(geoLockedLanguage);
+  i18n.geoLockedLanguage = geoLockedLanguage;
+}
 
 window.__i18n = i18n;
 
