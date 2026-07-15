@@ -120,9 +120,11 @@ const PageLayout = () => {
     if (!isLocalHomePreview && location.pathname !== '/docs') {
       loadStatus().catch(console.error);
     }
-    let systemName = getSystemName();
-    if (systemName) {
-      document.title = systemName;
+    if (location.pathname !== '/docs') {
+      const systemName = getSystemName();
+      if (systemName) {
+        document.title = systemName;
+      }
     }
     let logo = getLogo();
     const favicon = logo === '/navtoai-logo.svg' ? '/favicon.svg' : logo;
