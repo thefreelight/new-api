@@ -21,6 +21,7 @@ import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { reducer, initialState } from './reducer';
 import { normalizeLanguage } from '../../i18n/language';
+import { saveLanguagePreference } from '../../i18n/languagePreference';
 
 export const UserContext = React.createContext({
   state: initialState,
@@ -41,7 +42,7 @@ export const UserProvider = ({ children }) => {
           i18n.changeLanguage(normalizedLanguage);
         }
         if (normalizedLanguage) {
-          localStorage.setItem('i18nextLng', normalizedLanguage);
+          saveLanguagePreference(normalizedLanguage);
         }
       } catch (e) {
         // Ignore parse errors

@@ -20,7 +20,6 @@ For commercial licensing, please contact support@quantumnous.com
 import React from 'react';
 import { Button, Dropdown } from '@douyinfe/semi-ui';
 import { Languages } from 'lucide-react';
-import { getGeoLockedLanguage } from '../../../i18n/geoLanguage';
 
 const languageOptions = [
   { key: 'zh-CN', label: '简体中文' },
@@ -40,10 +39,6 @@ const LanguageSelector = ({
   buttonClassName,
   menuClassName,
 }) => {
-  const geoLockedLanguage = getGeoLockedLanguage();
-  const visibleOptions = geoLockedLanguage
-    ? languageOptions.filter((option) => option.key === geoLockedLanguage)
-    : languageOptions;
   const getItemClassName = (isSelected) =>
     isSelected
       ? '!bg-[#edf4ef] !font-medium !text-[#111722] dark:!bg-zinc-800 dark:!text-zinc-100'
@@ -59,12 +54,10 @@ const LanguageSelector = ({
             '!rounded-2xl !border !border-[#e3e7eb] !bg-[#fbfbf9]/95 !p-1.5 !shadow-[0_24px_60px_rgba(17,23,34,0.08)] backdrop-blur-xl dark:!border-zinc-800 dark:!bg-zinc-900/95 dark:!shadow-[0_24px_60px_rgba(0,0,0,0.35)]'
           }
         >
-          {visibleOptions.map((option) => (
+          {languageOptions.map((option) => (
             <Dropdown.Item
               key={option.key}
-              onClick={() => {
-                if (!geoLockedLanguage) onLanguageChange(option.key);
-              }}
+              onClick={() => onLanguageChange(option.key)}
               className={`!rounded-xl !px-3 !py-2 !text-sm !font-medium !text-[#5b6470] dark:!text-zinc-300 ${getItemClassName(
                 currentLang === option.key,
               )}`}

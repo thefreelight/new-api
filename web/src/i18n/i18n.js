@@ -19,7 +19,6 @@ For commercial licensing, please contact support@quantumnous.com
 
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
 
 import enTranslation from './locales/en.json';
 import frTranslation from './locales/fr.json';
@@ -30,43 +29,32 @@ import jaTranslation from './locales/ja.json';
 import koTranslation from './locales/ko.json';
 import viTranslation from './locales/vi.json';
 import { supportedLanguages } from './language';
-import { getGeoLockedLanguage } from './geoLanguage';
+import { getInitialLanguage } from './languagePreference';
 import { withMarketingTranslations } from './marketingTranslations';
 
-const geoLockedLanguage = getGeoLockedLanguage();
-
-i18n
-  .use(LanguageDetector)
-  .use(initReactI18next)
-  .init({
-    load: 'currentOnly',
-    supportedLngs: supportedLanguages,
-    resources: {
-      en: withMarketingTranslations(enTranslation, 'en'),
-      'zh-CN': zhCNTranslation,
-      'zh-TW': zhTWTranslation,
-      fr: frTranslation,
-      ru: ruTranslation,
-      ja: withMarketingTranslations(jaTranslation, 'ja'),
-      ko: withMarketingTranslations(koTranslation, 'ko'),
-      vi: viTranslation,
-    },
-    lng: geoLockedLanguage || undefined,
-    fallbackLng: {
-      ko: ['en'],
-      default: ['zh-CN'],
-    },
-    nsSeparator: false,
-    interpolation: {
-      escapeValue: false,
-    },
-  });
-
-if (geoLockedLanguage) {
-  const changeLanguage = i18n.changeLanguage.bind(i18n);
-  i18n.changeLanguage = () => changeLanguage(geoLockedLanguage);
-  i18n.geoLockedLanguage = geoLockedLanguage;
-}
+i18n.use(initReactI18next).init({
+  load: 'currentOnly',
+  supportedLngs: supportedLanguages,
+  resources: {
+    en: withMarketingTranslations(enTranslation, 'en'),
+    'zh-CN': zhCNTranslation,
+    'zh-TW': zhTWTranslation,
+    fr: frTranslation,
+    ru: ruTranslation,
+    ja: withMarketingTranslations(jaTranslation, 'ja'),
+    ko: withMarketingTranslations(koTranslation, 'ko'),
+    vi: viTranslation,
+  },
+  lng: getInitialLanguage(),
+  fallbackLng: {
+    ko: ['en'],
+    default: ['zh-CN'],
+  },
+  nsSeparator: false,
+  interpolation: {
+    escapeValue: false,
+  },
+});
 
 window.__i18n = i18n;
 

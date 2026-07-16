@@ -44,6 +44,7 @@ import { StatusContext } from '../../context/Status';
 import { UserContext } from '../../context/User';
 import { useActualTheme } from '../../context/Theme';
 import { useIsMobile } from '../../hooks/common/useIsMobile';
+import { saveLanguagePreference } from '../../i18n/languagePreference';
 import ModelGlobe from '../../components/home/ModelGlobe';
 import './home.css';
 
@@ -55,6 +56,17 @@ const navItems = [
   { label: '试验场', href: '/console/playground' },
   { label: '提示词库', href: '/console/playground?mode=image' },
   { label: '文档', href: '/docs' },
+];
+
+const homeLanguageOptions = [
+  { value: 'zh-CN', label: '简体中文', code: 'ZH' },
+  { value: 'zh-TW', label: '繁體中文', code: 'ZH' },
+  { value: 'en', label: 'English', code: 'EN' },
+  { value: 'fr', label: 'Français', code: 'FR' },
+  { value: 'ja', label: '日本語', code: 'JA' },
+  { value: 'ko', label: '한국어', code: 'KO' },
+  { value: 'ru', label: 'Русский', code: 'RU' },
+  { value: 'vi', label: 'Tiếng Việt', code: 'VI' },
 ];
 
 const capabilities = [
@@ -286,7 +298,7 @@ const HighlightedTerminal = () => {
 const Home = () => {
   const { t, i18n } = useTranslation();
   const [statusState] = useContext(StatusContext);
-  const [userState] = useContext(UserContext);
+  const [userState, userDispatch] = useContext(UserContext);
   const actualTheme = useActualTheme();
   const [homePageContentLoaded, setHomePageContentLoaded] = useState(false);
   const [homePageContent, setHomePageContent] = useState(
@@ -306,15 +318,42 @@ const Home = () => {
   const isSetupComplete = statusState?.status?.setup !== false;
   const primaryLink = isSetupComplete ? '/console/token' : '/setup';
   const primaryActionLabel = isSetupComplete ? t('开始使用') : t('完成初始化');
-  const languageName = {
-    'zh-CN': ['简体中文', 'ZH'],
-    'zh-TW': ['繁體中文', 'ZH'],
-    en: ['English', 'EN'],
-    ja: ['日本語', 'JA'],
-    ko: ['한국어', 'KO'],
-  }[i18n.language] || ['English', 'EN'];
 
   const docsLink = '/docs';
+
+  const handleHomeLanguageChange = async (language) => {
+    const previousLanguage = i18n.language;
+    saveLanguagePreference(language);
+    await i18n.changeLanguage(language);
+
+    if (!currentUser?.id) return;
+
+    try {
+      const response = await API.put('/api/user/self', { language });
+      if (!response.data.success) throw new Error('language update failed');
+
+      let settings = {};
+      if (currentUser.setting) {
+        try {
+          settings = JSON.parse(currentUser.setting) || {};
+        } catch (error) {
+          settings = {};
+        }
+      }
+      settings.language = language;
+
+      const nextUser = {
+        ...currentUser,
+        setting: JSON.stringify(settings),
+      };
+      userDispatch({ type: 'login', payload: nextUser });
+      localStorage.setItem('user', JSON.stringify(nextUser));
+    } catch (error) {
+      saveLanguagePreference(previousLanguage);
+      await i18n.changeLanguage(previousLanguage);
+      console.error('Failed to save language preference:', error);
+    }
+  };
 
   const postIframePreferences = () => {
     const iframe = customHomeIframeRef.current;
@@ -483,17 +522,24 @@ const Home = () => {
               <Sun size={18} />
             </button>
             <button
-              className='icon-button'
+              className='icon-button language-button'
               type='button'
               aria-label={t('语言')}
             >
               <Languages size={18} />
             </button>
             <div className='language-popover' aria-label={t('语言选项')}>
-              <button type='button' disabled>
-                <span>{languageName[0]}</span>
-                <b>{languageName[1]}</b>
-              </button>
+              {homeLanguageOptions.map((option) => (
+                <button
+                  type='button'
+                  key={option.value}
+                  className={i18n.language === option.value ? 'active' : ''}
+                  onClick={() => handleHomeLanguageChange(option.value)}
+                >
+                  <span>{option.label}</span>
+                  <b>{option.code}</b>
+                </button>
+              ))}
             </div>
             {currentUser ? (
               <>

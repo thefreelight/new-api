@@ -58,6 +58,16 @@ export const normalizeLanguage = (language) => {
     return 'ko';
   }
 
+  const baseLanguage = lower.split('-')[0];
+  const matchedBaseLanguage = supportedLanguages.find(
+    (supportedLanguage) =>
+      supportedLanguage.toLowerCase() === baseLanguage &&
+      !supportedLanguage.toLowerCase().startsWith('zh-'),
+  );
+  if (matchedBaseLanguage) {
+    return matchedBaseLanguage;
+  }
+
   const matchedLanguage = supportedLanguages.find(
     (supportedLanguage) => supportedLanguage.toLowerCase() === lower,
   );

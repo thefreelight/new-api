@@ -24,7 +24,7 @@ import { useTranslation } from 'react-i18next';
 import { API, showSuccess, showError } from '../../../../helpers';
 import { UserContext } from '../../../../context/User';
 import { normalizeLanguage } from '../../../../i18n/language';
-import { getGeoLockedLanguage } from '../../../../i18n/geoLanguage';
+import { saveLanguagePreference } from '../../../../i18n/languagePreference';
 
 // Language options with native names
 const languageOptions = [
@@ -45,7 +45,6 @@ const PreferencesSettings = ({ t }) => {
     normalizeLanguage(i18n.language) || 'zh-CN',
   );
   const [loading, setLoading] = useState(false);
-  const geoLockedLanguage = getGeoLockedLanguage();
 
   // Load saved language preference from user settings
   useEffect(() => {
@@ -76,7 +75,7 @@ const PreferencesSettings = ({ t }) => {
       // Update language immediately for responsive UX
       setCurrentLanguage(lang);
       i18n.changeLanguage(lang);
-      localStorage.setItem('i18nextLng', lang);
+      saveLanguagePreference(lang);
 
       // Save to backend
       const res = await API.put('/api/user/self', {
@@ -109,14 +108,14 @@ const PreferencesSettings = ({ t }) => {
         // Revert on error
         setCurrentLanguage(previousLang);
         i18n.changeLanguage(previousLang);
-        localStorage.setItem('i18nextLng', previousLang);
+        saveLanguagePreference(previousLang);
       }
     } catch (error) {
       showError(t('保存失败，请重试'));
       // Revert on error
       setCurrentLanguage(previousLang);
       i18n.changeLanguage(previousLang);
-      localStorage.setItem('i18nextLng', previousLang);
+      saveLanguagePreference(previousLang);
     } finally {
       setLoading(false);
     }
@@ -158,19 +157,14 @@ const PreferencesSettings = ({ t }) => {
             </div>
           </div>
           <Select
-            value={geoLockedLanguage || currentLanguage}
+            value={currentLanguage}
             onChange={handleLanguagePreferenceChange}
             style={{ width: 180 }}
             loading={loading}
-            disabled={Boolean(geoLockedLanguage)}
-            optionList={languageOptions
-              .filter(
-                (opt) => !geoLockedLanguage || opt.value === geoLockedLanguage,
-              )
-              .map((opt) => ({
-                value: opt.value,
-                label: opt.label,
-              }))}
+            optionList={languageOptions.map((opt) => ({
+              value: opt.value,
+              label: opt.label,
+            }))}
           />
         </div>
       </Card>

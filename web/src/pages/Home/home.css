@@ -125,6 +125,8 @@
   background: rgba(255, 255, 255, 0.96);
   box-shadow: var(--shadow);
   backdrop-filter: blur(18px);
+  max-height: min(420px, calc(100vh - 96px));
+  overflow-y: auto;
 }
 
 .nav-actions:hover .language-popover,
@@ -148,6 +150,10 @@
 
 .language-popover button:hover {
   background: rgba(247, 247, 248, 0.8);
+}
+
+.language-popover button.active {
+  background: rgba(251, 100, 21, 0.1);
 }
 
 .language-popover span {
@@ -883,6 +889,15 @@
   .login-link,
   .language-popover {
     display: none;
+  }
+
+  .icon-button.language-button {
+    display: inline-flex;
+  }
+
+  .nav-actions:focus-within .language-popover {
+    right: 8px;
+    display: block;
   }
 
   .nav-register {
@@ -3173,6 +3188,15 @@
   .login-link,
   .language-popover {
     display: none;
+  }
+
+  .icon-button.language-button {
+    display: inline-flex;
+  }
+
+  .nav-actions:focus-within .language-popover {
+    right: 8px;
+    display: block;
   }
 
   .nav-register {

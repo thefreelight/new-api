@@ -29,10 +29,10 @@ func TestLanguageForCountry(t *testing.T) {
 	}
 }
 
-func TestLockLanguageByCountry(t *testing.T) {
+func TestSuggestLanguageByCountry(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	router := gin.New()
-	router.Use(lockLanguageByCountry)
+	router.Use(suggestLanguageByCountry)
 	router.GET("/", func(c *gin.Context) {
 		c.Status(http.StatusNoContent)
 	})

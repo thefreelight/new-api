@@ -25,6 +25,7 @@ import { StatusContext } from '../../context/Status';
 import { useSetTheme, useTheme, useActualTheme } from '../../context/Theme';
 import { getLogo, getSystemName, API, showSuccess } from '../../helpers';
 import { normalizeLanguage } from '../../i18n/language';
+import { saveLanguagePreference } from '../../i18n/languagePreference';
 import { useIsMobile } from './useIsMobile';
 import { useSidebarCollapsed } from './useSidebarCollapsed';
 import { useMinimumLoadingTime } from './useMinimumLoadingTime';
@@ -156,7 +157,7 @@ export const useHeaderBar = ({ onMobileMenuToggle, drawerOpen }) => {
       // Change language immediately for responsive UX
       const previousLang = normalizeLanguage(i18n.language);
       i18n.changeLanguage(lang);
-      localStorage.setItem('i18nextLng', lang);
+      saveLanguagePreference(lang);
 
       // If user is logged in, save preference to backend
       if (userState?.user?.id) {
@@ -191,7 +192,7 @@ export const useHeaderBar = ({ onMobileMenuToggle, drawerOpen }) => {
         } catch (error) {
           if (previousLang) {
             i18n.changeLanguage(previousLang);
-            localStorage.setItem('i18nextLng', previousLang);
+            saveLanguagePreference(previousLang);
           }
           console.error('Failed to save language preference:', error);
         }

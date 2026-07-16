@@ -39,6 +39,10 @@ import { UserContext } from '../../context/User';
 import { StatusContext } from '../../context/Status';
 import { useLocation } from 'react-router-dom';
 import { normalizeLanguage } from '../../i18n/language';
+import {
+  getStoredLanguagePreference,
+  saveLanguagePreference,
+} from '../../i18n/languagePreference';
 const { Sider, Content, Header } = Layout;
 
 const PageLayout = () => {
@@ -149,14 +153,11 @@ const PageLayout = () => {
     }
 
     if (!preferredLang) {
-      const savedLang = localStorage.getItem('i18nextLng');
-      if (savedLang) {
-        preferredLang = normalizeLanguage(savedLang);
-      }
+      preferredLang = getStoredLanguagePreference();
     }
 
     if (preferredLang) {
-      localStorage.setItem('i18nextLng', preferredLang);
+      saveLanguagePreference(preferredLang);
       if (preferredLang !== i18n.language) {
         i18n.changeLanguage(preferredLang);
       }
