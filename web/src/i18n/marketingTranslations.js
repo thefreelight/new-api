@@ -1,3 +1,22 @@
+/*
+Copyright (C) 2025 QuantumNous
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+For commercial licensing, please contact support@quantumnous.com
+*/
+
 import { homeTranslations } from './homeTranslations';
 
 export const marketingTranslations = {
@@ -8,6 +27,8 @@ export const marketingTranslations = {
     '创建 API Key': 'Create an API key',
     接口与模型: 'APIs and models',
     'API 参考': 'API reference',
+    鉴权: 'Authentication',
+    概览: 'Overview',
     文字对话: 'Chat',
     图片生成: 'Image generation',
     工具接入: 'Developer tools',
@@ -91,6 +112,8 @@ export const marketingTranslations = {
     '创建 API Key': 'APIキーを作成',
     接口与模型: 'APIとモデル',
     'API 参考': 'APIリファレンス',
+    鉴权: '認証',
+    概览: '概要',
     文字对话: 'チャット',
     图片生成: '画像生成',
     工具接入: '開発ツール',
@@ -173,6 +196,8 @@ export const marketingTranslations = {
     '创建 API Key': 'API 키 만들기',
     接口与模型: 'API 및 모델',
     'API 参考': 'API 레퍼런스',
+    鉴权: '인증',
+    概览: '개요',
     文字对话: '채팅',
     图片生成: '이미지 생성',
     工具接入: '개발 도구',

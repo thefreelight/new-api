@@ -1,3 +1,22 @@
+/*
+Copyright (C) 2025 QuantumNous
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+For commercial licensing, please contact support@quantumnous.com
+*/
+
 const rows = {
   首页: ['Home', 'ホーム', '홈'],
   模型: ['Models', 'モデル', '모델'],
@@ -17,6 +36,12 @@ const rows = {
   切换主题: ['Change theme', 'テーマを変更', '테마 변경'],
   语言: ['Language', '言語', '언어'],
   语言选项: ['Language determined by region', '地域の言語', '지역 언어'],
+  拖动旋转: ['Drag to rotate', 'ドラッグして回転', '드래그하여 회전'],
+  自定义首页内容: [
+    'Custom home page content',
+    'カスタムホームページ',
+    '사용자 지정 홈페이지 콘텐츠',
+  ],
   'NavtoAI 多模型网络地球仪': [
     'NavtoAI global model network',
     'NavtoAIグローバルモデルネットワーク',
@@ -75,6 +100,10 @@ const rows = {
     'マルチモデル統合ゲートウェイ',
     '멀티모델 통합 게이트웨이',
   ],
+  代码: ['Code', 'コード', '코드'],
+  真实运营: ['Real operations', '実際の運用体制', '실제 운영'],
+  核心能力: ['Core capabilities', 'コア機能', '핵심 기능'],
+  图片提示词: ['Image prompts', '画像プロンプト', '이미지 프롬프트'],
   一站式AI: ['One AI gateway', 'AIをひとつの', '하나의 AI'],
   大模型网关: ['for every model', 'ゲートウェイへ', '모델 게이트웨이'],
   'NavtoAI 面向团队和开发者提供统一的模型网关入口，用一套控制台处理鉴权、额度、计费、日志和多端同步。':
@@ -314,6 +343,9 @@ const rows = {
     '成長を支えるパートナープログラム',
     '성장을 위한 파트너 프로그램',
   ],
+  合作伙伴权益: ['Partner benefits', 'パートナー特典', '파트너 혜택'],
+  代理权益: ['Partner benefits', 'パートナー特典', '파트너 혜택'],
+  权益概览: ['Benefits overview', '特典の概要', '혜택 개요'],
   'NavtoAI 为合作伙伴提供产品介绍、技术培训、推广素材和客户接入支持，帮助团队在本地市场长期服务客户。':
     [
       'NavtoAI gives partners product materials, technical training, campaign assets, and onboarding support to serve customers in local markets.',
@@ -415,6 +447,12 @@ const rows = {
     'Start building with NavtoAI',
     'NavtoAIを始める',
     'NavtoAI 시작하기',
+  ],
+  下一步: ['Next step', '次のステップ', '다음 단계'],
+  '为 AI 应用、团队和渠道提供统一网关、额度管理与日志服务。': [
+    'Unified gateway, quota management, and logging for AI applications, teams, and channels.',
+    'AIアプリ、チーム、チャネル向けに、統合ゲートウェイ、上限管理、ログ機能を提供します。',
+    'AI 애플리케이션, 팀, 채널을 위한 통합 게이트웨이, 한도 관리, 로그 기능을 제공합니다.',
   ],
   '接入模型、管理 API Key、追踪用量，并通过一个控制台服务全球团队。': [
     'Connect models, manage API keys, track usage, and support global teams from one console.',

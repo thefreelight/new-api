@@ -243,7 +243,7 @@ const ProviderVisual = () => {
           </div>
         ))}
 
-        <p className='globe-hint'>DRAG TO ROTATE</p>
+        <p className='globe-hint'>{t('拖动旋转')}</p>
       </div>
     </div>
   );
@@ -406,7 +406,7 @@ const Home = () => {
           <iframe
             ref={customHomeIframeRef}
             src={homePageContent}
-            title='Custom home page content'
+            title={t('自定义首页内容')}
             className='w-full h-screen border-none'
             onLoad={postIframePreferences}
           />
@@ -553,9 +553,9 @@ const Home = () => {
         <div className='site-container provider-inner'>
           <p>{t('兼容常见 API 接入习惯，统一管理模型调用、额度和日志')}</p>
           <div>
-            <span>CHAT</span>
-            <span>CODE</span>
-            <span>IMAGE</span>
+            <span>{t('文字对话')}</span>
+            <span>{t('代码')}</span>
+            <span>{t('图片生成')}</span>
             <span>AWS BEDROCK</span>
           </div>
         </div>
@@ -564,7 +564,7 @@ const Home = () => {
       <section className='site-section quick-section' id='quick-start'>
         <div className='site-container two-column'>
           <div className='section-copy'>
-            <p className='section-kicker'>QUICK START</p>
+            <p className='section-kicker'>{t('快速开始')}</p>
             <h2>{t('几分钟接入常用 AI 工具')}</h2>
             <p>
               {t(
@@ -613,8 +613,8 @@ const Home = () => {
                 <span />
               </div>
               <strong>TERMINAL - ZSH</strong>
-              <em>Chat</em>
-              <em>Code</em>
+              <em>{t('文字对话')}</em>
+              <em>{t('代码')}</em>
             </div>
             <HighlightedTerminal />
           </div>
@@ -625,7 +625,7 @@ const Home = () => {
         <div className='site-container'>
           <div className='section-heading split'>
             <div>
-              <p className='section-kicker'>REAL OPERATIONS</p>
+              <p className='section-kicker'>{t('真实运营')}</p>
               <h2>{t('NavtoAI，专注 AI 网关与企业级模型接入')}</h2>
               <p>
                 {t(
@@ -705,7 +705,7 @@ const Home = () => {
 
       <section className='site-section core-section' id='models'>
         <div className='site-container'>
-          <p className='section-kicker'>CORE CAPABILITIES</p>
+          <p className='section-kicker'>{t('核心能力')}</p>
           <div className='section-heading'>
             <h2>{t('从 API 接入到本地开发工作流')}</h2>
             <p>
@@ -729,7 +729,7 @@ const Home = () => {
       <section className='site-section prompt-section'>
         <div className='site-container prompt-layout'>
           <div className='section-copy'>
-            <p className='section-kicker'>IMAGE PROMPTS</p>
+            <p className='section-kicker'>{t('图片提示词')}</p>
             <h2>{t('从提示词案例开始生成图片')}</h2>
             <p>
               {t(
@@ -767,7 +767,7 @@ const Home = () => {
       <section className='site-section affiliate-section' id='agent'>
         <div className='site-container affiliate-layout'>
           <div className='section-copy'>
-            <p className='section-kicker'>AGENT BENEFITS</p>
+            <p className='section-kicker'>{t('合作伙伴权益')}</p>
             <h2>{t('合作伙伴权益与成长支持')}</h2>
             <p>
               {t(
@@ -793,7 +793,7 @@ const Home = () => {
           </div>
           <aside className='commission-card'>
             <div className='commission-head'>
-              <p>Agent rights</p>
+              <p>{t('代理权益')}</p>
               <LineIcon Icon={BadgeCheck} />
             </div>
             <h3>{t('合作伙伴支持方案')}</h3>
@@ -806,7 +806,7 @@ const Home = () => {
               <dd>{t('团队协助')}</dd>
             </dl>
             <div className='ledger'>
-              <strong>RIGHTS SNAPSHOT</strong>
+              <strong>{t('权益概览')}</strong>
               <p>
                 <span>{t('资料')}</span>
                 <b>{t('产品介绍与销售资料')}</b>
@@ -828,7 +828,7 @@ const Home = () => {
         <div className='site-container'>
           <div className='section-heading split'>
             <div>
-              <p className='section-kicker'>PRICING</p>
+              <p className='section-kicker'>{t('价格')}</p>
               <h2>{t('以控制台显示的实时价格为准')}</h2>
               <p>
                 {t(
@@ -869,7 +869,7 @@ const Home = () => {
 
       <section className='next-step'>
         <div className='site-container next-card'>
-          <p className='section-kicker'>NEXT STEP</p>
+          <p className='section-kicker'>{t('下一步')}</p>
           <h2>{t('立即开始使用 NavtoAI')}</h2>
           <p>
             {t(
@@ -898,8 +898,7 @@ const Home = () => {
           <div>
             <strong>{displayBrandName}</strong>
             <p>
-              Unified gateway, quota management, and logging for AI
-              applications, teams, and channels.
+              {t('为 AI 应用、团队和渠道提供统一网关、额度管理与日志服务。')}
             </p>
           </div>
           <nav>

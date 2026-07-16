@@ -220,7 +220,7 @@ export default function Docs() {
       <main className='docs-main'>
         <article className='docs-article'>
           <section className='docs-intro' id='quick-start'>
-            <p className='docs-kicker'>GET STARTED</p>
+            <p className='docs-kicker'>{t('开始使用')}</p>
             <h1>{t('接入 NavtoAI')}</h1>
             <p className='docs-lead'>
               {t(
@@ -261,7 +261,7 @@ export default function Docs() {
           </section>
 
           <section id='api-key'>
-            <p className='docs-kicker'>AUTHENTICATION</p>
+            <p className='docs-kicker'>{t('鉴权')}</p>
             <h2>{t('创建与保护 API Key')}</h2>
             <p>
               {t(
@@ -281,7 +281,7 @@ export OPENAI_BASE_URL="${apiBase}"`}</CodeBlock>
           </section>
 
           <section id='api-overview'>
-            <p className='docs-kicker'>OVERVIEW</p>
+            <p className='docs-kicker'>{t('概览')}</p>
             <h2>{t('接口与模型')}</h2>
             <p>
               {t(
@@ -309,7 +309,7 @@ export OPENAI_BASE_URL="${apiBase}"`}</CodeBlock>
           </section>
 
           <section id='chat-api'>
-            <p className='docs-kicker'>API REFERENCE</p>
+            <p className='docs-kicker'>{t('API 参考')}</p>
             <h2>{t('文字对话')}</h2>
             <p>
               {t('发送消息数组并指定模型。需要流式返回时加入 stream: true。')}
@@ -365,7 +365,7 @@ console.log(response.choices[0].message.content);`}</CodeBlock>
           </section>
 
           <section id='image-api'>
-            <p className='docs-kicker'>IMAGES</p>
+            <p className='docs-kicker'>{t('图片生成')}</p>
             <h2>{t('图片生成')}</h2>
             <p>{t('选择控制台已开通的图片模型，并描述期望的画面。')}</p>
             <CodeBlock language='bash'>{`curl ${apiBase}/images/generations \\
@@ -379,7 +379,7 @@ console.log(response.choices[0].message.content);`}</CodeBlock>
           </section>
 
           <section id='tools'>
-            <p className='docs-kicker'>TOOLS</p>
+            <p className='docs-kicker'>{t('工具接入')}</p>
             <h2>{t('开发工具接入')}</h2>
             <p>
               {t(
@@ -428,7 +428,7 @@ wire_api = "responses"`}</CodeBlock>
           </section>
 
           <section id='errors'>
-            <p className='docs-kicker'>TROUBLESHOOTING</p>
+            <p className='docs-kicker'>{t('常见问题')}</p>
             <h2>{t('常见问题')}</h2>
             <div className='docs-faq'>
               <details open>
@@ -467,7 +467,7 @@ wire_api = "responses"`}</CodeBlock>
           </section>
 
           <section id='support' className='docs-support'>
-            <p className='docs-kicker'>SUPPORT</p>
+            <p className='docs-kicker'>{t('获得支持')}</p>
             <h2>{t('仍然没有解决？')}</h2>
             <p>
               {t(
